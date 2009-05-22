@@ -1,0 +1,6 @@
+pprof \
+--lib_prefix /Users/paulreimer/Development/lib/opencv/build/lib \
+--lib_prefix /Users/paulreimer/Development/ofx/006/libs/poco/lib \
+--dot \
+bin/openFrameworksDebug.app/Contents/MacOS/openFrameworksDebug \
+/tmp/prof.out > of.dot

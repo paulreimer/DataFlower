@@ -1,0 +1,27 @@
+% NS_B
+<s>        sil
+
+% NS_E
+</s>        sil
+
+% WAKE
+COMPUTER    f ow n
+NICKNAME    k ao l
+
+% GESTURE
+LEFT        l eh f t sp                               
+RIGHT       r ay t sp                       
+UP          ah p sp
+DOWN        d aw n sp
+
+% BODYPART
+LEFT-HAND   l eh f t hh ae n d sp
+RIGHT-HAND  r ay t hh ae n d sp
+LEFT-LEG   l eh f t l eh g sp
+RIGHT-LEG  r ay t l eh g sp
+
+% COLOR
+GREEN       g r iy n sp
+BLUE        b l uw sp
+YELLOW      y eh l ow sp
+RED         r eh d sp
