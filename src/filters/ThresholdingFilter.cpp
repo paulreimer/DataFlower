@@ -4,7 +4,7 @@
 
 ThresholdingFilter::ThresholdingFilter(string name) : VideoFilter(name) {
 	printf("ThresholdingFilter::ThresholdingFilter()\n");
-	settings.threshold = 80;
+	settings.threshold = 65;
 }
 
 ThresholdingFilter::~ThresholdingFilter() {
@@ -17,6 +17,7 @@ void ThresholdingFilter::setup() {
 
 	grayOutput.allocate(VIDEO_SIZE);
 
+	addContent("Output", &output);
 	addSlider("Threshold",
 				   &settings.threshold, 0, 255);
 }

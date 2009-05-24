@@ -15,14 +15,15 @@ public:
 	
 	void destroy();
 
-	ofxCvGrayscaleImage grayImage;
-	ofxCvGrayscaleImage grayBg;
-	ofxCvGrayscaleImage	grayDiff;
+	void updateFromFiducial(ofxFiducial* &fiducial );
 	
-	ofxFiducialTracker	fidfinder;
 	
-	int 				threshold;
-	bool				bLearnBakground;
-	bool				backgroundSubOn;
+	//list to store fiducials
+	std::list <ofxFiducial> *fiducialsList;
 	
+	//list to store fingers
+	std::list <ofxFinger> *fingersList;
+
+	ofEvent<ofxFiducial*> fiducialDetected;
+
 };

@@ -1,0 +1,307 @@
+/***********************************************************************
+ 
+ Copyright (c) 2008, 2009, Memo Akten, www.memo.tv
+ *** The Mega Super Awesome Visuals Company ***
+ * All rights reserved.
+ 
+ based on Todd Vanderlin's ofxSimpleGui API
+ http://toddvanderlin.com/
+ 
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of MSA Visuals nor the names of its contributors 
+ *       may be used to endorse or promote products derived from this software
+ *       without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *
+ * ***********************************************************************/ 
+
+#include "VideoPipeline.h"
+#include "ofxPoint2f.h"
+
+//------------------------------------------------------------------------------ constrcutor
+VideoPipeline::VideoPipeline() {
+	config			= new ofxSimpleGuiConfig();
+	config->offset.set(0,0);
+//	guiFocus		= 0;
+	
+	verbose			= true;
+	
+	xmlFile			= OFX_SIMPLEGUITOO_XML_NAME;
+	doSave			= false;
+	doSaveBackup	= false;
+	
+	setAutoSave(false);
+	setDraw(true);
+}
+
+
+
+void VideoPipeline::addListeners() {
+	//	ofAddListener(ofEvents.update, this, &VideoPipeline::update);
+	
+	ofAddListener(ofEvents.mousePressed, this, &VideoPipeline::mousePressed);
+	ofAddListener(ofEvents.mouseMoved, this, &VideoPipeline::mouseMoved);
+	ofAddListener(ofEvents.mouseDragged, this, &VideoPipeline::mouseDragged);
+	ofAddListener(ofEvents.mouseReleased, this, &VideoPipeline::mouseReleased);
+	
+	ofAddListener(ofEvents.keyPressed, this, &VideoPipeline::keyPressed);
+	ofAddListener(ofEvents.keyReleased, this, &VideoPipeline::keyReleased);
+}
+
+
+void VideoPipeline::removeListeners() {
+	//	ofRemoveListener(ofEvents.update, this, &VideoPipeline::update);
+	
+	ofRemoveListener(ofEvents.mousePressed, this, &VideoPipeline::mousePressed);
+	ofRemoveListener(ofEvents.mouseMoved, this, &VideoPipeline::mouseMoved);
+	ofRemoveListener(ofEvents.mouseDragged, this, &VideoPipeline::mouseDragged);
+	ofRemoveListener(ofEvents.mouseReleased, this, &VideoPipeline::mouseReleased);
+	
+	ofRemoveListener(ofEvents.keyPressed, this, &VideoPipeline::keyPressed);
+	ofRemoveListener(ofEvents.keyReleased, this, &VideoPipeline::keyReleased);
+}
+
+void VideoPipeline::setDraw(bool b) {
+	doDraw = b;
+	if(doDraw) addListeners();
+	else removeListeners();	
+	if(doAutoSave) saveToXML(xmlFile);
+}
+
+void VideoPipeline::toggleDraw() {
+	setDraw(!doDraw);
+}
+
+bool VideoPipeline::isOn() {
+	return doDraw;
+}
+
+
+void VideoPipeline::setAutoSave(bool b) {
+	doAutoSave = b;
+}
+
+
+void VideoPipeline::loadFromXML(string file) {
+	if(verbose) printf("ofxSimpleGuiToo::loadFromXML( %s )\n", file.c_str());
+	
+	if(file.compare("NULL") != 0) xmlFile = file;
+	else {
+		xmlFile = OFX_SIMPLEGUITOO_XML_NAME;
+	}
+	
+	if(XML.loadFile(xmlFile) == false) {
+		if(verbose) printf("Error loading XMLFile: %s\n", xmlFile.c_str());
+		return;	
+	}
+	
+	doDraw		= XML.getValue("options:doDraw", true);
+	doAutoSave	= XML.getValue("options:doAutoSave", false);
+	
+	for(int i=1; i < filters.size(); i++) {
+		filters[i]->loadFromXML(XML);
+	}
+	
+	setDraw(doDraw);
+}
+
+
+void VideoPipeline::saveToXML(string file) {
+	doSave = false;
+	
+	XML.clear();	// clear cause we are building a new xml file
+	
+	XML.addTag("options");
+	XML.pushTag("options");
+	XML.addValue("doDraw", doDraw);
+	XML.addValue("doAutoSave", doAutoSave);
+	XML.popTag();
+	
+	XML.addTag("controls");
+	XML.pushTag("controls");
+	for(int i=1; i < filters.size(); i++) {
+		filters[i]->saveToXML(XML);
+	}
+	XML.popTag();
+	
+	XML.saveFile(file);
+	if(doSaveBackup) XML.saveFile(file+".bak");
+	printf("ofxSimpleGuiToo::saveToXML( %s )\n", file.c_str());
+}
+
+
+void VideoPipeline::setVerbose(bool v) {
+	verbose = v;
+}
+
+void VideoPipeline::drawFocus(float x, float y) {
+	glPushMatrix();
+	glTranslatef(x, y, 0);
+	ofFill();
+//	ofSetColor(config->focusColor.r, config->focusColor.g, config->focusColor.b, 200);
+	ofRect(0, 0, 10, 10);
+	glPopMatrix();
+}
+
+void VideoPipeline::setup() {
+	input.allocate(VIDEO_SIZE);
+	output.allocate(VIDEO_SIZE);
+	
+	for (int i=0; i<filters.size(); i++) {
+		filters[i]->setup();
+		filters[i]->setPos((i+1)*VIDEO_WIDTH,60);
+	}
+	
+}
+
+void VideoPipeline::update() {
+	filters.front()->input = input;
+	filters.front()->update();
+	
+	int i;
+	for (i = 1; i<filters.size(); i++) {
+		filters[i]->input = filters[i-1]->output;
+		filters[i]->update();		
+	}
+	
+	output = filters.back()->output;
+}
+
+void VideoPipeline::draw() {
+	if(!doDraw) return;
+	glDisableClientState(GL_COLOR_ARRAY);
+	
+	ofLine(256, 210,
+		   filters[0]->x, filters[0]->y+filters[0]->height/2);
+	for (int i = 0; i<filters.size(); i++) {
+		ofNoFill();
+        ofSetColor(0xFFFFFF);
+		ofSetLineWidth(5.0);
+        ofRect(filters[i]->x, filters[i]->y, filters[i]->width, filters[i]->height);
+		
+		if (i > 0)
+			ofLine(filters[i-1]->x+filters[i-1]->width, filters[i-1]->y+filters[i-1]->height/2,
+				   filters[i]->x, filters[i]->y+filters[i]->height/2);
+		
+		filters[i]->draw();
+	}
+}
+
+VideoFilter *VideoPipeline::filter(int i) {
+	return filters.at(i);
+}
+
+VideoFilter *VideoPipeline::filter(string name) {
+	VideoFilter *filter;
+	for(int i=1; i<filters.size(); i++) if(name.compare(filters[i]->name) == 0) return filters[i];
+	return NULL;
+}
+
+
+void VideoPipeline::mouseMoved(ofMouseEventArgs &e) {
+	VideoFilter* f;
+	vector<VideoFilter*>::reverse_iterator rit;
+	for (rit=filters.rbegin() ; rit < filters.rend(); ++rit ) {
+		f = *rit;
+		
+		ofxPoint2f coords(e.x,e.y);
+		ofxPoint2f ref(f->x, f->y);
+		coords.rotateRad(-f->angle, ref);
+		printf("Before: (%d,%d)\t", e.x, e.y);
+		e.x = coords.x - f->x;
+		e.y = coords.y - f->y;
+		printf("After: (%d,%d)\n", e.x, e.y);
+		
+		f->mouseMoved(e);
+		if (f->isMouseOver())
+			return;
+	}
+}
+
+void VideoPipeline::mousePressed(ofMouseEventArgs &e) {
+	VideoFilter* f;
+	vector<VideoFilter*>::reverse_iterator rit;
+	for (rit=filters.rbegin() ; rit < filters.rend(); ++rit ) {
+		f = *rit;
+		
+		ofxPoint2f coords(e.x,e.y);
+		ofxPoint2f ref(f->x, f->y);
+		coords.rotateRad(-f->angle, ref);
+		e.x = coords.x - f->x;
+		e.y = coords.y - f->y;
+		
+		f->mousePressed(e);
+		if (f->isMouseOver())
+			return;
+	}
+}
+
+void VideoPipeline::mouseDragged(ofMouseEventArgs &e) {
+	VideoFilter* f;
+	vector<VideoFilter*>::reverse_iterator rit;
+	for (rit=filters.rbegin() ; rit < filters.rend(); ++rit ) {
+		f = *rit;
+		
+		ofxPoint2f coords(e.x,e.y);
+		ofxPoint2f ref(f->x, f->y);
+		coords.rotateRad(-f->angle, ref);
+		e.x = coords.x - f->x;
+		e.y = coords.y - f->y;
+		
+		f->mouseDragged(e);
+		if (f->isMouseOver())
+			return;
+	}
+}
+
+void VideoPipeline::mouseReleased(ofMouseEventArgs &e) {
+	VideoFilter* f;
+	vector<VideoFilter*>::reverse_iterator rit;
+	for (rit=filters.rbegin() ; rit < filters.rend(); ++rit ) {
+		f = *rit;
+		
+		ofxPoint2f coords(e.x,e.y);
+		ofxPoint2f ref(f->x, f->y);
+		coords.rotateRad(-f->angle, ref);
+		e.x = coords.x - f->x;
+		e.y = coords.y - f->y;
+		
+		f->mouseReleased(e);
+		if (f->isMouseOver())
+			return;
+	}
+	if(doAutoSave) saveToXML(xmlFile);
+}
+
+void VideoPipeline::keyPressed(ofKeyEventArgs &e) {
+	vector<VideoFilter*>::reverse_iterator rit;
+	for (rit=filters.rbegin() ; rit < filters.rend(); ++rit ) {
+		(*rit)->keyPressed(e);
+	}
+	if(doAutoSave) saveToXML(xmlFile);
+}
+
+void VideoPipeline::keyReleased(ofKeyEventArgs &e) {
+	vector<VideoFilter*>::reverse_iterator rit;
+	for (rit=filters.rbegin() ; rit < filters.rend(); ++rit ) {
+		(*rit)->keyReleased(e);
+	}
+}

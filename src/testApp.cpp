@@ -16,9 +16,17 @@ void testApp::setup() {
 	tuioClient.start(12345);
 #endif
 
-#ifdef USE_VIDEO
+	VideoPipeline *pipe = new VideoPipeline();
+	//pipe->addFilter(new DifferencingFilter("First Differ"));
+	pipe->addFilter(new ThresholdingFilter("First Thresholder"));
+	//	pipe->pages.push_back(new ContourFindingFilter("Contours"));
+	FiducialTrackingFilter* fidtracker = new FiducialTrackingFilter("Fiducial Tracker");
+	pipe->addFilter(fidtracker);
+	pipe->setPage(0);
+	
+	videoSystem.addPipeline(pipe);
+		
 	videoSystem.setup();
-#endif
 
 #ifdef USE_GUI
 	guiSystem.setup();
@@ -26,6 +34,8 @@ void testApp::setup() {
 
 #ifdef USE_TUI
 	tuiSystem.setup();
+	tuiSystem.fiducialsList = &fidtracker->fidFinder.fiducialsList;
+	tuiSystem.fingersList = &fidtracker->fidFinder.fingersList;
 #endif
 }
 
@@ -53,7 +63,6 @@ void testApp::update(){
 	pmouseY = mouseY;
 
 #ifdef USE_TUI	
-	tuiSystem.grayImage = videoSystem.colorImg;
 	tuiSystem.update();
 #endif
 }

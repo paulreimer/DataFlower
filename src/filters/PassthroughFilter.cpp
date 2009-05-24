@@ -13,6 +13,7 @@ PassthroughFilter::~PassthroughFilter() {
 
 void PassthroughFilter::setup() {
 	VideoFilter::setup();
+	addContent("Output", &output);
 }
 
 void PassthroughFilter::update() {

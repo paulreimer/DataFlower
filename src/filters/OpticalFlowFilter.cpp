@@ -12,7 +12,7 @@ OpticalFlowFilter::OpticalFlowFilter(string name) : VideoFilter(name) {
 	settings.win_size		= 10;
 	settings.eps			= 0.03;
 	settings.max_features	= 100;
-	settings.pyr_levels	= 5;
+	settings.pyr_levels		= 5;
 	
 }
 

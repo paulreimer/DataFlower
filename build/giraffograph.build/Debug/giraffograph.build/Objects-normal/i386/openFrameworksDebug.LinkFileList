@@ -47,7 +47,6 @@
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/VideoSystem.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/GuiSystem.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/VideoFilter.o
-/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxDraggable.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ContourFindingFilter.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/DifferencingFilter.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/GrayscaleFilter.o
@@ -55,9 +54,17 @@
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/PassthroughFilter.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ThresholdingFilter.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/VideoPipeline.o
-/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/TuiSystem.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/fidtrackX.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/segment.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/treeidmap.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxFiducialFinder.o
 /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxFiducialTracker.o
+/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/FiducialTrackingFilter.o
+/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/TuiSystem.o
+/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxMatrix3x3.o
+/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxPoint2f.o
+/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxPoint3f.o
+/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxPoint4f.o
+/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxVec2f.o
+/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxVec3f.o
+/Users/paulreimer/Development/ofx/006/apps/my/giraffograph/build/giraffograph.build/Debug/giraffograph.build/Objects-normal/i386/ofxVec4f.o

@@ -13,6 +13,7 @@ GrayscaleFilter::~GrayscaleFilter() {
 
 void GrayscaleFilter::setup() {
 	VideoFilter::setup();
+	addContent("Output", &output);
 	grayOutput.allocate(VIDEO_SIZE);
 	
 }

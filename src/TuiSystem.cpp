@@ -7,6 +7,8 @@ extern testApp* myApp;
 
 TuiSystem::TuiSystem() {
 	printf("TuiSystem::TuiSystem()\n");
+	fingersList = NULL;
+	fiducialsList = NULL;
 }
 
 TuiSystem::~TuiSystem() {
@@ -15,49 +17,41 @@ TuiSystem::~TuiSystem() {
 }
 
 void TuiSystem::setup(){	 
-	grayImage.allocate(320,240);
-	grayBg.allocate(320,240);
-	grayDiff.allocate(320,240);
-	
-	threshold = 80;
-	bLearnBakground = true;
-	backgroundSubOn = false;
-	
-	//detect finger is off by default
-	fidfinder.detectFinger		= true;
-	fidfinder.maxFingerSize		= 25; 
-	fidfinder.minFingerSize		= 5;
-	fidfinder.fingerSensitivity	= 0.05f; //from 0 to 2.0f
 }
 
 //--------------------------------------------------------------
-void TuiSystem::update(){		
-	if (bLearnBakground == true){
-		grayBg = grayImage;		// the = sign copys the pixels from grayImage into grayBg (operator overloading)
-		bLearnBakground = false;
-		backgroundSubOn = true;
+void TuiSystem::update(){
+	int f;
+	for (list<ofxFiducial>::iterator fiducial = fiducialsList->begin(); fiducial != fiducialsList->end(); fiducial++) {
+		switch (fiducial->getId()) {
+			case 6: f = 0;
+				break;
+			case 4: f = 1;
+				break;
+			case 10: f = 2;
+				break;
+			default: f = -1;
+				break;
+		}
+		if (f >= 0) {
+			VideoFilter* filter = myApp->videoSystem.pipeline(0)->filter(f);
+			if (fiducial->current.xpos >= 0 && fiducial->current.ypos >= 0) {
+				filter->setPos(fiducial->current.xpos*VIDEO_INVWIDTH*myApp->window.width,
+							   fiducial->current.ypos*VIDEO_INVWIDTH*myApp->window.width);
+				filter->rotateRad(fiducial->getAngle());
+			}
+		}
 	}
-	
-	// take the abs value of the difference between background and incoming and then threshold:
-	if (backgroundSubOn) {
-		grayDiff.absDiff( grayBg, grayImage );
-	} else {
-		grayDiff = grayImage;
-	}
-	grayDiff.threshold(threshold);
-	fidfinder.findFiducials( grayDiff );
 }
 
 //--------------------------------------------------------------
 void TuiSystem::draw(){
-	grayDiff.draw(360,280);
-	
-	//use this method for the FiducialTracker
-	//to get fiducial info you can use the fiducial getter methods
+	// draw fullscreen fiducials
 	float _x=0, _y=0, deg;
-	for (list<ofxFiducial>::iterator fiducial = fidfinder.fiducialsList.begin(); fiducial != fidfinder.fiducialsList.end(); fiducial++) {
+	for (list<ofxFiducial>::iterator fiducial = fiducialsList->begin(); fiducial != fiducialsList->end(); fiducial++) {
 		_x = fiducial->current.xpos*VIDEO_INVWIDTH * myApp->window.width;
 		_y = fiducial->current.ypos*VIDEO_INVWIDTH * myApp->window.width;
+		// Draw root
 		ofNoFill();
 		ofSetRectMode(OF_RECTMODE_CENTER);
 		glPushMatrix();
@@ -70,24 +64,24 @@ void TuiSystem::draw(){
 		ofCircle(0, fiducial->l_size*4, fiducial->l_size); //draw leaf size blue
 		ofSetColor(0, 255, 0); //set color green
 		ofDrawBitmapString(ofToString( fiducial->fidId ), 0, 0); //draw fiducial number green
-		glPopMatrix();
+		glPopMatrix(); // fiducial
 		ofSetRectMode(OF_RECTMODE_CORNER);
 		ofSetColor(255,255,255);
-
+		
+		// Draw corners
 		fiducial->computeCorners();
 		ofSetColor(0, 255, 0);
 		ofNoFill();
 		glPushMatrix();
-		glTranslatef(_x, _y, 0);
 		if (fiducial->cornerPoints.size() > 0) {
-			for(int i = 0; i < fiducial->cornerPoints.size() ;i++) {
+			for(int i = 0; i < fiducial->cornerPoints.size(); i++) {
 				_x = fiducial->cornerPoints[i].x*VIDEO_INVWIDTH * myApp->window.width;
-				_y = fiducial->cornerPoints[i].x*VIDEO_INVHEIGHT * myApp->window.height;
+				_y = fiducial->cornerPoints[i].y*VIDEO_INVWIDTH * myApp->window.width;
 				ofCircle(_x, _y, 4);
-				////printf("corner 0.x: %f corner 0.y %f\n", cornerPoints[i].x, cornerPoints[i].y);
+				//printf("corner %d.x: %f corner %d.y %f\n", i, fiducial->cornerPoints[i].x, i, fiducial->cornerPoints[i].y);
 			}
 		}
-		glPopMatrix();
+		glPopMatrix(); // corners
 		ofSetColor(255,255,255);
 		
 		ofSetColor(0,0,255);//set color to blue
@@ -100,14 +94,22 @@ void TuiSystem::draw(){
 		//cout << "fiducial " << fiducial->getId() << " found at ( " << fiducial->getX() << "," << fiducial->getY() << " )" << endl;
 		//take a good look at the fiducial class to get all the info and a few helper functions
 	}
-	
-	//draw the fingers
-	for (list<ofxFinger>::iterator finger = fidfinder.fingersList.begin(); finger != fidfinder.fingersList.end(); finger++) {
-		finger->draw(20, 20);
+	if (fingersList->size()) {
+		//draw the fingers
+		ofNoFill();
+		ofSetRectMode(OF_RECTMODE_CENTER);
+		ofSetColor(255, 0, 0);//set color red
+		for (list<ofxFinger>::iterator finger = fingersList->begin(); finger != fingersList->end(); finger++) {
+			glPushMatrix();
+			glTranslatef(finger->current.xpos + _x, finger->current.ypos + _y, 0);
+			ofRect(0, 0, finger->width, finger->height); //draw finger red
+			ofDrawBitmapString(ofToString( finger->fingerID ), 0, finger->height+2); //draw finger number
+			glPopMatrix();
+		}
+		ofSetRectMode(OF_RECTMODE_CORNER);
+		ofSetColor(255,255,255);	
 	}
-
-//	printf("fid count %i\n",fidfinder.fiducialsList.size());
-}
+}	
 
 void TuiSystem::destroy() {
 	printf("TuiSystem::destroy()\n");

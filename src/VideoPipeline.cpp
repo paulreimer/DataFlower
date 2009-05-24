@@ -5,8 +5,11 @@
 
 extern testApp* myApp;
 
-VideoPipeline::VideoPipeline() {
-	config			= &defaultSimpleGuiConfig;
+VideoPipeline::VideoPipeline() : ofxSimpleGuiToo() {
+	config			= new ofxSimpleGuiConfig();
+	config->offset.set(0,0);
+	config->gridSize.x = 120;
+
 //	guiFocus		= 0;
 	
 	verbose			= true;
@@ -27,28 +30,8 @@ VideoPipeline::~VideoPipeline() {
 	destroy();
 }
 
-void VideoPipeline::setup() {
-	input.allocate(VIDEO_SIZE);
-	output.allocate(VIDEO_SIZE);
-
-//	outputPage = addPage("Input");
-
-//	outputPage = addPage("Output");
-//	outputPage->addContent("Result", &output);
-
-	vector<VideoFilter*>::iterator it;
-	VideoFilter* cur;
-//	for(int i = pages.begin(); it != pages.end(); it++) {
-	for (int i=0; i<pages.size(); i++) {
-//		cur = *it;
-		pages[i]->setup();
-		pages[i]->setPos((i+1)*VIDEO_WIDTH, (i+1)*VIDEO_HEIGHT);
-	}
-}
-
-void VideoPipeline::addListeners() {
-//	ofAddListener(ofEvents.update, this, &VideoPipeline::update);
-	
+void VideoPipeline::updateListeners() {
+//	ofAddListener(ofEvents.update, this, &ofxSimpleGuiToo::update);
 	ofAddListener(ofEvents.mousePressed, this, &VideoPipeline::mousePressed);
 	ofAddListener(ofEvents.mouseMoved, this, &VideoPipeline::mouseMoved);
 	ofAddListener(ofEvents.mouseDragged, this, &VideoPipeline::mouseDragged);
@@ -58,17 +41,22 @@ void VideoPipeline::addListeners() {
 	ofAddListener(ofEvents.keyReleased, this, &VideoPipeline::keyReleased);
 }
 
+void VideoPipeline::setup() {
+	input.allocate(VIDEO_SIZE);
+	output.allocate(VIDEO_SIZE);
 
-void VideoPipeline::removeListeners() {
-//	ofRemoveListener(ofEvents.update, this, &VideoPipeline::update);
-	
-	ofRemoveListener(ofEvents.mousePressed, this, &VideoPipeline::mousePressed);
-	ofRemoveListener(ofEvents.mouseMoved, this, &VideoPipeline::mouseMoved);
-	ofRemoveListener(ofEvents.mouseDragged, this, &VideoPipeline::mouseDragged);
-	ofRemoveListener(ofEvents.mouseReleased, this, &VideoPipeline::mouseReleased);
-	
-	ofRemoveListener(ofEvents.keyPressed, this, &VideoPipeline::keyPressed);
-	ofRemoveListener(ofEvents.keyReleased, this, &VideoPipeline::keyReleased);
+//	outputPage = addPage("Input");
+
+//	outputPage = addPage("Output");
+//	outputPage->addContent("Result", &output);
+	ofxSimpleGuiToo::removeListeners();
+	updateListeners();
+
+	for (int i=0; i<pages.size(); i++) {
+		filter(i)->setup();
+		filter(i)->setPos((i+1)*VIDEO_WIDTH,60);
+	}
+
 }
 
 void VideoPipeline::update() {
@@ -77,11 +65,26 @@ void VideoPipeline::update() {
 
 	int i;
 	for (i = 1; i<pages.size(); i++) {
-		pages[i]->input = pages[i-1]->output;
-		pages[i]->update();		
+		filter(i)->input = filter(i-1)->output;
+		filter(i)->update();		
 	}
 
 	output = pages.back()->output;
+}
+
+VideoFilter *VideoPipeline::filter(int i) {
+	return pages.at(i);
+}
+
+VideoFilter *VideoPipeline::filter(string name) {
+	VideoFilter *page;
+	for(int i=1; i<pages.size(); i++) if(name.compare(filter(i)->name) == 0) return filter(i);
+	return NULL;
+}
+
+VideoFilter *VideoPipeline::addFilter(VideoFilter* filter) {
+	pages.push_back(filter);
+	return filter;
 }
 
 void VideoPipeline::draw() {
@@ -89,17 +92,18 @@ void VideoPipeline::draw() {
 	glDisableClientState(GL_COLOR_ARRAY);
 	
 	ofLine(256, 210,
-		   pages[0]->x, pages[0]->y+pages[0]->height/2);
+		   filter(0)->x, filter(0)->y+filter(0)->height/2);
 	for (int i = 0; i<pages.size(); i++) {
 		ofNoFill();
         ofSetColor(0xFFFFFF);
-        ofRect(pages[i]->x, pages[i]->y, pages[i]->width, pages[i]->height);
+		ofSetLineWidth(5.0);
+        ofRect(filter(i)->x, filter(i)->y, filter(i)->width, filter(i)->height - config->padding.y);
 		
-		if (i)
-			ofLine(pages[i-1]->x+pages[i-1]->width, pages[i-1]->y+pages[i-1]->height/2,
-				pages[i]->x, pages[i]->y+pages[i]->height/2);
+		if (i > 0)
+			ofLine(filter(i-1)->x+filter(i-1)->width, filter(i-1)->y+filter(i-1)->height/2,
+				filter(i)->x, filter(i)->y+filter(i)->height/2);
 
-		pages[i]->draw();
+		filter(i)->draw();
 	}
 }
 
@@ -107,61 +111,55 @@ void VideoPipeline::destroy() {
 	printf("VideoPipeline::destroy()\n");
 }
 
-void VideoPipeline::setDraw(bool b) {
-	doDraw = b;
-	if(doDraw) addListeners();
-	else removeListeners();	
-	if(doAutoSave) saveToXML(xmlFile);
-}
-
 void VideoPipeline::mouseMoved(ofMouseEventArgs &e) {
-	vector<VideoFilter*>::reverse_iterator rit;
-	for (rit=pages.rbegin() ; rit < pages.rend(); ++rit ) {
-		(*rit)->mouseMoved(e);
-		if ((*rit)->isMouseOver())
-			return;
+	vector<VideoFilter*>::reverse_iterator f;
+	for (f=pages.rbegin() ; f < pages.rend(); ++f ) {
+		(*f)->mouseMoved(e);
+//		if ((*f)->isMouseOver())
+//			return;
 	}
 }
 
 void VideoPipeline::mousePressed(ofMouseEventArgs &e) {
-	vector<VideoFilter*>::reverse_iterator rit;
-	for (rit=pages.rbegin() ; rit < pages.rend(); ++rit ) {
-		(*rit)->mousePressed(e);
-		if ((*rit)->isMouseOver())
-			return;
+	vector<VideoFilter*>::reverse_iterator f;
+	for (f=pages.rbegin() ; f < pages.rend(); ++f ) {
+		(*f)->mousePressed(e);
+		//		if ((*f)->isMouseOver())
+		//			return;
 	}
 }
 
 void VideoPipeline::mouseDragged(ofMouseEventArgs &e) {
-	vector<VideoFilter*>::reverse_iterator rit;
-	for (rit=pages.rbegin() ; rit < pages.rend(); ++rit ) {
-		(*rit)->mouseDragged(e);
-		if ((*rit)->isMouseOver())
-			return;
+	vector<VideoFilter*>::reverse_iterator f;
+	for (f=pages.rbegin() ; f < pages.rend(); ++f ) {
+		
+		(*f)->mouseDragged(e);
+		//		if ((*f)->isMouseOver())
+		//			return;
 	}
 }
 
 void VideoPipeline::mouseReleased(ofMouseEventArgs &e) {
-	vector<VideoFilter*>::reverse_iterator rit;
-	for (rit=pages.rbegin() ; rit < pages.rend(); ++rit ) {
-		(*rit)->mouseReleased(e);
-		if ((*rit)->isMouseOver())
-			return;
+	vector<VideoFilter*>::reverse_iterator f;
+	for (f=pages.rbegin() ; f < pages.rend(); ++f ) {
+		(*f)->mouseReleased(e);
+		//		if ((*f)->isMouseOver())
+		//			return;
 	}
 	if(doAutoSave) saveToXML(xmlFile);
 }
 
 void VideoPipeline::keyPressed(ofKeyEventArgs &e) {
-	vector<VideoFilter*>::reverse_iterator rit;
-	for (rit=pages.rbegin() ; rit < pages.rend(); ++rit ) {
-		(*rit)->keyPressed(e);
+	vector<VideoFilter*>::reverse_iterator f;
+	for (f=pages.rbegin() ; f < pages.rend(); ++f ) {		
+		(*f)->keyPressed(e);
 	}
 	if(doAutoSave) saveToXML(xmlFile);
 }
 
 void VideoPipeline::keyReleased(ofKeyEventArgs &e) {
-	vector<VideoFilter*>::reverse_iterator rit;
-	for (rit=pages.rbegin() ; rit < pages.rend(); ++rit ) {
-		(*rit)->keyReleased(e);
+	vector<VideoFilter*>::reverse_iterator f;
+	for (f=pages.rbegin() ; f < pages.rend(); ++f ) {		
+		(*f)->keyReleased(e);
 	}
 }

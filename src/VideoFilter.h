@@ -2,16 +2,16 @@
 
 #include "ofMain.h"
 #include "ofxSimpleGuiPage.h"
-#include "ofxDraggable.h"
 #include "ofxOpenCv.h"
 #include "settings.h"
+#include "ofxFidMain.h"
 
 class VideoFilter : public ofxSimpleGuiPage {
 public:
 	VideoFilter(string name);
 
 	virtual ~VideoFilter();
-
+	
 	void setup();
 	void update();
 	void draw();
@@ -31,11 +31,21 @@ public:
 	ofxSimpleGuiSlider2d	*addSlider2d(string name, ofPoint* value, float xmin, float xmax, float ymin, float ymax);
 	ofxSimpleGuiTitle		*addTitle(string name, bool *value = NULL);
 	ofxSimpleGuiToggle		*addToggle(string name, bool *value);
+
+	void repositionMouseEvent(ofMouseEventArgs *e);
+	void mouseMoved(ofMouseEventArgs &e);
+	void mousePressed(ofMouseEventArgs &e);	
+	void mouseDragged(ofMouseEventArgs &e);	
+	void mouseReleased(ofMouseEventArgs &e);
 	
 	void onPress(int mx, int my, int button);
 	void onDragOver(int mx, int my, int button);
 
+	void rotateRad(float _angle);
+	float angle;	
+
+
 protected:
 	int saveX, saveY;
-	
+
 };

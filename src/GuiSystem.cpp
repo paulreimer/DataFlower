@@ -18,6 +18,7 @@ GuiSystem& GuiSystem::setup() {
 #ifdef USE_GUI
 #ifdef USE_FLUID
 	//	gui.addPage("Fluid");
+
 	PhysicsSystem* phy = &myApp->physicsSystem;
 	gui.addToggle("Draw Fluid",
 				  &phy->settings.drawFluid);

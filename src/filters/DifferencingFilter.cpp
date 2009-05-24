@@ -2,6 +2,7 @@
 
 #include "DifferencingFilter.h"
 
+
 DifferencingFilter::DifferencingFilter(string name) : VideoFilter(name) {
 	printf("DifferencingFilter::DifferencingFilter()\n");
 	settings.capture = true;
@@ -22,10 +23,9 @@ void DifferencingFilter::setup() {
     inputCapture.allocate(VIDEO_SIZE);
 	grayCapture.allocate(VIDEO_SIZE);
 
-	addContent("Background",
-			  &grayCapture);
-	addButton("Capture",
-				  &settings.capture);
+	addContent("Output", &output);
+	addContent("Background", &grayCapture);
+	addButton("Capture", &settings.capture);
 }
 
 void DifferencingFilter::update() {

@@ -1,11 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
-#include "filters/ThresholdingFilter.h"
-#include "filters/DifferencingFilter.h"
-#include "filters/GrayscaleFilter.h"
+#include "VideoFilter.h"
+#include "filters.h"
 
-#include "ofxDraggable.h"
+#include "ofxFidMain.h"
 #include "ofxSimpleGuiToo.h"
 #include "ofxOpenCv.h"
 
@@ -16,27 +15,24 @@ public:
 
 	void setup();
 
-	void addListeners();
-	void removeListeners();
+	void updateListeners();
 
 	void update();
 	void draw();
 	
 	void destroy();
 
+	VideoFilter				*filter(int i);				// 1 based index of page
+	VideoFilter				*filter(string name);
+	
+	VideoFilter				*addFilter(VideoFilter *filter);
+
 	ofxCvColorImage			input;
 
 	ofxCvColorImage			output;
-	
-	ofxSimpleGuiPage		*inputPage;
-	ofxSimpleGuiPage		*outputPage;
 
+protected:
 	vector <VideoFilter*>	pages;
-
-//	VideoFilter				*page(int i);				// 1 based index of page
-//	VideoFilter				*page(string name);
-	
-//	VideoFilter				*addPage(string name = "");
 
 	void mouseMoved(ofMouseEventArgs &e);
 	void mousePressed(ofMouseEventArgs &e);	
@@ -45,6 +41,4 @@ public:
 	
 	void keyPressed(ofKeyEventArgs &e);
 	void keyReleased(ofKeyEventArgs &e);
-	
-	void setDraw(bool b);
 };

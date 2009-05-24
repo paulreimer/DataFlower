@@ -2,11 +2,13 @@
 
 #include "VideoFilter.h"
 #include "testApp.h"
+#include "ofxPoint2f.h"
 
 extern testApp* myApp;
 
 VideoFilter::VideoFilter(string name) : ofxSimpleGuiPage(name) {
 	width = height = 0;
+	angle = 0;
 	disableAllEvents();
 	
 	printf("VideoFilter::VideoFilter()\n");
@@ -23,8 +25,7 @@ void VideoFilter::setup() {
 
 	output.allocate(VIDEO_SIZE);
 	
-	addContent("Output", &output);
-	enableMouseEvents();
+//	enableMouseEvents();
 }
 
 void VideoFilter::update() {
@@ -35,19 +36,57 @@ void VideoFilter::draw() {
 	float posY		= 0;
 	
 	ofSetRectMode(OF_RECTMODE_CORNER);
-	
+
 	for(int i=0; i<controls.size(); i++) {
-		float controlX = posX + x;
-		float controlY = posY + y;
+		glPushMatrix();
+			glTranslatef(x+width/2, y+height/2, 0);
+			glRotatef(angle*180.0/PI, 0, 0, 1.0); // must flip degrees to compensate for image flip
+			glTranslatef(-width/2, -height/2, 0);
+
+			controls[i]->draw(posX, posY);
+
+			ofNoFill();
+			ofSetColor(config->borderColor);
+			glLineWidth(0.5f);
+			ofRect(posX, posY, controls[i]->width, controls[i]->height);
+			posY += controls[i]->height + config->padding.y;
 		
-		controls[i]->draw(controlX, controlY);
-		ofNoFill();
-		ofSetColor(config->borderColor);
-		glLineWidth(0.5f);
-		ofRect(controlX, controlY, controls[i]->width, controls[i]->height);
-		posY = getNextY(posY + controls[i]->height + config->padding.y);
-		
+		glPopMatrix();
 	}
+}
+
+void VideoFilter::repositionMouseEvent(ofMouseEventArgs* e) {
+	ofxPoint2f _ref(x, y);
+	ofxPoint2f _new(e->x, e->y);
+	_new.rotateRad(-angle, _ref);
+	e->x = _new.x;// - x;
+	e->y = _new.y;//- y;
+}
+
+void VideoFilter::mouseMoved(ofMouseEventArgs &e) {
+	printf("Before: (%d, %d)\n", e.x, e.y);
+	ofMouseEventArgs e_new = e;
+	repositionMouseEvent(&e_new);
+	printf("After: (%d, %d)\n", e_new.x, e_new.y);
+	for(int i=0; i<controls.size(); i++) controls[i]->_mouseMoved(e_new);
+}
+
+void VideoFilter::mousePressed(ofMouseEventArgs &e) {
+	ofMouseEventArgs e_new = e;
+	repositionMouseEvent(&e_new);
+	for(int i=0; i<controls.size(); i++) controls[i]->_mousePressed(e_new);
+}
+
+void VideoFilter::mouseDragged(ofMouseEventArgs &e) {
+	ofMouseEventArgs e_new = e;
+	repositionMouseEvent(&e_new);
+	for(int i=0; i<controls.size(); i++) controls[i]->_mouseDragged(e_new);
+}
+
+void VideoFilter::mouseReleased(ofMouseEventArgs &e) {
+	ofMouseEventArgs e_new = e;
+	repositionMouseEvent(&e_new);
+	for(int i=0; i<controls.size(); i++) controls[i]->_mouseReleased(e_new);
 }
 
 ofxSimpleGuiControl *VideoFilter::addControl(ofxSimpleGuiControl* control) {
@@ -57,13 +96,13 @@ ofxSimpleGuiControl *VideoFilter::addControl(ofxSimpleGuiControl* control) {
 	return control;
 }
 
-ofxSimpleGuiButton *VideoFilter::addButton(string name, bool *value) {
-	return (ofxSimpleGuiButton *)addControl(new ofxSimpleGuiButton(name, value));
-}
-
 ofxSimpleGuiContent *VideoFilter::addContent(string name, ofBaseDraws *content, float fixwidth) {
 	if(fixwidth == -1) fixwidth = config->gridSize.x - config->padding.x;
 	return (ofxSimpleGuiContent *)addControl(new ofxSimpleGuiContent(name, content, fixwidth));
+}
+
+ofxSimpleGuiButton *VideoFilter::addButton(string name, bool *value) {
+	return (ofxSimpleGuiButton *)addControl(new ofxSimpleGuiButton(name, value));
 }
 
 ofxSimpleGuiFPSCounter *VideoFilter::addFPSCounter() {
@@ -95,14 +134,21 @@ void VideoFilter::onPress(int mx, int my, int button) {
 	// ...relative to the position of the object
 	saveX = mx - x;
 	saveY = my - y;
-	
-	ofxSimpleGuiPage::onPress(mx, my, button);
 }
 
 void VideoFilter::onDragOver(int mx, int my, int button) {
 	x = mx - saveX;    // update x position
 	y = my - saveY;    // update mouse y position
-	ofxSimpleGuiPage::onDragOver(mx, my, button);
+//	setPos(x, y);
+	printf("Got pos: (%f, %f)\n", x, y);
+	ofSetColor(255, 0, 0);
+	ofFill();
+	ofCircle(x, y, 5.0);
+}
+
+void VideoFilter::rotateRad(float _angle){
+	angle=_angle;
+	printf("Rotate by %f rad.\n", _angle);
 }
 
 void VideoFilter::destroy() {

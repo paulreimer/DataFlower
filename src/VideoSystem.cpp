@@ -25,19 +25,23 @@ VideoSystem& VideoSystem::setup() {
     colorImg.allocate(VIDEO_SIZE);
 
 //	myApp->guiSystem.gui.page(0)->setName("Input");
-	myApp->guiSystem.gui.addContent("Webcam", &colorImg);
-	VideoPipeline *pipe = new VideoPipeline();
-	pipe->pages.push_back(new DifferencingFilter("First Differ"));
-	pipe->pages.push_back(new ThresholdingFilter("First Thresholder"));
-	pipelines.push_back(pipe);
-	
+	myApp->guiSystem.gui.addContent("Webcam", &colorImg, -1);
+
 	vector<VideoPipeline*>::iterator it;
 	VideoPipeline* pipeline;
 	for(it = pipelines.begin(); it != pipelines.end(); it++) {
 		pipeline = *it;
 		pipeline->setup();
 	}
+}
 
+VideoPipeline *VideoSystem::pipeline(int i) {
+	return pipelines.at(i);
+}
+
+VideoPipeline *VideoSystem::addPipeline(VideoPipeline* pipeline) {
+	pipelines.push_back(pipeline);
+	return pipeline;
 }
 
 void VideoSystem::update() {

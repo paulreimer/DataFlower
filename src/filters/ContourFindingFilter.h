@@ -9,8 +9,14 @@ public:
 
 	void setup();
 	void update();
+	void draw();
 
 	void destroy();
+
+	struct ContourFindingSettings {
+		int		num_blobs;
+		bool	find_holes;
+	} settings;
 	
 private:
 	ofxCvContourFinder      contourFinder;

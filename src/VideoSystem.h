@@ -17,14 +17,19 @@ public:
 	void draw();
 	
 	void destroy();
+
+	ofxCvColorImage			colorImg;
+
+	VideoPipeline			*pipeline(int i);
 	
+	VideoPipeline			*addPipeline(VideoPipeline *pipeline);
+
 #ifdef _USE_LIVE_VIDEO
 	ofVideoGrabber			vidGrabber;
 #else
 	ofVideoPlayer			vidPlayer;
 #endif
 	
-	ofxCvColorImage			colorImg;
-	
+protected:
 	vector <VideoPipeline*>	pipelines;
 };
