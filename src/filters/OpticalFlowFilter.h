@@ -7,7 +7,7 @@
 
 class OpticalFlowFilter : public VideoFilter  {
 public:
-	OpticalFlowFilter(string name = "Optical Flow");
+	OpticalFlowFilter();
 	virtual ~OpticalFlowFilter();
 
 	void setup();
@@ -25,29 +25,29 @@ public:
 		int		max_features;
 		int		pyr_levels;
 	} settings;
-	
+
 private:
 	ofxCvGrayscaleImage		grayInput;
 	ofxCvGrayscaleImage 	grayOutput;
 
 	ofxCvColorImage 		inputPrev;
 	ofxCvGrayscaleImage		grayInputPrev;
-	
+
 	ofxCvFloatImage			velx;
 	ofxCvFloatImage			vely;
 	ofxCvGrayscaleImage		dv;
-	
+
 	CvSize					img_sz;
-	
+
 	IplImage*				eig_image;
 	IplImage*				tmp_image;
-	
+
 	CvPoint2D32f*			cornersImg;
 	CvPoint2D32f*			cornersPrev;
 	CvSize					pyr_sz;
 	IplImage*				pyrImg;
 	IplImage*				pyrPrev;
-	
+
 	int						corner_count;
 	char					features_found[ MAX_CORNERS ];
 	float					feature_errors[ MAX_CORNERS ];

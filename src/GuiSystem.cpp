@@ -14,8 +14,7 @@ GuiSystem::~GuiSystem() {
 	destroy();
 }
 
-GuiSystem& GuiSystem::setup() {
-#ifdef USE_GUI
+void GuiSystem::setup() {
 #ifdef USE_FLUID
 	//	gui.addPage("Fluid");
 
@@ -39,20 +38,37 @@ GuiSystem& GuiSystem::setup() {
 	gui.addToggle("drawFluid",
 				  &phy->settings.drawFluid);
 	gui.addToggle("drawParticles",
-				  &phy->settings.drawParticles); 
+				  &phy->settings.drawParticles);
 	gui.addToggle("renderUsingVA",
-				  &phy->settings.renderUsingVA); 
-#endif	
+				  &phy->settings.renderUsingVA);
+#endif
+	
+#ifdef USE_VBO
+	gui.addPage("Elements");
+	gui.addSlider2d("Rendering Offset",
+					&myApp->settings.render_offset, 0, myApp->window.width, 0, myApp->window.height);
+	gui.addSlider("Inter-frame Spacing",
+				  &myApp->settings.frame_spacing, 0.0, 10.0, 0.0);
+	gui.addPage("Rendering");
+	gui.addSlider("Zoom",
+				  &myApp->settings.render_offset.z, -1000.0, 0.0, 0.0);
+	gui.addSlider("X Rotation",
+				  &myApp->settings.rot.x, 0.0, 360.0, 0.0);
+	gui.addSlider("Y Rotation",
+				  &myApp->settings.rot.y, 0.0, 360.0, 0.0);
+	gui.addSlider("Z Rotation",
+				  &myApp->settings.rot.z, 0.0, 360.0, 0.0);
+	gui.addSlider("GL Draw Mode",
+				  &myApp->settings.gl_draw_mode, 0, 9);
 #endif
 }
 
-void GuiSystem::update() {
+void GuiSystem::toggleDraw() {
+	gui.toggleDraw();
 }
 
 void GuiSystem::draw() {
-#ifdef USE_GUI
 	gui.draw();
-#endif
 }
 
 void GuiSystem::destroy() {

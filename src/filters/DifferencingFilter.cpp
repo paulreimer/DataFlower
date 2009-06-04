@@ -3,7 +3,7 @@
 #include "DifferencingFilter.h"
 
 
-DifferencingFilter::DifferencingFilter(string name) : VideoFilter(name) {
+DifferencingFilter::DifferencingFilter() {
 	printf("DifferencingFilter::DifferencingFilter()\n");
 	settings.capture = true;
 	settings.once = true;
@@ -26,12 +26,13 @@ void DifferencingFilter::setup() {
 	addContent("Output", &output);
 	addContent("Background", &grayCapture);
 	addButton("Capture", &settings.capture);
+	addToggle("Hold", &settings.once);
 }
 
 void DifferencingFilter::update() {
 //	VideoFilter::update();
 	grayInput = input;
-	
+
 	grayInput.absDiff(grayInput, grayCapture);
 	output = grayInput;
 

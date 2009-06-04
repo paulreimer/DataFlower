@@ -4,7 +4,7 @@
 
 class PassthroughFilter : public VideoFilter  {
 public:
-	PassthroughFilter(string name = "Passthrough");
+	PassthroughFilter();
 	virtual ~PassthroughFilter();
 
 	void setup();

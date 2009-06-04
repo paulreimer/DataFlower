@@ -4,7 +4,7 @@
 
 class DifferencingFilter : public VideoFilter  {
 public:
-	DifferencingFilter(string name = "Frame Differencing");
+	DifferencingFilter();
 	virtual ~DifferencingFilter();
 
 	void setup();
@@ -16,7 +16,7 @@ public:
 		bool capture;
 		bool once;
 	} settings;
-	
+
 protected:
 	ofxCvGrayscaleImage		grayInput;
 	ofxCvGrayscaleImage 	grayOutput;

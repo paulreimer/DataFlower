@@ -5,7 +5,7 @@
 
 class FiducialTrackingFilter : public VideoFilter  {
 public:
-	FiducialTrackingFilter(string name = "Fiducial Tracker");
+	FiducialTrackingFilter();
 	virtual ~FiducialTrackingFilter();
 
 	void setup();
@@ -19,5 +19,5 @@ public:
 protected:
 	ofxCvGrayscaleImage		grayInput;
 	ofxCvGrayscaleImage 	grayOutput;
-	
+
 };

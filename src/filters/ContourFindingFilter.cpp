@@ -2,7 +2,7 @@
 
 #include "ContourFindingFilter.h"
 
-ContourFindingFilter::ContourFindingFilter(string name) : VideoFilter(name) {
+ContourFindingFilter::ContourFindingFilter() {
 	printf("ContourFindingFilter::ContourFindingFilter()\n");
 	settings.num_blobs = 10;
 	settings.find_holes = false;
@@ -13,11 +13,11 @@ ContourFindingFilter::~ContourFindingFilter() {
 	destroy();
 }
 
-void ContourFindingFilter::setup() {	
+void ContourFindingFilter::setup() {
 	VideoFilter::setup();
 	grayInput.allocate(VIDEO_SIZE);
 
-	addContent("Output", &output, VIDEO_WIDTH);
+	addContent("Output", &output);
 	addSlider("Blobs",
 			  &settings.num_blobs, 1, 10);
 	addToggle("Find Holes", &settings.find_holes);
@@ -31,9 +31,7 @@ void ContourFindingFilter::update() {
 
 void ContourFindingFilter::draw() {
 	VideoFilter::draw();
-	for (int i = 0; i < contourFinder.nBlobs; i++){
-		contourFinder.blobs[i].draw(x, y);
-	}
+	contourFinder.draw(x, y, width, width*VIDEO_INVWIDTH*VIDEO_HEIGHT);
 }
 
 void ContourFindingFilter::destroy() {

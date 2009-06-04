@@ -13,7 +13,7 @@ VideoSystem::~VideoSystem() {
 	destroy();
 }
 
-VideoSystem& VideoSystem::setup() {
+void VideoSystem::setup() {
 #ifdef _USE_LIVE_VIDEO
 	vidGrabber.setVerbose(true);
 	vidGrabber.initGrabber(VIDEO_SIZE);
@@ -21,17 +21,27 @@ VideoSystem& VideoSystem::setup() {
 	vidPlayer.loadMovie("fingers.mov");
 	vidPlayer.play();
 #endif
-	
+
     colorImg.allocate(VIDEO_SIZE);
 
-//	myApp->guiSystem.gui.page(0)->setName("Input");
+//	gui_config.font.loadFont("frabk.ttf", gui_config.fontSize);
+	gui_config.offset.set(0,0);
+	gui_config.gridSize.x = 120;
+
+	//	myApp->guiSystem.gui.page(0)->setName("Input");
 	myApp->guiSystem.gui.addContent("Webcam", &colorImg, -1);
 
+/*
 	vector<VideoPipeline*>::iterator it;
 	VideoPipeline* pipeline;
 	for(it = pipelines.begin(); it != pipelines.end(); it++) {
 		pipeline = *it;
-		pipeline->setup();
+*/
+	for(int i = 0; i < pipelines.size(); i++ ) {
+		pipelines[i]->setConfig(&gui_config);
+
+		pipelines[i]->setPos(280, 72 + i*200);
+		pipelines[i]->setup();
 	}
 }
 
@@ -46,7 +56,7 @@ VideoPipeline *VideoSystem::addPipeline(VideoPipeline* pipeline) {
 
 void VideoSystem::update() {
 	bool bNewFrame = false;
-	
+
 #ifdef _USE_LIVE_VIDEO
 	vidGrabber.grabFrame();
 	bNewFrame = vidGrabber.isFrameNew();
@@ -54,7 +64,7 @@ void VideoSystem::update() {
 	vidPlayer.idleMovie();
 	bNewFrame = vidPlayer.isFrameNew();
 #endif
-	
+
 	if (bNewFrame) {
 #ifdef _USE_LIVE_VIDEO
 		colorImg.setFromPixels(vidGrabber.getPixels(), VIDEO_SIZE);
@@ -69,6 +79,16 @@ void VideoSystem::update() {
 			pipeline->input = colorImg;
 			pipeline->update();
 		}
+	}
+	bGotFrame = bNewFrame;
+}
+
+void VideoSystem::toggleDraw() {
+	vector<VideoPipeline*>::iterator it;
+	VideoPipeline* pipeline;
+	for(it = pipelines.begin(); it != pipelines.end(); it++) {
+		pipeline = *it;
+		pipeline->toggleDraw();
 	}
 }
 

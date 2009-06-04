@@ -1,14 +1,17 @@
 #pragma once
 
 #include "TuiSystem.h"
+#include "VideoSystem.h"
 #include "testApp.h"
 
 extern testApp* myApp;
 
 TuiSystem::TuiSystem() {
 	printf("TuiSystem::TuiSystem()\n");
-	fingersList = NULL;
-	fiducialsList = NULL;
+	doDraw = true;
+
+//	fingersList = NULL;
+//	fiducialsList = NULL;
 }
 
 TuiSystem::~TuiSystem() {
@@ -16,39 +19,84 @@ TuiSystem::~TuiSystem() {
 	destroy();
 }
 
-void TuiSystem::setup(){	 
+void TuiSystem::setup(){
+	VideoPipeline* pipe = new VideoPipeline();
+	pipe->addFilter(new SimpleThresholdingFilter());
+	pipe->addFilter(&fidtracker);
+	
+	myApp->videoSystem.addPipeline(pipe);
+}
+
+inline bool leftToRightSort(ofxFiducial lhs, ofxFiducial rhs) {
+	return lhs.current.xpos < rhs.current.xpos;
 }
 
 //--------------------------------------------------------------
 void TuiSystem::update(){
-	int f;
-	for (list<ofxFiducial>::iterator fiducial = fiducialsList->begin(); fiducial != fiducialsList->end(); fiducial++) {
-		switch (fiducial->getId()) {
-			case 6: f = 0;
+	list<ofxFiducial>* fids = &fidtracker.fidFinder.fiducialsList;
+	vector< list<ofxFiducial>* > pipelines;
+	fids->sort(leftToRightSort);
+//	int lane_lengths[(myApp->window.height/settings.pipelane_height)+1];
+	
+	VideoFilter* filter;
+	for (list<ofxFiducial>::iterator fiducial = fids->begin(); fiducial != fids->end(); fiducial++) {
+		// notify the listeners
+		//ofNotifyEvent(this->fiducialDetected, *fiducial);
+		
+//		int pipelane = fiducial->current.ypos / settings.pipelane_height;
+		switch (fiducial->getId() % 12) {
+			case 0: filter = new PassthroughFilter();
 				break;
-			case 4: f = 1;
+			case 1: filter = new GrayscaleFilter();
 				break;
-			case 10: f = 2;
+			case 2: filter = new HomographyFilter();
 				break;
-			default: f = -1;
+			case 3: filter = new ThresholdingFilter();
+				break;
+			case 4: filter = new SimpleThresholdingFilter();
+				break;
+			case 5: filter = new AdaptiveThresholdingFilter();
+				break;
+			case 6: filter = new AdaptiveSkinFilter();
+				break;
+			case 7: filter = new DifferencingFilter();
+				break;
+			case 8: filter = new OpticalFlowFilter();
+				break;
+			case 9: filter = new ContourFindingFilter();
+				break;
+			case 10: filter = new CannyEdgeFilter();
+				break;
+			case 11: filter = new FiducialTrackingFilter();
+				break;
+			case 12:
+				break;
+			default: filter = new VideoFilter();
 				break;
 		}
-		if (f >= 0) {
-			VideoFilter* filter = myApp->videoSystem.pipeline(0)->filter(f);
-			if (fiducial->current.xpos >= 0 && fiducial->current.ypos >= 0) {
-				filter->setPos(fiducial->current.xpos*VIDEO_INVWIDTH*myApp->window.width,
-							   fiducial->current.ypos*VIDEO_INVWIDTH*myApp->window.width);
-				filter->rotateRad(fiducial->getAngle());
-			}
+		filter->fid = fiducial->getId();
+		filter->life++;
+//		VideoFilter* filter = myApp->videoSystem.pipeline(0)->filter(f);
+		if (fiducial->current.xpos >= 0 && fiducial->current.ypos >= 0) {
+			filter->setPos(fiducial->current.xpos*VIDEO_INVHEIGHT*myApp->window.height,
+						   fiducial->current.ypos*VIDEO_INVHEIGHT*myApp->window.height);
+			filter->rotateRad(fiducial->getAngle());
 		}
 	}
 }
 
+void TuiSystem::toggleDraw() {
+	doDraw = !doDraw;
+}
+
 //--------------------------------------------------------------
 void TuiSystem::draw(){
+	if (!doDraw) return;
+	list<ofxFiducial>* fids = &fidtracker.fidFinder.fiducialsList;	
+	
 	// draw fullscreen fiducials
 	float _x=0, _y=0, deg;
-	for (list<ofxFiducial>::iterator fiducial = fiducialsList->begin(); fiducial != fiducialsList->end(); fiducial++) {
+	for (list<ofxFiducial>::iterator fiducial = fids->begin(); fiducial != fids->end(); fiducial++) {
 		_x = fiducial->current.xpos*VIDEO_INVWIDTH * myApp->window.width;
 		_y = fiducial->current.ypos*VIDEO_INVWIDTH * myApp->window.width;
 		// Draw root
@@ -67,7 +115,7 @@ void TuiSystem::draw(){
 		glPopMatrix(); // fiducial
 		ofSetRectMode(OF_RECTMODE_CORNER);
 		ofSetColor(255,255,255);
-		
+
 		// Draw corners
 		fiducial->computeCorners();
 		ofSetColor(0, 255, 0);
@@ -83,7 +131,7 @@ void TuiSystem::draw(){
 		}
 		glPopMatrix(); // corners
 		ofSetColor(255,255,255);
-		
+
 		ofSetColor(0,0,255);//set color to blue
 		//if mouse (- 20 to compensate for drawing at 20) is inside fiducial then fill
 		if (fiducial->isPointInside(myApp->mouseX - 20, myApp->mouseY - 20)) ofFill();
@@ -94,6 +142,7 @@ void TuiSystem::draw(){
 		//cout << "fiducial " << fiducial->getId() << " found at ( " << fiducial->getX() << "," << fiducial->getY() << " )" << endl;
 		//take a good look at the fiducial class to get all the info and a few helper functions
 	}
+/*
 	if (fingersList->size()) {
 		//draw the fingers
 		ofNoFill();
@@ -107,10 +156,12 @@ void TuiSystem::draw(){
 			glPopMatrix();
 		}
 		ofSetRectMode(OF_RECTMODE_CORNER);
-		ofSetColor(255,255,255);	
+		ofSetColor(255,255,255);
 	}
-}	
+*/
+}
 
 void TuiSystem::destroy() {
 	printf("TuiSystem::destroy()\n");
+//	free(pipe);
 }

@@ -4,13 +4,16 @@
 #include "testApp.h"
 #include "ofxPoint2f.h"
 
+//#include "TuiSystem.h"
+
 extern testApp* myApp;
 
-VideoFilter::VideoFilter(string name) : ofxSimpleGuiPage(name) {
+VideoFilter::VideoFilter() {
+	config = &defaultSimpleGuiConfig;
 	width = height = 0;
-	angle = 0;
-	disableAllEvents();
-	
+	rotateEvents = true;
+	translateEvents = false;
+
 	printf("VideoFilter::VideoFilter()\n");
 }
 
@@ -19,22 +22,22 @@ VideoFilter::~VideoFilter() {
 	destroy();
 }
 
+void VideoFilter::setConfig(ofxSimpleGuiConfig *config) {
+	this->config = config;
+}
+
 void VideoFilter::setup() {
-	ofxSimpleGuiPage::setup();
     input.allocate(VIDEO_SIZE);
 
 	output.allocate(VIDEO_SIZE);
-	
-//	enableMouseEvents();
-}
 
-void VideoFilter::update() {
+	enableMouseEvents();
 }
 
 void VideoFilter::draw() {
 	float posX		= 0;
 	float posY		= 0;
-	
+
 	ofSetRectMode(OF_RECTMODE_CORNER);
 
 	for(int i=0; i<controls.size(); i++) {
@@ -50,46 +53,14 @@ void VideoFilter::draw() {
 			glLineWidth(0.5f);
 			ofRect(posX, posY, controls[i]->width, controls[i]->height);
 			posY += controls[i]->height + config->padding.y;
-		
+
 		glPopMatrix();
 	}
 }
 
-void VideoFilter::repositionMouseEvent(ofMouseEventArgs* e) {
-	ofxPoint2f _ref(x, y);
-	ofxPoint2f _new(e->x, e->y);
-	_new.rotateRad(-angle, _ref);
-	e->x = _new.x;// - x;
-	e->y = _new.y;//- y;
-}
-
-void VideoFilter::mouseMoved(ofMouseEventArgs &e) {
-	printf("Before: (%d, %d)\n", e.x, e.y);
-	ofMouseEventArgs e_new = e;
-	repositionMouseEvent(&e_new);
-	printf("After: (%d, %d)\n", e_new.x, e_new.y);
-	for(int i=0; i<controls.size(); i++) controls[i]->_mouseMoved(e_new);
-}
-
-void VideoFilter::mousePressed(ofMouseEventArgs &e) {
-	ofMouseEventArgs e_new = e;
-	repositionMouseEvent(&e_new);
-	for(int i=0; i<controls.size(); i++) controls[i]->_mousePressed(e_new);
-}
-
-void VideoFilter::mouseDragged(ofMouseEventArgs &e) {
-	ofMouseEventArgs e_new = e;
-	repositionMouseEvent(&e_new);
-	for(int i=0; i<controls.size(); i++) controls[i]->_mouseDragged(e_new);
-}
-
-void VideoFilter::mouseReleased(ofMouseEventArgs &e) {
-	ofMouseEventArgs e_new = e;
-	repositionMouseEvent(&e_new);
-	for(int i=0; i<controls.size(); i++) controls[i]->_mouseReleased(e_new);
-}
-
 ofxSimpleGuiControl *VideoFilter::addControl(ofxSimpleGuiControl* control) {
+	// VideoFilter calls the shots
+	control->disableAllEvents();
 	controls.push_back(control);
 	height += control->height + config->padding.y;
 	width = MAX(control->width, width);
@@ -129,26 +100,85 @@ ofxSimpleGuiToggle *VideoFilter::addToggle(string name, bool *value) {
 	return (ofxSimpleGuiToggle *)addControl(new ofxSimpleGuiToggle(name, value));
 }
 
+void VideoFilter::update() {
+	for(int i=0; i<controls.size(); i++) controls[i]->update();
+}
+
+void VideoFilter::_mouseMoved(ofMouseEventArgs &e) {
+	ofMouseEventArgs new_e = e;
+	relocateMouseEvent(&new_e);
+	for(int i=0; i<controls.size(); i++) controls[i]->_mouseMoved(new_e);
+	
+	FiducialBackedObject::_mouseMoved(e);
+}
+
+void VideoFilter::_mousePressed(ofMouseEventArgs &e) {
+	ofMouseEventArgs new_e = e;
+	relocateMouseEvent(&new_e);
+	for(int i=0; i<controls.size(); i++) controls[i]->_mousePressed(new_e);
+
+	FiducialBackedObject::_mousePressed(e);
+}
+
+void VideoFilter::_mouseDragged(ofMouseEventArgs &e) {
+	ofMouseEventArgs new_e = e;
+	relocateMouseEvent(&new_e);
+	for(int i=0; i<controls.size(); i++) controls[i]->_mouseDragged(new_e);
+
+	FiducialBackedObject::_mouseDragged(e);
+}
+
+void VideoFilter::_mouseReleased(ofMouseEventArgs &e) {
+	ofMouseEventArgs new_e = e;
+	relocateMouseEvent(&new_e);
+	for(int i=0; i<controls.size(); i++) controls[i]->_mouseReleased(new_e);
+	
+	FiducialBackedObject::_mouseReleased(e);
+}
+
+void VideoFilter::_keyPressed(ofKeyEventArgs &e) {
+	for(int i=0; i<controls.size(); i++) controls[i]->_keyPressed(e);
+}
+
+void VideoFilter::_keyReleased(ofKeyEventArgs &e) {
+	for(int i=0; i<controls.size(); i++) controls[i]->_keyReleased(e);
+}
+
 void VideoFilter::onPress(int mx, int my, int button) {
 	// save the offset of where the mouse was clicked...
 	// ...relative to the position of the object
-	saveX = mx - x;
-	saveY = my - y;
+	bool content = false;
+	for(int i=0; i<controls.size(); i++) {
+		if (controls[i]->controlType == "Content"
+			&& controls[i]->isMouseDown()) {
+			content = true;
+			break;
+		}
+	}
+	if (content) { //ahhh
+		saveX = mx - x;
+		saveY = my - y;
+	}
 }
 
 void VideoFilter::onDragOver(int mx, int my, int button) {
-	x = mx - saveX;    // update x position
-	y = my - saveY;    // update mouse y position
-//	setPos(x, y);
-	printf("Got pos: (%f, %f)\n", x, y);
-	ofSetColor(255, 0, 0);
-	ofFill();
-	ofCircle(x, y, 5.0);
+	bool content = false;
+	for(int i=0; i<controls.size(); i++) {
+		if (controls[i]->controlType == "Content"
+			&& controls[i]->isMouseDown()) {
+			content = true;
+			break;
+		}
+	}
+	
+	if (content) { //ahhh
+		x = mx - saveX;    // update x position
+		y = my - saveY;    // update mouse y position
+	}
 }
 
-void VideoFilter::rotateRad(float _angle){
-	angle=_angle;
-	printf("Rotate by %f rad.\n", _angle);
+void VideoFilter::fiducialDetected(ofxFiducial &fiducial) {
+	printf("Detected fiducial #%d\n", fiducial.getId());
 }
 
 void VideoFilter::destroy() {

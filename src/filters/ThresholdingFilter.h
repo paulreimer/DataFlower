@@ -4,7 +4,7 @@
 
 class ThresholdingFilter : public VideoFilter  {
 public:
-	ThresholdingFilter(string name = "Threshold");
+	ThresholdingFilter();
 	virtual ~ThresholdingFilter();
 
 	void setup();
@@ -14,10 +14,13 @@ public:
 
 	struct ThresholdSettings {
 		int		threshold;
+		int		max_value;
+		int		mode;
+		bool	use_otsu;
 	} settings;
 
 protected:
-//	ofxCvGrayscaleImage		grayInput;
+	ofxCvGrayscaleImage 	grayInput;
 	ofxCvGrayscaleImage 	grayOutput;
 
 };

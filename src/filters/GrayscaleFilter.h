@@ -4,7 +4,7 @@
 
 class GrayscaleFilter : public VideoFilter  {
 public:
-	GrayscaleFilter(string = "Grayscale");
+	GrayscaleFilter();
 	virtual ~GrayscaleFilter();
 
 	void setup();

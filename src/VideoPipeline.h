@@ -1,44 +1,41 @@
 #pragma once
 
 #include "ofMain.h"
-#include "VideoFilter.h"
 #include "filters.h"
 
-#include "ofxFidMain.h"
-#include "ofxSimpleGuiToo.h"
+#include "ofxSimpleGuiConfig.h"
 #include "ofxOpenCv.h"
 
-class VideoPipeline : public ofxSimpleGuiToo {
+class VideoPipeline : public ofxMSAInteractiveObject {
 public:
 	VideoPipeline();
 	virtual ~VideoPipeline();
 
 	void setup();
 
-	void updateListeners();
-
 	void update();
 	void draw();
-	
+
 	void destroy();
+
+	void setDraw(bool b);
+	void toggleDraw();
+	bool					doDraw;
 
 	VideoFilter				*filter(int i);				// 1 based index of page
 	VideoFilter				*filter(string name);
-	
+
 	VideoFilter				*addFilter(VideoFilter *filter);
 
 	ofxCvColorImage			input;
 
 	ofxCvColorImage			output;
 
-protected:
-	vector <VideoFilter*>	pages;
+	void setConfig(ofxSimpleGuiConfig *config);
 
-	void mouseMoved(ofMouseEventArgs &e);
-	void mousePressed(ofMouseEventArgs &e);	
-	void mouseDragged(ofMouseEventArgs &e);	
-	void mouseReleased(ofMouseEventArgs &e);
-	
-	void keyPressed(ofKeyEventArgs &e);
-	void keyReleased(ofKeyEventArgs &e);
+
+protected:
+	list <VideoFilter*>	filters;
+
+	ofxSimpleGuiConfig*		config;
 };

@@ -3,6 +3,7 @@
 
 testApp *myApp;
 int main( ){
+	ofSetDataPathRoot("../Resources/");
 	ofSetupOpenGL(1280, 720, OF_WINDOW);			// <-------- setup the GL context
 	myApp = new testApp;
 	ProfilerStart("of.prof");

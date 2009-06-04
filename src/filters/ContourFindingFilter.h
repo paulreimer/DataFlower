@@ -4,7 +4,7 @@
 
 class ContourFindingFilter : public VideoFilter {
 public:
-	ContourFindingFilter(string name = "Contour Finder");
+	ContourFindingFilter();
 	virtual ~ContourFindingFilter();
 
 	void setup();
@@ -17,8 +17,8 @@ public:
 		int		num_blobs;
 		bool	find_holes;
 	} settings;
-	
-private:
+
 	ofxCvContourFinder      contourFinder;
+private:
 	ofxCvGrayscaleImage		grayInput;
 };

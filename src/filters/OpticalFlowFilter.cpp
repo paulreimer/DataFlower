@@ -2,7 +2,7 @@
 
 #include "OpticalFlowFilter.h"
 
-OpticalFlowFilter::OpticalFlowFilter(string name) : VideoFilter(name) {
+OpticalFlowFilter::OpticalFlowFilter() {
 	printf("OpticalFlowFilter::OpticalFlowFilter()\n");
 
 	settings.dv_min_error	= 0;
@@ -13,7 +13,7 @@ OpticalFlowFilter::OpticalFlowFilter(string name) : VideoFilter(name) {
 	settings.eps			= 0.03;
 	settings.max_features	= 100;
 	settings.pyr_levels		= 5;
-	
+
 }
 
 OpticalFlowFilter::~OpticalFlowFilter() {
@@ -23,18 +23,18 @@ OpticalFlowFilter::~OpticalFlowFilter() {
 
 void OpticalFlowFilter::setup() {
 	VideoFilter::setup();
-	
+
 	inputPrev.allocate(VIDEO_SIZE);
 	grayInputPrev.allocate(VIDEO_SIZE);
 
-	cornersImg = new CvPoint2D32f[ MAX_CORNERS ]; 
-	cornersPrev = new CvPoint2D32f[ MAX_CORNERS ]; 
-	
-	img_sz = cvGetSize( grayInput.getCvImage() ); 
-	IplImage* eig_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 ); 
+	cornersImg = new CvPoint2D32f[ MAX_CORNERS ];
+	cornersPrev = new CvPoint2D32f[ MAX_CORNERS ];
+
+	img_sz = cvGetSize( grayInput.getCvImage() );
+	IplImage* eig_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
 	IplImage* tmp_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
-	
-	pyr_sz = cvSize( grayInput.getCvImage()->width+8, grayInput.getCvImage()->height/3 ); 
+
+	pyr_sz = cvSize( grayInput.getCvImage()->width+8, grayInput.getCvImage()->height/3 );
 	pyrImg = cvCreateImage( pyr_sz, IPL_DEPTH_32F, 1 );
 	pyrPrev = cvCreateImage( pyr_sz, IPL_DEPTH_32F, 1 );
 }
@@ -52,7 +52,7 @@ void OpticalFlowFilter::update() {
 						  3,
 						  0,
 						  0.04
-						  ); 
+						  );
 	cvFindCornerSubPix(grayInput.getCvImage(),
 					   cornersImg,
 					   corner_count,
@@ -60,7 +60,7 @@ void OpticalFlowFilter::update() {
 					   cvSize(-1,-1),
 					   cvTermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS,20,0.03)
 					   );
-	
+
 	cvCalcOpticalFlowPyrLK(grayInput.getCvImage(),
 						   grayInputPrev.getCvImage(),
 						   pyrImg,

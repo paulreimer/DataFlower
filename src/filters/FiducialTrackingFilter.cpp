@@ -2,7 +2,7 @@
 
 #include "FiducialTrackingFilter.h"
 
-FiducialTrackingFilter::FiducialTrackingFilter(string name) : VideoFilter(name) {
+FiducialTrackingFilter::FiducialTrackingFilter() {
 	printf("FiducialTrackingFilter::FiducialTrackingFilter()\n");
 }
 
@@ -17,11 +17,11 @@ void FiducialTrackingFilter::setup() {
 	grayOutput.allocate(VIDEO_SIZE);
 
 	fidFinder.detectFinger		= true;
-	fidFinder.maxFingerSize		= 25; 
+	fidFinder.maxFingerSize		= 25;
 	fidFinder.minFingerSize		= 5;
 	fidFinder.fingerSensitivity	= 0.05f; //from 0 to 2.0f
 
-	addContent("Output", &output, VIDEO_WIDTH);
+	addContent("Output", &output);
 	addToggle("Detect Fingers",
 			  &fidFinder.detectFinger);
 	addSlider("Min Finger Size",
@@ -45,8 +45,11 @@ void FiducialTrackingFilter::draw() {
 	float _x=0, _y=0;
 	for (list<ofxFiducial>::iterator fiducial = fidFinder.fiducialsList.begin(); fiducial != fidFinder.fiducialsList.end(); fiducial++) {
 		// Draw on top of gui
-		fiducial->draw( x, y );//draw fiducial                                
-		fiducial->drawCorners( x, y );//draw corners
+//		glTranslatef(x+width/2, y+height/2, 0);
+//		glRotatef(angle*180.0/PI, 0, 0, 1.0); // must flip degrees to compensate for image flip
+//		glTranslatef(-width/2, -height/2, 0);
+//		fiducial->draw( x, y );//draw fiducial
+//		fiducial->drawCorners( x, y );//draw corners
 	}
 }
 

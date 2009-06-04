@@ -10,14 +10,14 @@
 
 #### (1) Specify by common prefix of .dfa and .dict files. Comma-separated
 #### prefixes can be specified for multiple grammar recognition
--gram grammar/twister
+-gram twister
 
 #### (2) Or you can give Julian a text file which contains list of grammar
 #### prefixes one per line.
 #-gramlist file
 
 #### (3) Classic way to specify a grammar.
-#-dfa grammar/sample.dfa
+#-dfa sample.dfa
 #-v dict
 
 #### If you want to clear previously specified grammars, use this at the

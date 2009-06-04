@@ -2,7 +2,7 @@
 
 #include "PassthroughFilter.h"
 
-PassthroughFilter::PassthroughFilter(string name) : VideoFilter(name) {
+PassthroughFilter::PassthroughFilter() {
 	printf("PassthroughFilter::PassthroughFilter()\n");
 }
 

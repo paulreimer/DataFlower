@@ -1,10 +1,31 @@
+#define USE_VIDEO
 #define _USE_LIVE_VIDEO
+
+#define USE_TUIO
+#define USE_OSC
+#define USE_GUI
+#undef	USE_PHYSICS
+#define USE_TUI
+#undef	USE_VBO
+#undef USE_SPEECH_TO_TEXT
 
 #define MAX_CORNERS 500
 
-#define VIDEO_WIDTH			320
+#define VIDEO_WIDTH			640
 #define VIDEO_INVWIDTH		1/VIDEO_WIDTH
-#define VIDEO_HEIGHT		240
+#define VIDEO_HEIGHT		480
 #define VIDEO_INVHEIGHT		1/VIDEO_HEIGHT
 #define VIDEO_ASPECT		VIDEO_WIDTH/VIDEO_HEIGHT
 #define VIDEO_SIZE			VIDEO_WIDTH,VIDEO_HEIGHT
+
+#define	FRAMES_IN_BUFFER	1000
+#define MAX_VERTICES		700000
+
+#define PORTRAIT		0
+#define LANDSCAPE		1
+
+#define ON_THE_BOTTOM	0
+#define ON_THE_TOP		1
+#define ON_THE_LEFT		2
+#define ON_THE_RIGHT	3
+

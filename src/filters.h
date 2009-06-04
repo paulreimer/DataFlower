@@ -1,9 +1,15 @@
 #pragma once
 
 #include "VideoFilter.h"
+#include "filters/PassthroughFilter.h"
+#include "filters/OpticalFlowFilter.h"
 #include "filters/ContourFindingFilter.h"
-#include "filters/ContourFindingFilter.h"
+#include "filters/HomographyFilter.h"
 #include "filters/ThresholdingFilter.h"
 #include "filters/DifferencingFilter.h"
 #include "filters/GrayscaleFilter.h"
 #include "filters/FiducialTrackingFilter.h"
+#include "filters/CannyEdgeFilter.h"
+#include "filters/AdaptiveSkinFilter.h"
+#include "filters/AdaptiveThresholdingFilter.h"
+#include "filters/SimpleThresholdingFilter.h"

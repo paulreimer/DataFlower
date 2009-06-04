@@ -1,27 +1,29 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxMSAInteractiveObject.h"
 
 #include "ofxOpenCv.h"
 #include "VideoPipeline.h"
 
 #include "settings.h"
 
-class VideoSystem : public ofBaseUpdates {
-public:	
+class VideoSystem : public ofxMSAInteractiveObject {
+public:
 	VideoSystem();
 	virtual ~VideoSystem();
-	
-	VideoSystem& setup();
+
+	void setup();
 	void update();
 	void draw();
-	
+	void toggleDraw();
+
 	void destroy();
 
 	ofxCvColorImage			colorImg;
 
 	VideoPipeline			*pipeline(int i);
-	
+
 	VideoPipeline			*addPipeline(VideoPipeline *pipeline);
 
 #ifdef _USE_LIVE_VIDEO
@@ -29,7 +31,9 @@ public:
 #else
 	ofVideoPlayer			vidPlayer;
 #endif
-	
+
+	bool bGotFrame;
 protected:
+	ofxSimpleGuiConfig gui_config;
 	vector <VideoPipeline*>	pipelines;
 };

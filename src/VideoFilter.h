@@ -1,21 +1,24 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxSimpleGuiPage.h"
-#include "ofxOpenCv.h"
 #include "settings.h"
+
+
+#include "ofxSimpleGuiIncludes.h"
+#include "FiducialBackedObject.h"
+#include "ofxOpenCv.h"
 #include "ofxFidMain.h"
 
-class VideoFilter : public ofxSimpleGuiPage {
+class VideoFilter : public FiducialBackedObject {
 public:
-	VideoFilter(string name);
+	VideoFilter();
 
 	virtual ~VideoFilter();
-	
+
 	void setup();
 	void update();
 	void draw();
-	
+
 	void destroy();
 
 	ofxCvColorImage 		input;
@@ -32,20 +35,25 @@ public:
 	ofxSimpleGuiTitle		*addTitle(string name, bool *value = NULL);
 	ofxSimpleGuiToggle		*addToggle(string name, bool *value);
 
-	void repositionMouseEvent(ofMouseEventArgs *e);
-	void mouseMoved(ofMouseEventArgs &e);
-	void mousePressed(ofMouseEventArgs &e);	
-	void mouseDragged(ofMouseEventArgs &e);	
-	void mouseReleased(ofMouseEventArgs &e);
-	
 	void onPress(int mx, int my, int button);
 	void onDragOver(int mx, int my, int button);
 
-	void rotateRad(float _angle);
-	float angle;	
+	void _mouseMoved(ofMouseEventArgs &e);
+	void _mousePressed(ofMouseEventArgs &e);
+	void _mouseDragged(ofMouseEventArgs &e);
+	void _mouseReleased(ofMouseEventArgs &e);
 
+	void _keyPressed(ofKeyEventArgs &e);
+	void _keyReleased(ofKeyEventArgs &e);
+
+	void setConfig(ofxSimpleGuiConfig *config);
 
 protected:
+	void fiducialDetected(ofxFiducial &fiducial);
+	
+	vector <ofxSimpleGuiControl*>	controls;
+	ofxSimpleGuiConfig	*config;
+
 	int saveX, saveY;
 
 };

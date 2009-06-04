@@ -2,7 +2,7 @@
 
 #include "GrayscaleFilter.h"
 
-GrayscaleFilter::GrayscaleFilter(string name) : VideoFilter(name) {
+GrayscaleFilter::GrayscaleFilter() {
 	printf("GrayscaleFilter::GrayscaleFilter()\n");
 }
 
@@ -15,7 +15,7 @@ void GrayscaleFilter::setup() {
 	VideoFilter::setup();
 	addContent("Output", &output);
 	grayOutput.allocate(VIDEO_SIZE);
-	
+
 }
 
 void GrayscaleFilter::update() {

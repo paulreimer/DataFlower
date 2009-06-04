@@ -1,16 +1,18 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxMSAInteractiveObject.h"
+
 #include "ofxSimpleGuiToo.h"
 
-class GuiSystem : public ofBaseUpdates {
-public:	
+class GuiSystem : public ofxMSAInteractiveObject {
+public:
 	GuiSystem();
 	virtual ~GuiSystem();
-	
-	GuiSystem& setup();
-	void update();
+
+	void setup();
 	void draw();
+	void toggleDraw();
 	
 	void destroy();
 	ofxSimpleGuiToo gui;
