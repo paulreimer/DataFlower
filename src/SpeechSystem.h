@@ -48,3 +48,5 @@ private:
 static void recready(Recog *recog, void *speech_sys);
 static void recstart(Recog *recog, void *speech_sys);
 static void recdone(Recog *recog, void *speech_sys);
+
+void debug_julius_result(RecogProcess *r);

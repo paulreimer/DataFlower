@@ -25,7 +25,15 @@
 	#include "SpeechSystem.h"
 #endif
 
-class testApp : public ofSimpleApp{
+#ifdef USE_DATA
+	#include "DataSystem.h"
+#endif
+
+#ifdef USE_TEMPLATE_MATCHING
+	#include "TemplateMatchingSystem.h"
+#endif
+
+class testApp : public ofSimpleApp {
 public:
 	virtual ~testApp();
 
@@ -48,6 +56,14 @@ public:
 #ifdef USE_SPEECH_TO_TEXT
 	SpeechSystem speechSystem;
 #endif
+
+#ifdef USE_DATA
+	DataSystem dataSystem;
+#endif
+	
+#ifdef USE_TEMPLATE_MATCHING
+	TemplateMatchingSystem templSystem;
+#endif	
 	
 	void setup();
 	void update();

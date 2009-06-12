@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef USE_OPENCV_TRUNK
+
 #include "VideoFilter.h"
 #include "cvaux.h"
 
@@ -24,3 +26,5 @@ protected:
 
 	CvAdaptiveSkinDetector	filter;
 };
+
+#endif

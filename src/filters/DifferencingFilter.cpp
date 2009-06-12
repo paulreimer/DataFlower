@@ -30,7 +30,6 @@ void DifferencingFilter::setup() {
 }
 
 void DifferencingFilter::update() {
-//	VideoFilter::update();
 	grayInput = input;
 
 	grayInput.absDiff(grayInput, grayCapture);

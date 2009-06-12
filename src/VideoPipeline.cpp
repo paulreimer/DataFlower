@@ -72,6 +72,7 @@ void VideoPipeline::draw() {
 	if(!doDraw) return;
 	glDisableClientState(GL_COLOR_ARRAY);
 
+	ofSetColor(0xFFFFFF);
 	ofLine(256, 210,
 		   filters.front()->x, filters.front()->y+filters.front()->height/2);
 	list<VideoFilter*>::iterator lhs = filters.begin();

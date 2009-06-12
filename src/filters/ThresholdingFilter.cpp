@@ -33,7 +33,6 @@ void ThresholdingFilter::setup() {
 }
 
 void ThresholdingFilter::update() {
-//	VideoFilter::update();
 	grayInput = input;
 	
 	int mode = settings.mode;

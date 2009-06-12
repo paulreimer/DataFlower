@@ -6,6 +6,7 @@ MORPHING_METHOD_ERODE_ERODE	= 2,
 MORPHING_METHOD_ERODE_DILATE = 3
 */
 
+#ifdef USE_OPENCV_TRUNK
 #include "AdaptiveSkinFilter.h"
 
 AdaptiveSkinFilter::AdaptiveSkinFilter() : filter(1, CvAdaptiveSkinDetector::MORPHING_METHOD_ERODE_DILATE){
@@ -32,7 +33,6 @@ void AdaptiveSkinFilter::setup() {
 }
 
 void AdaptiveSkinFilter::update() {
-//	VideoFilter::update();
 	cvCvtColor(input.getCvImage(), bgrInput.getCvImage(), CV_RGB2BGR);
 	bgrInput.flagImageChanged();
 
@@ -43,3 +43,5 @@ void AdaptiveSkinFilter::update() {
 void AdaptiveSkinFilter::destroy() {
 	printf("AdaptiveSkinFilter::destroy()\n");
 }
+
+#endif

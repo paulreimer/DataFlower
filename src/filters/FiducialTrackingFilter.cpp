@@ -34,7 +34,6 @@ void FiducialTrackingFilter::setup() {
 }
 
 void FiducialTrackingFilter::update() {
-//	VideoFilter::update();
 	grayInput = input;
 
 	fidFinder.findFiducials( grayInput );

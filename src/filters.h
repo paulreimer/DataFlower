@@ -13,3 +13,5 @@
 #include "filters/AdaptiveSkinFilter.h"
 #include "filters/AdaptiveThresholdingFilter.h"
 #include "filters/SimpleThresholdingFilter.h"
+#include "filters/BackgroundSubtractionFilter.h"
+#include "filters/CaptureFilter.h"

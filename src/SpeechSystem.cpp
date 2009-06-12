@@ -162,28 +162,9 @@ static void recdone(Recog *recog, void *speech_sys) {
 		/* result are in r->result.	See recog.h for details */
 		
 		/* check result status */
-		if (r->result.status < 0) {			/* no results obtained */
-			/* outout message according to the status code */
-			switch(r->result.status) {
-				case J_RESULT_STATUS_REJECT_POWER:
-					printf("<input rejected by power>\n");
-					break;
-				case J_RESULT_STATUS_TERMINATE:
-					printf("<input teminated by request>\n");
-					break;
-				case J_RESULT_STATUS_ONLY_SILENCE:
-					printf("<input rejected by decoder (silence input result)>\n");
-					break;
-				case J_RESULT_STATUS_REJECT_GMM:
-					printf("<input rejected by GMM>\n");
-					break;
-				case J_RESULT_STATUS_REJECT_SHORT:
-					printf("<input rejected by short input>\n");
-					break;
-				case J_RESULT_STATUS_FAIL:
-					printf("<search failed>\n");
-					break;
-			}
+		if (r->result.status < 0) {
+			/* no results obtained */
+			debug_julius_result(r);
 			/* continue to next process instance */
 			continue;
 		}
@@ -191,8 +172,8 @@ static void recdone(Recog *recog, void *speech_sys) {
 		/* output results for all the obtained sentences */
 		winfo = r->lm->winfo;
 		
-		for(n = 0; n < r->result.sentnum; n++) { // for all sentences
-			
+		int it_end = min(r->result.sentnum, 1);
+		for(n = 0; n < it_end; n++) { // for all sentences
 			s = &(r->result.sent[n]);
 			seq = s->word;
 			seqnum = s->word_num;
@@ -214,4 +195,28 @@ static void recdone(Recog *recog, void *speech_sys) {
 	
 	/* flush output buffer */
 	fflush(stdout);
+}
+
+void debug_julius_result(RecogProcess *r) {
+	/* outout message according to the status code */
+	switch(r->result.status) {
+		case J_RESULT_STATUS_REJECT_POWER:
+			printf("<input rejected by power>\n");
+			break;
+		case J_RESULT_STATUS_TERMINATE:
+			printf("<input teminated by request>\n");
+			break;
+		case J_RESULT_STATUS_ONLY_SILENCE:
+			printf("<input rejected by decoder (silence input result)>\n");
+			break;
+		case J_RESULT_STATUS_REJECT_GMM:
+			printf("<input rejected by GMM>\n");
+			break;
+		case J_RESULT_STATUS_REJECT_SHORT:
+			printf("<input rejected by short input>\n");
+			break;
+		case J_RESULT_STATUS_FAIL:
+			printf("<search failed>\n");
+			break;
+	}
 }

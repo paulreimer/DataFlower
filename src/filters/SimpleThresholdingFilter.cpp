@@ -26,7 +26,6 @@ void SimpleThresholdingFilter::setup() {
 }
 
 void SimpleThresholdingFilter::update() {
-//	VideoFilter::update();
 	grayOutput = input;
 	
 	grayOutput.threshold(settings.threshold, settings.invert);

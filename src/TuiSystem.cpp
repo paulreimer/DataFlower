@@ -21,6 +21,7 @@ TuiSystem::~TuiSystem() {
 
 void TuiSystem::setup(){
 	VideoPipeline* pipe = new VideoPipeline();
+	pipe->addFilter(new HomographyFilter());
 	pipe->addFilter(new SimpleThresholdingFilter());
 	pipe->addFilter(&fidtracker);
 	
@@ -57,8 +58,10 @@ void TuiSystem::update(){
 				break;
 			case 5: filter = new AdaptiveThresholdingFilter();
 				break;
+#ifdef USE_OPENCV_TRUNK
 			case 6: filter = new AdaptiveSkinFilter();
 				break;
+#endif
 			case 7: filter = new DifferencingFilter();
 				break;
 			case 8: filter = new OpticalFlowFilter();

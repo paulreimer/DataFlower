@@ -41,23 +41,28 @@ void testApp::setup() {
 #endif	
 	
 #ifdef USE_SPEECH_TO_TEXT
-//	speechSystem.setup();
 	speechSystem.enableAppEvents();
 #endif
 
+#ifdef USE_DATA
+	dataSystem.enableAppEvents();
+#endif
+	
+#ifdef USE_TEMPLATE_MATCHING
+	templSystem.enableAppEvents();
+#endif
+	
 #ifdef USE_VIDEO
 	VideoPipeline *pipe = new VideoPipeline();
 	DifferencingFilter* differ = new DifferencingFilter();
 	differ->settings.once = false;
-	
-//	pipe->addFilter(new HomographyFilter());
 
 //	pipe->addFilter(new CannyEdgeFilter());
 //	pipe->addFilter(differ);
-	pipe->addFilter(new AdaptiveSkinFilter());
-	pipe->addFilter(new SimpleThresholdingFilter());
-//	pipe->addFilter(new AdaptiveThresholdingFilter());
-//	pipe->addFilter(&contourFilter);
+//	pipe->addFilter(new AdaptiveSkinFilter());
+//	pipe->addFilter(new SimpleThresholdingFilter());
+	pipe->addFilter(new AdaptiveThresholdingFilter());
+	pipe->addFilter(&contourFilter);
 
 	videoSystem.addPipeline(pipe);
 
@@ -236,10 +241,6 @@ void testApp::draw(){
 	glDisable(GL_DEPTH_TEST);	
 	glPopMatrix();
 #endif
-	
-#ifdef USE_SPEECH_TO_TEXT
-	speechSystem.draw();
-#endif
 }
 
 void testApp::windowResized(int w, int h) {
@@ -258,6 +259,7 @@ void testApp::windowResized(int w, int h) {
 
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
+	static int modkey;
     switch(key) {
 		case ' ':
 #ifdef USE_GUI
@@ -268,6 +270,7 @@ void testApp::keyPressed  (int key){
 #ifdef USE_TUI
 			tuiSystem.toggleDraw();
 #endif
+
 #ifdef USE_VIDEO
 			videoSystem.toggleDraw();
 #endif			
@@ -291,6 +294,7 @@ void testApp::keyPressed  (int key){
 			videoSystem.vidGrabber.videoSettings();
 			break;
 	}
+	modkey = key;
 }
 
 

@@ -1,13 +1,16 @@
 #define USE_VIDEO
 #define _USE_LIVE_VIDEO
+#undef USE_OPENCV_TRUNK
 
-#define USE_TUIO
-#define USE_OSC
-#define USE_GUI
+#define	USE_TUIO
+#define	USE_OSC
+#define	USE_GUI
 #undef	USE_PHYSICS
-#define USE_TUI
-#undef	USE_VBO
-#undef USE_SPEECH_TO_TEXT
+#undef	USE_TUI
+#define	USE_VBO
+#undef	USE_SPEECH_TO_TEXT
+#undef	USE_DATA
+#define	USE_TEMPLATE_MATCHING
 
 #define MAX_CORNERS 500
 

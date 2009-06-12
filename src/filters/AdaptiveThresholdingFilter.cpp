@@ -32,7 +32,6 @@ void AdaptiveThresholdingFilter::setup() {
 }
 
 void AdaptiveThresholdingFilter::update() {
-//	VideoFilter::update();
 	grayOutput = input;
 	
 	grayOutput.adaptiveThreshold(settings.blocksize, settings.offset,
