@@ -93,6 +93,7 @@
 		876B2C930FC6F4FC002A1A6F /* FiducialTrackingFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 876B2C910FC6F4FC002A1A6F /* FiducialTrackingFilter.cpp */; };
 		879019890FE2B3220069C4C7 /* CaptureFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 879019870FE2B3220069C4C7 /* CaptureFilter.cpp */; };
 		8790198C0FE2B32F0069C4C7 /* TemplateMatchingSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8790198A0FE2B32F0069C4C7 /* TemplateMatchingSystem.cpp */; };
+		879302160FE7672B00C965C7 /* dict in Resources */ = {isa = PBXBuildFile; fileRef = 879302150FE7672B00C965C7 /* dict */; };
 		87B86B7A0FBA18CF007ADBAE /* binner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87B86B6B0FBA18CF007ADBAE /* binner.cpp */; };
 		87B86B7B0FBA18CF007ADBAE /* ofxMSAParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87B86B6D0FBA18CF007ADBAE /* ofxMSAParticle.cpp */; };
 		87B86B7C0FBA18CF007ADBAE /* ofxMSAPhysics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87B86B6F0FBA18CF007ADBAE /* ofxMSAPhysics.cpp */; };
@@ -375,6 +376,7 @@
 		879019880FE2B3220069C4C7 /* CaptureFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaptureFilter.h; path = src/filters/CaptureFilter.h; sourceTree = SOURCE_ROOT; };
 		8790198A0FE2B32F0069C4C7 /* TemplateMatchingSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateMatchingSystem.cpp; path = src/TemplateMatchingSystem.cpp; sourceTree = SOURCE_ROOT; };
 		8790198B0FE2B32F0069C4C7 /* TemplateMatchingSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TemplateMatchingSystem.h; path = src/TemplateMatchingSystem.h; sourceTree = SOURCE_ROOT; };
+		879302150FE7672B00C965C7 /* dict */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dict; sourceTree = "<group>"; };
 		87B86B610FBA18CF007ADBAE /* ofxMSAParticleDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMSAParticleDrawer.h; path = /Users/paulreimer/Development/ofx/006/addons/ofxMSAPhysics/src/Callbacks/ofxMSAParticleDrawer.h; sourceTree = "<absolute>"; };
 		87B86B620FBA18CF007ADBAE /* ofxMSAParticleUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMSAParticleUpdater.h; path = /Users/paulreimer/Development/ofx/006/addons/ofxMSAPhysics/src/Callbacks/ofxMSAParticleUpdater.h; sourceTree = "<absolute>"; };
 		87B86B630FBA18CF007ADBAE /* ofxMSAPhysicsCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMSAPhysicsCallbacks.h; path = /Users/paulreimer/Development/ofx/006/addons/ofxMSAPhysics/src/Callbacks/ofxMSAPhysicsCallbacks.h; sourceTree = "<absolute>"; };
@@ -1180,6 +1182,7 @@
 		8769E2690FC5020C004001D5 /* jconf */ = {
 			isa = PBXGroup;
 			children = (
+				879302150FE7672B00C965C7 /* dict */,
 				8769E26A0FC5020C004001D5 /* grammar */,
 				8769E2700FC5020C004001D5 /* hmmdefs */,
 				8769E2710FC5020C004001D5 /* julian.jconf */,
@@ -1982,6 +1985,7 @@
 				874DFAC80FD6057000F85B4D /* cvaux110d.pdb in Resources */,
 				874DFACB0FD6057000F85B4D /* cxcore110d.pdb in Resources */,
 				87174C060FD6496700EBE6E7 /* twister.dict in Resources */,
+				879302160FE7672B00C965C7 /* dict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

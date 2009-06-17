@@ -10,7 +10,8 @@
 
 #### (1) Specify by common prefix of .dfa and .dict files. Comma-separated
 #### prefixes can be specified for multiple grammar recognition
--gram twister
+#-gram twister
+-v dict
 
 #### (2) Or you can give Julian a text file which contains list of grammar
 #### prefixes one per line.
