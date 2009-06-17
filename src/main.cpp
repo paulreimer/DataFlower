@@ -1,7 +1,8 @@
 #include "testApp.h"
 
-#define CPU_PROFILE
-#define HEAP_PROFILE
+#define	CPU_PROFILE
+#undef	HEAP_PROFILE
+#undef	MANUAL_PROFILE
 
 #ifdef CPU_PROFILE
 	#include <google/profiler.h>
@@ -17,11 +18,13 @@ int main( ){
 	ofSetupOpenGL(1280, 720, OF_WINDOW);			// <-------- setup the GL context
 	myApp = new testApp;
 
+#ifdef MANUAL_PROFILE
 #ifdef CPU_PROFILE
 	ProfilerStart("cpu_prof.out");
 #endif
 #ifdef HEAP_PROFILE
 	HeapProfilerStart("heap_prof");
+#endif
 #endif
 
 	ofRunApp(myApp);

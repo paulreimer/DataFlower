@@ -7,10 +7,10 @@
 #define	USE_GUI
 #undef	USE_PHYSICS
 #undef	USE_TUI
-#define	USE_VBO
+#undef	USE_VBO
 #undef	USE_SPEECH_TO_TEXT
 #undef	USE_DATA
-#define	USE_TEMPLATE_MATCHING
+#undef	USE_TEMPLATE_MATCHING
 
 #define MAX_CORNERS 500
 
@@ -22,7 +22,7 @@
 #define VIDEO_SIZE			VIDEO_WIDTH,VIDEO_HEIGHT
 
 #define	FRAMES_IN_BUFFER	1000
-#define MAX_VERTICES		700000
+#define MAX_VERTICES		1500000
 
 #define PORTRAIT		0
 #define LANDSCAPE		1

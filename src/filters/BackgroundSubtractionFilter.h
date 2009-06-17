@@ -14,12 +14,12 @@ public:
 
 	struct BackgroundSubtractionSettings {
 		bool capture;
-		int		blocksize;
-		int		offset;
-		bool	invert;
-		bool	use_gauss;
+//		int		blocksize;
+//		int		offset;
+//		bool	use_gauss;
 
-		//int	 threshold;
+		bool	invert;
+		int	 threshold;
 	} settings;
 
 protected:

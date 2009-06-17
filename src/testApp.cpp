@@ -60,8 +60,8 @@ void testApp::setup() {
 //	pipe->addFilter(new CannyEdgeFilter());
 //	pipe->addFilter(differ);
 //	pipe->addFilter(new AdaptiveSkinFilter());
-//	pipe->addFilter(new SimpleThresholdingFilter());
-	pipe->addFilter(new AdaptiveThresholdingFilter());
+	pipe->addFilter(new SimpleThresholdingFilter());
+//	pipe->addFilter(new AdaptiveThresholdingFilter());
 	pipe->addFilter(&contourFilter);
 
 	videoSystem.addPipeline(pipe);
