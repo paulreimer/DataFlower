@@ -2,7 +2,7 @@
 
 #include "VideoFilter.h"
 
-class ContourFindingFilter : public VideoFilter {
+class ContourFindingFilter : public GrayscaleFilter {
 public:
 	ContourFindingFilter();
 	virtual ~ContourFindingFilter();
@@ -13,12 +13,17 @@ public:
 
 	void destroy();
 
-	struct ContourFindingSettings {
+	class ContourFindingSettings {
+		friend class ContourFindingFilter;
+	protected:
 		int		num_blobs;
 		bool	find_holes;
+
+		ContourFindingSettings() {
+			num_blobs	= 10;
+			find_holes	= false;
+		}
 	} settings;
 
 	ofxCvContourFinder      contourFinder;
-private:
-	ofxCvGrayscaleImage		grayInput;
 };

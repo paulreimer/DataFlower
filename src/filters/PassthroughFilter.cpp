@@ -3,17 +3,17 @@
 #include "PassthroughFilter.h"
 
 PassthroughFilter::PassthroughFilter() {
-	printf("PassthroughFilter::PassthroughFilter()\n");
+	if (verbose) printf("PassthroughFilter::PassthroughFilter()\n");
 }
 
 PassthroughFilter::~PassthroughFilter() {
-	printf("PassthroughFilter::~PassthroughFilter()\n");
+	if (verbose) printf("PassthroughFilter::~PassthroughFilter()\n");
 	destroy();
 }
 
 void PassthroughFilter::setup() {
-	VideoFilter::setup();
-	addContent("Output", &output);
+	ColorFilter::setup();
+	addContent("Output", output);
 }
 
 void PassthroughFilter::update() {
@@ -21,5 +21,5 @@ void PassthroughFilter::update() {
 }
 
 void PassthroughFilter::destroy() {
-	printf("PassthroughFilter::destroy()\n");
+	if (verbose) printf("PassthroughFilter::destroy()\n");
 }

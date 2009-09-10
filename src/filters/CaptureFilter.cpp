@@ -4,20 +4,19 @@
 
 
 CaptureFilter::CaptureFilter() {
-	printf("CaptureFilter::CaptureFilter()\n");
-	settings.capture = false;
+	if (verbose) printf("CaptureFilter::CaptureFilter()\n");
 }
 
 CaptureFilter::~CaptureFilter() {
-	printf("CaptureFilter::~CaptureFilter()\n");
+	if (verbose) printf("CaptureFilter::~CaptureFilter()\n");
 	destroy();
 }
 
 void CaptureFilter::setup() {
-	VideoFilter::setup();
+	ColorFilter::setup();
 
-	addContent("Output", &output);
-	addButton("Capture", &settings.capture);
+	addContent("Output", output);
+	addButton("Capture", settings.capture);
 }
 
 void CaptureFilter::update() {
@@ -25,7 +24,7 @@ void CaptureFilter::update() {
 		settings.capture = false;
 
 		ofxCvColorImage* capture = new ofxCvColorImage();
-		capture->allocate(VIDEO_SIZE);
+		capture->allocate(videoSize.x, videoSize.y);
 		*capture = input;
 
 		captures.push_back(capture);
@@ -34,6 +33,7 @@ void CaptureFilter::update() {
 }
 
 void CaptureFilter::destroy() {
-	printf("CaptureFilter::destroy()\n");
-//	delete captures;
+	if (verbose) printf("CaptureFilter::destroy()\n");
+	for (int i=0; i < captures.size(); i++)
+		delete captures[i];
 }

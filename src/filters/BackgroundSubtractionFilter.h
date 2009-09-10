@@ -2,7 +2,7 @@
 
 #include "VideoFilter.h"
 
-class BackgroundSubtractionFilter : public VideoFilter  {
+class BackgroundSubtractionFilter : public ColorFilter  {
 public:
 	BackgroundSubtractionFilter();
 	virtual ~BackgroundSubtractionFilter();
@@ -12,7 +12,9 @@ public:
 
 	void destroy();
 
-	struct BackgroundSubtractionSettings {
+	class BackgroundSubtractionSettings {
+		friend class BackgroundSubtractionFilter;
+	protected:
 		bool capture;
 //		int		blocksize;
 //		int		offset;
@@ -20,6 +22,17 @@ public:
 
 		bool	invert;
 		int	 threshold;
+		
+		BackgroundSubtractionSettings() {
+			capture		= true;
+			
+			//blocksize	= 9;
+			//offset	= 0;
+			//use_gauss	= false;
+			invert		= false;
+			
+			threshold	= 120;
+		}
 	} settings;
 
 protected:

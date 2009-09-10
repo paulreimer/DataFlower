@@ -2,7 +2,7 @@
 
 #include "VideoFilter.h"
 
-class DifferencingFilter : public VideoFilter  {
+class DifferencingFilter : public GrayscaleFilter  {
 public:
 	DifferencingFilter();
 	virtual ~DifferencingFilter();
@@ -12,15 +12,18 @@ public:
 
 	void destroy();
 
-	struct DifferencingSettings {
+	class DifferencingSettings {
+		friend class DifferencingFilter;
+	protected:
 		bool capture;
 		bool once;
+
+		DifferencingSettings() {
+			capture	= true;
+			once	= true;
+		}
 	} settings;
 
 protected:
-	ofxCvGrayscaleImage		grayInput;
-	ofxCvGrayscaleImage 	grayOutput;
-
-	ofxCvColorImage			inputCapture;
-	ofxCvGrayscaleImage 	grayCapture;
+	ofxCvGrayscaleImage 	capture;
 };

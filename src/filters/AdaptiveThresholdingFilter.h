@@ -2,7 +2,7 @@
 
 #include "VideoFilter.h"
 
-class AdaptiveThresholdingFilter : public VideoFilter  {
+class AdaptiveThresholdingFilter : public GrayscaleFilter  {
 public:
 	AdaptiveThresholdingFilter();
 	virtual ~AdaptiveThresholdingFilter();
@@ -12,15 +12,19 @@ public:
 
 	void destroy();
 		
-	struct ThresholdSettings {
+	class ThresholdSettings {
+		friend class AdaptiveThresholdingFilter;
+	protected:
 		int		blocksize;
 		int		offset;
 		bool	invert;
 		bool	use_gauss;
+		
+		ThresholdSettings() {
+			blocksize	= 9;
+			offset		= 0;
+			invert		= false;
+			use_gauss	= false;
+		}
 	} settings;
-
-protected:
-	ofxCvGrayscaleImage 	grayInput;
-	ofxCvGrayscaleImage 	grayOutput;
-
 };

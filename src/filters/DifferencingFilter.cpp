@@ -4,44 +4,36 @@
 
 
 DifferencingFilter::DifferencingFilter() {
-	printf("DifferencingFilter::DifferencingFilter()\n");
-	settings.capture = true;
-	settings.once = true;
+	if (verbose) printf("DifferencingFilter::DifferencingFilter()\n");
 }
 
 DifferencingFilter::~DifferencingFilter() {
-	printf("DifferencingFilter::~DifferencingFilter()\n");
+	if (verbose) printf("DifferencingFilter::~DifferencingFilter()\n");
 	destroy();
 }
 
 void DifferencingFilter::setup() {
-	VideoFilter::setup();
+	GrayscaleFilter::setup();
 
-	grayInput.allocate(VIDEO_SIZE);
-	grayOutput.allocate(VIDEO_SIZE);
+	capture.allocate(videoSize.x, videoSize.y);
 
-    inputCapture.allocate(VIDEO_SIZE);
-	grayCapture.allocate(VIDEO_SIZE);
-
-	addContent("Output", &output);
-	addContent("Background", &grayCapture);
-	addButton("Capture", &settings.capture);
-	addToggle("Hold", &settings.once);
+	addContent("Output", output);
+	addContent("Background", capture);
+	addButton("Capture", settings.capture);
+	addToggle("Hold", settings.once);
 }
 
 void DifferencingFilter::update() {
-	grayInput = input;
-
-	grayInput.absDiff(grayInput, grayCapture);
-	output = grayInput;
+	output.absDiff(input, capture);
 
 	if (settings.capture == true){
 		settings.capture = !settings.once;
-		inputCapture = input;
-		grayCapture = inputCapture;
+		capture = input;
 	}
 }
 
 void DifferencingFilter::destroy() {
-	printf("DifferencingFilter::destroy()\n");
+	capture.clear();
+
+	if (verbose) printf("DifferencingFilter::destroy()\n");
 }

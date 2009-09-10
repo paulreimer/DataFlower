@@ -1,6 +1,12 @@
-pprof \
---lib_prefix /Users/paulreimer/Development/lib/opencv/build/lib \
---lib_prefix /Users/paulreimer/Development/ofx/006/libs/poco/lib \
---dot \
-bin/openFrameworksDebug.app/Contents/MacOS/openFrameworksDebug \
-/tmp/prof.out > of.dot
+#!/bin/bash
+
+MY_ARGS=--ignore="^0x([19f]|02aa)"
+#MY_OUTPUT=
+
+ARGS="--dot --mean_delay"
+ARGS=$ARGS $@
+
+EXECUTABLE=bin/openFrameworksDebug.app/Contents/MacOS/openFrameworksDebug \
+SAMPLES=bin/prof_cpu.out
+
+pprof $ARGS $MY_ARGS $EXECUTABLE $SAMPLES $MY_OUTPUT

@@ -2,12 +2,6 @@
 
 #include "ofMain.h"
 #include "settings.h"
-#include "msaColor.h"
-
-#ifdef USE_TUIO
-#include "ofxTuio.h"
-#define tuioCursorSpeedMult				0.02f	// the iphone screen is so small, easy to rack up huge velocities! need to scale down
-#endif
 
 #ifdef USE_VIDEO
 #include "VideoSystem.h"
@@ -19,6 +13,7 @@
 
 #ifdef USE_TUI
 	#include "TuiSystem.h"
+	#include "ofxPoint2f.h"
 #endif
 
 #ifdef USE_SPEECH_TO_TEXT
@@ -33,20 +28,38 @@
 	#include "TemplateMatchingSystem.h"
 #endif
 
+#ifdef USE_GPU_VIS
+	#include "RenderSystem.h"
+#endif
+
+#ifdef USE_REMOTE_CONTROL
+	#include "RemoteSystem.h"
+#endif
+
+#ifdef USE_OPENCL
+	#include "ofxClScheduler.h"
+#endif
+
+//#include "ofxFiducial.h"
+//#include "VideoPipeline.h"
+
 class testApp : public ofSimpleApp {
 public:
 	virtual ~testApp();
 
-#ifdef USE_TUIO
-	myTuioClient tuioClient;
-#endif
-
+#ifdef USE_OSC
+	ofxOscReceiver  osc_in;
+#endif	
+	
 #ifdef USE_GUI
 	GuiSystem guiSystem;
 #endif
 
 #ifdef USE_TUI
 	TuiSystem tuiSystem;
+#ifdef USE_GUI
+	ofxSimpleGuiConfig fid_gui_conf;
+#endif
 #endif
 
 #ifdef USE_VIDEO
@@ -64,7 +77,19 @@ public:
 #ifdef USE_TEMPLATE_MATCHING
 	TemplateMatchingSystem templSystem;
 #endif	
+
+#ifdef USE_GPU_VIS
+	RenderSystem renderSystem;
+#endif
+
+#ifdef USE_REMOTE_CONTROL
+	RemoteSystem remoteSystem;
+#endif
 	
+#ifdef USE_OPENCL
+	ofxClScheduler clScheduler;
+#endif
+
 	void setup();
 	void update();
 	void draw();
@@ -88,30 +113,16 @@ public:
 	} window;
 
 	struct AppSettings {
-		ofPoint rot;
-		float	frame_spacing;
-		float	zoom;
-		int		numVertices;
-		ofPoint render_offset;
 		float	lerpSpeed;
-		int		gl_draw_mode;
 	} settings;
 	
-	void saveTuioCursorPos(ofxTuioCursor &cursor);
-	
-	GLuint			vbo[2];
-
-	float			pos[MAX_VERTICES][3];
-	float			colors[MAX_VERTICES][4];
-	msaColor		frameColor;
-	
-	ofxOscReceiver  osc_in;
-
-	int numFrames;
-	int numVerts, numVertsPrev;
-	ContourFindingFilter contourFilter;
-	
-	ofPoint iPhoneAccel;
-	int iPhoneOrientation, iPhoneHomeButton;
+	void fiducialFound(ofxFiducial &fiducial);
+	void fiducialLost(ofxFiducial &fiducial);
+	void fiducialUpdated(ofxFiducial &fiducial);
 };
 
+ofxPoint2f intersects(ofxPoint2f origin, ofxPoint2f endpoint, double angle,
+					  ofxPoint2f box_origin, double box_angle, int box_w, int box_h);
+
+ofxPoint2f intersects_window_edge(ofxPoint2f origin, double angle);
+ofxPoint2f intersects_window_edge(ofxPoint2f origin, ofxPoint2f endpoint, double angle);

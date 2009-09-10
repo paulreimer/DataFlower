@@ -3,7 +3,7 @@
 #include "VideoFilter.h"
 #include "ofxFidMain.h"
 
-class FiducialTrackingFilter : public VideoFilter  {
+class FiducialTrackingFilter : public GrayscaleFilter  {
 public:
 	FiducialTrackingFilter();
 	virtual ~FiducialTrackingFilter();
@@ -15,9 +15,4 @@ public:
 	void destroy();
 
 	ofxFiducialTracker		fidFinder;
-
-protected:
-	ofxCvGrayscaleImage		grayInput;
-	ofxCvGrayscaleImage 	grayOutput;
-
 };

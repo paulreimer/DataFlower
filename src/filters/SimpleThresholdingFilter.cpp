@@ -3,35 +3,27 @@
 #include "SimpleThresholdingFilter.h"
 
 SimpleThresholdingFilter::SimpleThresholdingFilter() {
-	printf("SimpleThresholdingFilter::SimpleThresholdingFilter()\n");
-	settings.threshold = 120;
-	settings.invert = false;
+	if (verbose) printf("SimpleThresholdingFilter::SimpleThresholdingFilter()\n");
 }
 
 SimpleThresholdingFilter::~SimpleThresholdingFilter() {
-	printf("SimpleThresholdingFilter::~SimpleThresholdingFilter()\n");
+	if (verbose) printf("SimpleThresholdingFilter::~SimpleThresholdingFilter()\n");
 	destroy();
 }
 
 void SimpleThresholdingFilter::setup() {
-	VideoFilter::setup();
+	GrayscaleFilter::setup();
 
-	grayOutput.allocate(VIDEO_SIZE);
-
-	addContent("Output", &output);
-	addSlider("Threshold",
-			  &settings.threshold, 0, 255);
-	addToggle("Invert",
-			  &settings.invert);
+	addContent("Output", output);
+	addSlider("Threshold", settings.threshold, 0, 255);
+	addToggle("Invert", settings.invert);
 }
 
 void SimpleThresholdingFilter::update() {
-	grayOutput = input;
-	
-	grayOutput.threshold(settings.threshold, settings.invert);
-	output = grayOutput;
+	output = input;
+	output.threshold(settings.threshold, settings.invert);
 }
 
 void SimpleThresholdingFilter::destroy() {
-	printf("SimpleThresholdingFilter::destroy()\n");
+	if (verbose) printf("SimpleThresholdingFilter::destroy()\n");
 }

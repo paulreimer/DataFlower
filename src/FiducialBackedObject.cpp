@@ -1,22 +1,25 @@
 #pragma once
 
 #include "FiducialBackedObject.h"
-#include "ofxFiducial.h"
 #include "ofxPoint2f.h"
 
-FiducialBackedObject::FiducialBackedObject() : ofxMSAInteractiveObject() {
-	fid = INVALID_ID;
-	life = 0;
+#define FIDUCIAL_UNKNOWN_TYPE 0
 
+FiducialBackedObject::FiducialBackedObject() : ofxMSAInteractiveObject() {
+	ref_type = FIDUCIAL_UNKNOWN_TYPE;
+	fiducial = NULL;
+	
+	angle = 0;
+	
 	rotateEvents = false;
 	translateEvents = false;
-	ofxMSAInteractiveObject::disableAllEvents();
-	printf("FiducialBackedObject::FiducialBackedObject()\n");
+	disableAllEvents();
+
+	if (verbose) printf("FiducialBackedObject::FiducialBackedObject()\n");
 }
 
 FiducialBackedObject::~FiducialBackedObject() {
-//	ofxMSAInteractiveObject::~ofxMSAInteractiveObject();
-	printf("FiducialBackedObject::~FiducialBackedObject()\n");
+	if (verbose) printf("FiducialBackedObject::~FiducialBackedObject()\n");
 }
 
 void FiducialBackedObject::rotateRad(float angle){

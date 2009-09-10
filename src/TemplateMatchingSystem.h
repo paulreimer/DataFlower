@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxMSAInteractiveObject.h"
+#include "VideoPipeline.h"
 
 #include "CaptureFilter.h"
 //#include "ofxCvMain.h"
@@ -17,6 +18,10 @@ public:
 
 	void destroy();
 
+	bool verbose;
+
 protected:	
 	CaptureFilter templCaptureFilter;
+	
+	VideoPipeline pipe;
 };

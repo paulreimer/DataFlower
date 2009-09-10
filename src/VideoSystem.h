@@ -20,20 +20,30 @@ public:
 
 	void destroy();
 
-	ofxCvColorImage			colorImg;
+	std::vector<ofxCvColorImage> grabImgs;
+	std::vector<ofxCvColorImage> vidImgs;
 
-	VideoPipeline			*pipeline(int i);
+//	VideoPipeline			*pipeline(int i);
 
-	VideoPipeline			*addPipeline(VideoPipeline *pipeline);
+	VideoPipeline			*addPipeline(VideoPipeline* pipeline, ofxCvColorImage* src = NULL);
+	void					*dropPipeline(VideoPipeline* pipeline);
 
-#ifdef _USE_LIVE_VIDEO
-	ofVideoGrabber			vidGrabber;
-#else
-	ofVideoPlayer			vidPlayer;
-#endif
+	std::vector<ofVideoGrabber>	vidGrabbers;
+	std::vector<ofPoint>		grabSizes;
+
+	std::vector<ofVideoPlayer>	vidPlayers;
+	std::vector<ofPoint>		vidSizes;
 
 	bool bGotFrame;
-protected:
+
+	bool verbose;
+
+	map <VideoPipeline*, ofxCvColorImage*> pipelines;
+	
+#ifdef USE_GUI
+	ofxSimpleGuiPage* gui;
 	ofxSimpleGuiConfig gui_config;
-	vector <VideoPipeline*>	pipelines;
+#endif
+protected:
+
 };

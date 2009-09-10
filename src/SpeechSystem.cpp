@@ -3,7 +3,8 @@
 #include "SpeechSystem.h"
 
 SpeechSystem::SpeechSystem() {
-	printf("SpeechSystem::SpeechSystem()\n");
+	verbose = SYSTEM_VERBOSE;
+	if (verbose) printf("SpeechSystem::SpeechSystem()\n");
 	jconf_filename = ofToDataPath("julian.jconf");
 
 	lastSentDragger.content = &detected;
@@ -15,7 +16,7 @@ SpeechSystem::SpeechSystem() {
 }
 
 SpeechSystem::~SpeechSystem() {
-	printf("SpeechSystem::~SpeechSystem()\n");
+	if (verbose) printf("SpeechSystem::~SpeechSystem()\n");
 	destroy();
 }
 
@@ -81,11 +82,11 @@ void SpeechSystem::threadedFunction() {
 	/* finish after whole input has been processed and input reaches end */
 	j_recognize_stream(recog);
 	
-	printf("SpeechSystem::threadedFunction()\n");
+	if (verbose) printf("SpeechSystem::threadedFunction()\n");
 }
 
 void SpeechSystem::destroy() {
-	printf("SpeechSystem::destroy()\n");
+	if (verbose) printf("SpeechSystem::destroy()\n");
 	/* calling j_close_stream(recog) at any time will terminate
      recognition and exit j_recognize_stream() */
 	j_close_stream(recog);

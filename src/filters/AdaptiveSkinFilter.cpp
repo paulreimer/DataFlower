@@ -10,21 +10,19 @@ MORPHING_METHOD_ERODE_DILATE = 3
 #include "AdaptiveSkinFilter.h"
 
 AdaptiveSkinFilter::AdaptiveSkinFilter() : filter(1, CvAdaptiveSkinDetector::MORPHING_METHOD_ERODE_DILATE){
-	printf("AdaptiveSkinFilter::AdaptiveSkinFilter()\n");
-	settings.sampling_scale = 1;
-	settings.morphing_mode = CvAdaptiveSkinDetector::MORPHING_METHOD_ERODE;
+	if (verbose) printf("AdaptiveSkinFilter::AdaptiveSkinFilter()\n");
 }
 
 AdaptiveSkinFilter::~AdaptiveSkinFilter() {
-	printf("AdaptiveSkinFilter::~AdaptiveSkinFilter()\n");
+	if (verbose) printf("AdaptiveSkinFilter::~AdaptiveSkinFilter()\n");
 	destroy();
 }
 
 void AdaptiveSkinFilter::setup() {
-	VideoFilter::setup();
+	ColorFilter::setup();
 
-	bgrInput.allocate(VIDEO_SIZE);
-	grayOutput.allocate(VIDEO_SIZE);
+	bgrInput.allocate(videoSize.x, videoSize.y);
+	grayOutput.allocate(videoSize.x, videoSize.y);
 
 	addContent("Output", &output);
 	addContent("BGR Input", &bgrInput);
@@ -41,7 +39,10 @@ void AdaptiveSkinFilter::update() {
 }
 
 void AdaptiveSkinFilter::destroy() {
-	printf("AdaptiveSkinFilter::destroy()\n");
+	bgrInput.clear();
+	grayOutput.clear();
+
+	if (verbose) printf("AdaptiveSkinFilter::destroy()\n");
 }
 
 #endif

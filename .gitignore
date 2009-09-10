@@ -1,2 +1,6 @@
 build
 bin
+*.dot
+data/*.mov
+data/*.avi
+data/*.mpg

@@ -2,7 +2,7 @@
 
 #include "VideoFilter.h"
 
-class HomographyFilter : public VideoFilter  {
+class HomographyFilter : public ColorFilter  {
 public:
 	HomographyFilter();
 	virtual ~HomographyFilter();
@@ -12,10 +12,16 @@ public:
 
 	void destroy();
 
-	struct HomographySettings {
+protected:
+	class HomographySettings {
+		friend class HomographyFilter;
+	protected:
 		bool mirror_h;
 		bool mirror_v;
+		
+		HomographySettings() {
+			mirror_h = false;
+			mirror_v = false;
+		}
 	} settings;
-	
-protected:
 };

@@ -17,11 +17,12 @@ DataSystem::DataSystem(string lang) :
 stemmer(lang),
 stopper(sw, sw + sizeof(sw) / sizeof(sw[0]))
 {
-	printf("DataSystem::DataSystem()\n");
+	verbose = SYSTEM_VERBOSE;
+	if (verbose) printf("DataSystem::DataSystem()\n");
 }
 
 DataSystem::~DataSystem() {
-	printf("DataSystem::~DataSystem()\n");
+	if (verbose) printf("DataSystem::~DataSystem()\n");
 	destroy();
 }
 
@@ -68,5 +69,5 @@ void DataSystem::query(string q) {
 }
 
 void DataSystem::destroy() {
-	printf("DataSystem::destroy()\n");
+	if (verbose) printf("DataSystem::destroy()\n");
 }

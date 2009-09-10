@@ -4,33 +4,25 @@
 
 
 BackgroundSubtractionFilter::BackgroundSubtractionFilter() {
-	printf("BackgroundSubtractionFilter::BackgroundSubtractionFilter()\n");
-	settings.capture = true;
-
-//	settings.blocksize = 9;
-//	settings.offset = 0;
-//	settings.use_gauss = false;
-	settings.invert = false;
-
-	settings.threshold = 120;
+	if (verbose) printf("BackgroundSubtractionFilter::BackgroundSubtractionFilter()\n");
 }
 
 BackgroundSubtractionFilter::~BackgroundSubtractionFilter() {
-	printf("BackgroundSubtractionFilter::~BackgroundSubtractionFilter()\n");
+	if (verbose) printf("BackgroundSubtractionFilter::~BackgroundSubtractionFilter()\n");
 	destroy();
 }
 
 void BackgroundSubtractionFilter::setup() {
-	VideoFilter::setup();
+	ColorFilter::setup();
 
-    inputCapture.allocate(VIDEO_SIZE);
-	grayCapture.allocate(VIDEO_SIZE);
+    inputCapture.allocate(videoSize.x, videoSize.y);
+	grayCapture.allocate(videoSize.x, videoSize.y);
 
-	fgMask.allocate(VIDEO_SIZE);
+	fgMask.allocate(videoSize.x, videoSize.y);
 
-	addContent("Output", &output);
-	addContent("Background", &grayCapture);
-	addButton("Capture", &settings.capture);
+	addContent("Output", output);
+	addContent("Background", grayCapture);
+	addButton("Capture", settings.capture);
 /*
 	addSlider("Block Size",
 			  &settings.blocksize, 1, 49);
@@ -39,10 +31,9 @@ void BackgroundSubtractionFilter::setup() {
 	addToggle("Use Gauss",
 			  &settings.use_gauss);	
 */
-	addToggle("Invert",
-			  &settings.invert);
+	addToggle("Invert", settings.invert);
 	
-	addSlider("Threshold", &settings.threshold, 0, 255);
+	addSlider("Threshold", settings.threshold, 0, 255);
 }
 
 void BackgroundSubtractionFilter::update() {
@@ -65,5 +56,9 @@ void BackgroundSubtractionFilter::update() {
 }
 
 void BackgroundSubtractionFilter::destroy() {
-	printf("BackgroundSubtractionFilter::destroy()\n");
+	inputCapture.clear();
+	grayCapture.clear();
+	fgMask.clear();
+	
+	if (verbose) printf("BackgroundSubtractionFilter::destroy()\n");
 }

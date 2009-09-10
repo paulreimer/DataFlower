@@ -5,23 +5,47 @@
 //--------------------------------------------------------------
 void testApp::setup() {
 	// initialize stuff according to current window size
+	glutReshapeWindow(1152, 864);
+	glutPositionWindow(-1152,0);
+	glutFullScreen();
+	
 	windowResized(ofGetWidth(), ofGetHeight());
 
 	ofBackground(0, 0, 0);
 	ofSetBackgroundAuto(true);
 	ofSetVerticalSync(true);
 	ofSetFrameRate(60);
-	
-	settings.rot = 0;
-	settings.frame_spacing = 1;
-	settings.render_offset.set((window.width-VIDEO_WIDTH)/2, (window.height-VIDEO_HEIGHT)/2, -750.0),
-	settings.lerpSpeed = 0.095;
-	
-	numFrames = 0;
-	numVerts = 0;
-	settings.numVertices = MAX_VERTICES;
 
-	settings.gl_draw_mode = GL_POINTS;
+	settings.lerpSpeed = 0.095;
+
+#ifdef USE_GUI
+	guiSystem.gui.setup();
+#endif
+	
+#ifdef USE_GPU_VIS
+#ifdef USE_OPENCL
+	renderSystem.clScheduler = &clScheduler;
+#endif	
+#ifdef USE_REMOTE_CONTROL
+	renderSystem.settings.rot = &remoteSystem.pos.rot;
+	renderSystem.settings.offset = &remoteSystem.pos.offset;
+#else
+	renderSystem.settings.rot = new ofPoint(0,0,0);
+	renderSystem.settings.offset = new ofPoint(0,0,0);
+#endif
+	ofDisableSetupScreen();
+	renderSystem.enableAppEvents();
+	renderSystem.enableKeyEvents();
+#endif
+
+#ifdef USE_VIDEO
+	videoSystem.gui = &guiSystem.gui.addPage("Video Inputs");
+	
+	videoSystem.grabSizes.resize(3, ofPoint(VIDEO_SIZE));
+	
+	videoSystem.enableAppEvents();
+#endif
+	
 #ifdef USE_TUIO
 	tuioClient.start(12345);
 	
@@ -31,14 +55,30 @@ void testApp::setup() {
 #ifdef USE_OSC
 	osc_in.setup( 1234 );
 #endif
+	
+#ifdef USE_REMOTE_CONTROL
+	remoteSystem.enableAppEvents();
+#endif
 
 #ifdef USE_TUI
+	tuiSystem.toggleDraw();
 	tuiSystem.enableAppEvents();
-#endif
+	
+	ofAddListener(tuiSystem.fiducialFound, this, &testApp::fiducialFound);
+	ofAddListener(tuiSystem.fiducialLost, this, &testApp::fiducialLost);
+	ofAddListener(tuiSystem.fiducialUpdated, this, &testApp::fiducialUpdated);
 	
 #ifdef USE_GUI
-	guiSystem.enableAppEvents();
-#endif	
+	fid_gui_conf.sliderHeight		= 10;
+	fid_gui_conf.sliderTextHeight	= 12;
+
+	fid_gui_conf.fontSize			= 8;
+	fid_gui_conf.fontOffset.set		(0, fid_gui_conf.fontSize-1);
+	
+	fid_gui_conf.setup();
+#endif
+
+#endif
 	
 #ifdef USE_SPEECH_TO_TEXT
 	speechSystem.enableAppEvents();
@@ -52,195 +92,250 @@ void testApp::setup() {
 	templSystem.enableAppEvents();
 #endif
 	
-#ifdef USE_VIDEO
-	VideoPipeline *pipe = new VideoPipeline();
-	DifferencingFilter* differ = new DifferencingFilter();
-	differ->settings.once = false;
-
-//	pipe->addFilter(new CannyEdgeFilter());
-//	pipe->addFilter(differ);
-//	pipe->addFilter(new AdaptiveSkinFilter());
-	pipe->addFilter(new SimpleThresholdingFilter());
-//	pipe->addFilter(new AdaptiveThresholdingFilter());
-	pipe->addFilter(&contourFilter);
-
-	videoSystem.addPipeline(pipe);
-
-	videoSystem.enableAppEvents();
-#endif
-
-#ifdef USE_VBO
-	for(int i=0; i<MAX_VERTICES; i++) {
-		pos[i][0] = pos[i][1] = pos[i][2] = 0;
-		colors[i][3] = 1;
-	}
-	// Setup the VBO buffers
-	glGenBuffersARB(2, &vbo[0]);
-	
-	// vbo for vertex positions
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(pos), pos, GL_STREAM_DRAW_ARB);
-
-
-	// vbo for vertex colors
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo[1]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(colors), colors, GL_STREAM_DRAW_ARB);
-
+#ifdef USE_GUI
+	guiSystem.enableAppEvents();
+/*	
+	mx = my = 1.0;
+	bx = by = 0;
+	guiSystem.gui.addSlider("mx", &mx, 0.8, 1.2, 0.0);
+	guiSystem.gui.addSlider("my", &my, 0.8, 1.2, 0.0);
+	guiSystem.gui.addSlider("bx", &bx, -40, 40);
+	guiSystem.gui.addSlider("by", &by, -40, 40);
+*/
 #endif
 }
 
+// TODO: these don't belong here
+bool null_fiducial_id (ofxFiducial& l) {
+	return (l.getId()==NULL_FIDUCIAL_ID);
+}
+
+bool null_fid_obj_id (pair<ofxFiducial*,FiducialBackedObject*> l) {
+	return (l.first->getId()==NULL_FIDUCIAL_ID);
+}
+
+bool null_fid_filter (pair<ofxFiducial*,FiducialBackedObject*> l) {
+	return null_fid_obj_id(l) && (l.second->type()==FIDUCIAL_FILTER_TYPE);
+}
+
+bool null_fid_pipeline (pair<ofxFiducial*,FiducialBackedObject*> l) {
+	return null_fid_obj_id(l) && (l.second->type()==FIDUCIAL_PIPELINE_TYPE);
+}
+
+struct fiducial_id_asc {
+	bool operator() (const ofxFiducial* & l, const ofxFiducial* & r) const {
+		// TODO: stupid const casts
+		return (const_cast<ofxFiducial* &>(l)->getId() < const_cast<ofxFiducial* &>(r)->getId());
+	}
+};
 
 //--------------------------------------------------------------
 void testApp::update(){
-#ifdef USE_TUIO
-	tuioClient.getMessage();
-/*
-	// do finger stuff
-	list<ofxTuioCursor*>cursorList = tuioClient.getTuioCursors();
-	
-	ofxTuioCursor* first = *(cursorList.begin());
-	switch(cursorList.size()) {
-		case 2:
-			ofxTuioCursor* second = first+1;
-			settings.rot.z = first->getAngleDegrees(second);
-			settings.render_offset.z = first->getDistance(second);
-			break;
-		case 1:
-			settings.render_offset.x = (int)first->getX()*window.width;
-			settings.render_offset.y = (int)first->getY()*window.height;
-			printf("Set render_offset = (%d, %d)\n)", settings.render_offset.x, settings.render_offset.y);
-		default:
-			break;
-	}
-
-	for(list<ofxTuioCursor*>::iterator it=cursorList.begin(); it != cursorList.end(); it++) {
-		ofxTuioCursor *tcur = (*it);
-        float vx = tcur->getXSpeed() * tuioCursorSpeedMult;
-        float vy = tcur->getYSpeed() * tuioCursorSpeedMult;
-    }
-*/
-#endif
-
-#ifdef USE_VBO
-	numVertsPrev = numVerts;
-
-	msaColor c;
-	c.setHSV(ofGetFrameNum() % 360, 1, 1);
-	frameColor = c;
-
-	float new_z = numFrames*settings.frame_spacing;
-	
-	ofxCvContourFinder* contours = &contourFilter.contourFinder;
-	for( int i = 0; i < contours->blobs.size(); i++ ) {
-		if (numVerts+contours->blobs[i].pts.size() > settings.numVertices) {
-			numVerts = 0;
-			numFrames = 0;
-		}
-		for(int j = 0; j < contours->blobs[i].pts.size(); j++){
-			contours->blobs[i].pts[j].z = new_z;
-			pos[numVerts][0] = contours->blobs[i].pts[j].x;
-			pos[numVerts][1] = contours->blobs[i].pts[j].y;
-			pos[numVerts][2] = contours->blobs[i].pts[j].z;
-
-			colors[numVerts][0] = c.r;
-			colors[numVerts][1] = c.g;
-			colors[numVerts][2] = c.b;
-			numVerts++;
-		}
-	}
-
-	if (videoSystem.bGotFrame)
-		numFrames++;
-	
-#endif
-	
-#ifdef USE_OSC
-	while( osc_in.hasWaitingMessages() ) {
-		ofxOscMessage m;
-		osc_in.getNextMessage( &m );
-		
-		if ( m.getAddress() == "/offset/xyz" ) {
-			if( m.getNumArgs() >= 2 ) {
-				settings.render_offset.x += m.getArgAsFloat(0);
-				settings.render_offset.y += m.getArgAsFloat(1);
-			}
-			if( m.getNumArgs() == 3 ) {
-				settings.render_offset.z += m.getArgAsFloat(2) * 10.0;
-			}
-
-//			printf("Offset: (%f, %f, %f)\n", m.getArgAsFloat(0), m.getArgAsFloat(1), m.getArgAsFloat(2));
-//			printf("Orientation: (%f, %f)\n", m.getArgAsFloat(0), m.getArgAsFloat(1));
-		}
-		else if ( m.getAddress() == "/acceleration/xyz" ) {
-			if( m.getNumArgs() == 3 ) {
-				printf("Before: %f, After: %f\n", iPhoneAccel.z, m.getArgAsFloat(2));
-				
-				iPhoneAccel.x = ofLerp(iPhoneAccel.x, m.getArgAsFloat(0), settings.lerpSpeed);
-				iPhoneAccel.y = ofLerp(iPhoneAccel.y, m.getArgAsFloat(1), settings.lerpSpeed);
-				
-				// don't lerp, rotation has been constrained within [-TWO_PI, TWO_PI]
-				if (fabs(iPhoneAccel.z - m.getArgAsFloat(2)) > PI)
-					iPhoneAccel.z = m.getArgAsFloat(2);
-				else
-					iPhoneAccel.z = ofLerp(iPhoneAccel.z, m.getArgAsFloat(2), settings.lerpSpeed);
-
-				iPhoneOrientation = (fabs(iPhoneAccel.y) > fabs(iPhoneAccel.x))? PORTRAIT : LANDSCAPE;
-				if (iPhoneOrientation == LANDSCAPE)
-					iPhoneHomeButton = (iPhoneAccel.x < 0)? ON_THE_RIGHT : ON_THE_LEFT;
-				else
-					iPhoneHomeButton = (iPhoneAccel.y < 0)? ON_THE_BOTTOM: ON_THE_TOP;
-				
-				// swap x, y axes (more intuitive interface)
-				settings.rot.set(iPhoneAccel.x*90,iPhoneAccel.z*90,-iPhoneAccel.y*90);
-			}
-		}
-	}
-#endif
 	// save old mouse position (openFrameworks doesn't do this automatically like processing does)
 	pmouseX = mouseX;
 	pmouseY = mouseY;
+
+#ifdef USE_TUI
+	fid_objs_table* fid_objs = &tuiSystem.fid_objs;
+
+	if (fid_objs->size() > 0) {
+	 	map<ofxFiducial*, bool> marked_fiducials;
+
+		fid_objs_lookup pipelines_lookup = fid_objs->find(FIDUCIAL_PIPELINE_TYPE);
+		fid_objs_lookup filters_lookup = fid_objs->find(FIDUCIAL_FILTER_TYPE);
+		
+		if (pipelines_lookup != fid_objs->end() && filters_lookup != fid_objs->end()) {
+			fid_obj_table& pipelines = pipelines_lookup->second;
+			fid_obj_table& filters = filters_lookup->second;
+			
+			fid_obj_lookup pipeline_obj, pipeline_1st_stage;
+			fid_obj_lookup filter_obj, chk_filter_obj;//, pipelines;
+			
+			VideoPipeline *pipeline;
+			VideoFilter *filter, *chk_filter, *hit_filter;
+
+			ofxFiducial *fiducial, *chk_fiducial, *hit_fiducial;
+			
+			ofxPoint2f first_hit_point, edge_hit_point, hit_point;
+			ofxPoint2f origin, endpoint, ref;
+			ofxPoint2f box_origin;
+			float angle, box_angle;
+			float dist, min_dist;
+			
+			bool bPipelineFirstStage;
+
+			// We create a pipeline for each null fiducial
+			for(pipeline_obj = pipelines.begin(); pipeline_obj != pipelines.end(); pipeline_obj++) {
+
+				fiducial = pipeline_obj->first;
+				pipeline = dynamic_cast<VideoPipeline*>(pipeline_obj->second);
+				pipeline->truncate();
+				
+				pipeline_1st_stage = filters.find(pipeline->fiducial);
+				if (pipeline_1st_stage == filters.end())
+					continue;
+				
+				filter = dynamic_cast<VideoFilter*>((*pipeline_1st_stage).second);
+				pipeline->addFilter(filter);
+
+				angle = filter->angle;
+
+				ref = filter->mid_point();
+				
+				origin = filter->output_point();
+				endpoint.set(origin.x + window.width + window.height, origin.y);
+				endpoint.rotateRad(angle, ref);
+
+				// Compute closest intersections for each fiducial vs. other fiducials
+				edge_hit_point = intersects_window_edge(origin, endpoint, angle);
+
+				bPipelineFirstStage = true;
+				
+				filter_obj = filters.begin();
+				while (first_hit_point != edge_hit_point && filter_obj != filters.end()) {
+
+					if (bPipelineFirstStage)
+						bPipelineFirstStage = false;
+					else {
+						fiducial = filter_obj->first;
+						filter = dynamic_cast<VideoFilter*>(filter_obj->second);
+					}
+
+					// Don't check any fiducial already assigned to a pipeline
+					if (marked_fiducials.find(fiducial) != marked_fiducials.end()) {
+						filter_obj++;
+						continue;
+					}
+
+					// Setup this candidate fiducial as the ray source
+					angle = filter->angle;
+
+					ref = filter->mid_point();
+
+					origin = filter->output_point();
+//					origin.rotateRad(angle, ref);
+					endpoint.set(origin.x + window.width + window.height, origin.y);
+					endpoint.rotateRad(angle, ref);
+
+					first_hit_point = edge_hit_point = intersects_window_edge(origin, endpoint, angle);
+
+					min_dist = origin.distance(first_hit_point);
+
+					hit_fiducial = NULL;
+					hit_filter = NULL;
+
+					// Check if this candidate fiducial intersects any others, and choose the one
+					// with minimum distance intersection
+					for (chk_filter_obj = filters.begin(); chk_filter_obj != filters.end(); chk_filter_obj++) {
+						// Don't check initial pipeline stages, ourselves, or any pre-assigned fiducials
+						chk_fiducial = chk_filter_obj->first;
+						chk_filter = dynamic_cast<VideoFilter*>(chk_filter_obj->second);
+/*
+						printf("Fiducial %d (from %d) is: ", chk_fiducial->getId(), fiducial->getId());
+						if (null_fiducial_id(*chk_fiducial))
+							printf("null\n");
+						if (chk_fiducial == fiducial)
+							printf("a dupe\n");
+						if (marked_fiducials.find(chk_fiducial) != marked_fiducials.end())
+							printf("marked\n");
+*/						
+						if (null_fiducial_id(*chk_fiducial)
+							|| chk_fiducial == fiducial
+							|| marked_fiducials.find(chk_fiducial) != marked_fiducials.end()) continue;
+
+						box_origin.set(chk_filter->x, chk_filter->y);
+						box_angle = chk_filter->angle;
+
+						hit_point = intersects(origin, first_hit_point, TWO_PI-angle,
+											   box_origin, box_angle,
+											   chk_filter->width, chk_filter->height);
+						
+						if (hit_point.x >= 0 && hit_point.y >= 0) {
+							dist = origin.distance(hit_point);
+							if (dist < min_dist) {
+								min_dist = dist;
+								first_hit_point = hit_point;
+
+								hit_fiducial = &(*chk_fiducial);
+
+								hit_filter = &(*chk_filter);
+								hit_filter->setHitPoint(hit_point);
+								
+								filter_obj = chk_filter_obj;
+							}
+						}
+					}
+					
+					if (hit_fiducial != NULL) {
+						pipeline->addFilter(hit_filter);
+
+						marked_fiducials[fiducial] = true;
+					} else
+						filter_obj++;
+				}
+				
+				pipeline->setHitPoint(edge_hit_point);
+			}
+		}
+	}
+#endif
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){
-#ifdef USE_VBO
-	glPushMatrix();
-	glTranslatef(settings.render_offset.x, settings.render_offset.y, settings.render_offset.z);
-	
-	glTranslatef(VIDEO_WIDTH/2, VIDEO_HEIGHT/2, FRAMES_IN_BUFFER/2);
-	glRotatef(settings.rot.x, 1.0,   0,   0);
-	glRotatef(settings.rot.y,   0, 1.0,   0);
-	glRotatef(settings.rot.z,   0,   0, 1.0);
-	glTranslatef(-VIDEO_WIDTH/2, -VIDEO_HEIGHT/2, -FRAMES_IN_BUFFER/2);
-	
-	glEnable(GL_DEPTH_TEST);
-	glPointSize(2);
-	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo[0]);
-	
-	
-	glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, numVerts * 3 * sizeof(float), pos);
-	glVertexPointer(3, GL_FLOAT, 0, 0);
-	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo[1]);
-	glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, numVerts * 4 * sizeof(float), colors);
-	glColorPointer(4, GL_FLOAT, 0, 0);	
+void testApp::draw() {
+/*
+	fid_objs_table* fid_objs = &tuiSystem.fid_objs;
 
+	if (fid_objs->size() > 0) {
+		fid_objs_lookup filters_lookup = fid_objs->find(FIDUCIAL_FILTER_TYPE);
+		fid_obj_table& filters = filters_lookup->second;
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
+		fid_obj_lookup filter_obj;
 
-//	frameColor.setGL();
-	glDrawArrays(settings.gl_draw_mode, 0, numVerts);
-	
-	glDisableClientState(GL_VERTEX_ARRAY); 
-	glDisableClientState(GL_COLOR_ARRAY);
+		ofxPoint2f corners[BOX_CORNERS];
 
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+		VideoFilter *filter;
+		ofxFiducial *fiducial;
 
-	glDisable(GL_DEPTH_TEST);	
-	glPopMatrix();
-#endif
+		ofxPoint2f box_origin;
+		float box_angle;
+		int box_w, box_h;
+		
+		ofxPoint2f ref;
+
+		for (filter_obj = filters.begin(); filter_obj != filters.end(); filter_obj++) {
+			// Don't check initial pipeline stages, ourselves, or any pre-assigned fiducials
+			fiducial = filter_obj->first;
+			filter = dynamic_cast<VideoFilter*>(filter_obj->second);
+			
+			if (null_fiducial_id(*fiducial))
+				continue;
+			
+			box_origin.set(filter->x, filter->y);
+			box_angle = TWO_PI-filter->angle;
+
+			box_w = filter->width;
+			box_h = filter->height;
+			
+			corners[0].set(box_origin.x,		box_origin.y);
+			corners[1].set(box_origin.x+box_w,	box_origin.y);
+			corners[2].set(box_origin.x,		box_origin.y+box_h);
+			corners[3].set(box_origin.x+box_w,	box_origin.y+box_h);
+
+			ref.set(box_origin.x+(box_w/2),box_origin.y+(box_h/2));
+			
+			for (int c=0; c<BOX_CORNERS; c++) {
+				corners[c].rotateRad(box_angle, ref);
+			
+				printf("Fiducial %d, corner %d: (%4.2f,%4.2f)\n", fiducial->getId(), c, corners[c].x, corners[c].y);
+				ofSetColor(0xfffff);
+				ofFill();
+				
+				ofCircle(corners[c].x, corners[c].y, 8);
+			}
+		}
+	}
+*/
 }
 
 void testApp::windowResized(int w, int h) {
@@ -258,29 +353,34 @@ void testApp::windowResized(int w, int h) {
 #pragma mark Input callbacks
 
 //--------------------------------------------------------------
-void testApp::keyPressed  (int key){
+void testApp::keyPressed(int key){
 	static int modkey;
     switch(key) {
-		case ' ':
+		case 'g':
 #ifdef USE_GUI
 			guiSystem.toggleDraw();
 #endif			
 			glClear(GL_COLOR_BUFFER_BIT);
-		case 'g':
+
+		case 't':
 #ifdef USE_TUI
 			tuiSystem.toggleDraw();
 #endif
-
+		case 'v':
 #ifdef USE_VIDEO
 			videoSystem.toggleDraw();
 #endif			
+			break;
+		case 'r':
+#ifdef USE_GPU_VIS
+			renderSystem.toggleDraw();
+#endif
 			break;
 		case 'f':
 			ofToggleFullscreen();
 			break;
 		case 'c':
-			numFrames = 0;
-			numVerts = 0;
+			// TODO: capture
 			break;
 		case 's':
 			static char fileNameStr[255];
@@ -290,16 +390,28 @@ void testApp::keyPressed  (int key){
 			printf("Saving file: %s\n", fileNameStr);
 			imgScreen.saveImage(fileNameStr);
 			break;
-		case '1':
-			videoSystem.vidGrabber.videoSettings();
 			break;
 	}
 	modkey = key;
+
+	if ('0' <= key && key <= '9') {
+	int v = key-'0'-1;
+/*
+	if (modkey == SHIFT_KEY) {
+		list<ofVideoPlayer>::iterator v_player = videoSystem.vidPlayers.find(v);
+		if (v_player != videoSystem.vidPlayers.end())
+			v_player->videoSettings();
+*/
+//	else if (modkey == CONTROL_KEY
+//	else if (videoSystem.vidGrabbers.size() > v)
+		videoSystem.vidGrabbers[v].videoSettings();
+	}
+	
 }
 
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
+void testApp::mouseMoved(int x, int y ) {
 	float mouseNormX = x * window.invWidth;
     float mouseNormY = y * window.invHeight;
     float mouseVelX = (x - pmouseX) * window.invWidth;
@@ -313,10 +425,209 @@ void testApp::mouseDragged(int x, int y, int button) {
     float mouseVelY = (y - pmouseY) * window.invHeight;
 }
 
-void testApp::saveTuioCursorPos(ofxTuioCursor &cursor) {
-	printf("Found new cursor\n");
-}
-
 testApp::~testApp() {
 	printf("Goodbye!\n");
+}
+
+ofxPoint2f intersects_window_edge(ofxPoint2f origin, ofxPoint2f endpoint, double angle) {
+	return intersects(origin, endpoint, angle,
+					  ofxPoint2f(0,0), 0.0, ofGetWidth(), ofGetHeight());
+}
+
+//http://newsgroups.archived.at/comp/graphics.algorithms/200603/12/0603122551.html
+ofxPoint2f intersects(ofxPoint2f origin, ofxPoint2f endpoint, double angle,
+					  ofxPoint2f box_origin, double box_angle, int box_w, int box_h) {
+	
+	ofxPoint2f corners[BOX_CORNERS];
+	corners[0].set(box_origin.x,		box_origin.y);
+	corners[1].set(box_origin.x+box_w,	box_origin.y);
+	corners[2].set(box_origin.x+box_w,	box_origin.y+box_h);
+	corners[3].set(box_origin.x,		box_origin.y+box_h);
+
+	ofxPoint2f ref(box_origin.x + box_w/2, box_origin.y + box_h/2);
+	ofxPoint2f hit_point = endpoint;
+
+	int c, next_c;
+	for (int c=0; c<BOX_CORNERS; c++)
+		corners[c].rotateRad(box_angle, ref);
+	
+	double min_dist = origin.distance(endpoint);
+	double d, la, lb, dist;
+	for (int c=0; c<BOX_CORNERS; c++) {
+		next_c=(c+1)%BOX_CORNERS;
+		ofxPoint2f dp(corners[c].x - origin.x, corners[c].y - origin.y);
+		ofxPoint2f qa(endpoint.x - origin.x, endpoint.y - origin.y);
+		ofxPoint2f qb(corners[next_c].x - corners[c].x, corners[next_c].y - corners[c].y);
+		
+		d  = qa.y * qb.x - qb.y * qa.x;
+		la = (qb.x * dp.y - qb.y * dp.x)/d;
+		lb = (qa.x * dp.y - qa.y * dp.x)/d;
+		
+		if (0 <= la && la <= 1 && 0 <= lb && lb <= 1) {
+			hit_point.set(origin.x + la * qa.x,
+						  origin.y + la * qa.y);
+			dist = origin.distance(hit_point);
+			
+			if (d-(5*DBL_EPSILON) <= dist && dist <= d+(5*DBL_EPSILON))
+				printf("Trust d value");
+
+			if (dist < min_dist) {
+				min_dist = dist;
+				endpoint = hit_point;
+			}
+		}
+	}
+	return endpoint;
+}
+
+ofxPoint2f intersects_window_edge(ofxPoint2f origin, double angle) {
+	int w=ofGetWidth();
+	int h=ofGetHeight();
+	ofxPoint2f endpoint;
+	double slope=tan(angle), wall_y;
+	if (slope >=0) {
+		if (angle < PI) {	// Quadrant 1 [TR]
+			wall_y = slope*(w - origin.x) + origin.y;
+			if (wall_y < h)	// Right!
+				endpoint.set(w, wall_y);
+			else			// Top!
+				endpoint.set(origin.x+(h-origin.y)/slope, h);
+		}
+		else {				// Quadrant 3 [BL]
+			wall_y = -slope*(w-origin.x) + origin.y;
+			if (wall_y > 0)	// Left!
+				endpoint.set(0, wall_y);
+			else			// Bottom!
+				endpoint.set(origin.x + (-origin.y/slope), 0);
+		}
+	} else {
+		if (angle < PI)	{	// Quadrant 2 [TL]
+			wall_y = -slope*(w - origin.x) + origin.y;
+			if (wall_y < h)	// Left!
+				endpoint.set(0, wall_y);
+			else			// Top!
+				endpoint.set(origin.x + origin.y/slope, h);
+		}
+		else {				// Quadrant 4 [BR]
+			wall_y = slope*(w - origin.x) + origin.y;
+			if (wall_y > 0)	// Right!
+				endpoint.set(w, wall_y);
+			else			// Bottom!
+				endpoint.set(origin.x - origin.y/slope, 0);
+		}
+	}
+	return endpoint;
+}
+
+void testApp::fiducialFound(ofxFiducial &fiducial) {
+//	printf("Found fiducial #%d\n", fiducial.getId());
+	fid_obj_table& filters = tuiSystem.fid_objs[FIDUCIAL_FILTER_TYPE];
+	fid_obj_lookup filter_obj = filters.find(&fiducial);
+	if (filter_obj == filters.end()) {
+		VideoFilter* filter = tuiSystem.createFiducialFilter(&fiducial);
+		filter->setConfig(&fid_gui_conf);
+
+		// TODO: make this user-adjustable, or set automatically
+		filter->videoSize.set(VIDEO_SIZE);
+		filter->setup();
+
+		filters.insert(make_pair(&fiducial,filter));
+	}
+
+	if (fiducial.getId() == NULL_FIDUCIAL_ID) {
+		fid_obj_table& pipelines = tuiSystem.fid_objs[FIDUCIAL_PIPELINE_TYPE];
+		fid_obj_lookup pipeline_obj = pipelines.find(&fiducial);
+
+		if (pipeline_obj == pipelines.end()) {
+			VideoPipeline* pipeline = new VideoPipeline();
+			pipeline->fiducial = &fiducial;
+			videoSystem.addPipeline(pipeline, &(videoSystem.grabImgs.back()));
+			pipelines.insert(make_pair(&fiducial,pipeline));
+		}
+	}
+
+	fiducial.life += MAX_FIDUCIAL_LIFE;	
+}
+
+void testApp::fiducialLost(ofxFiducial &fiducial) {
+//	printf("Lost fiducial #%d\n", fiducial.getId());
+	
+	fid_objs_lookup filters_lookup = tuiSystem.fid_objs.find(FIDUCIAL_FILTER_TYPE);
+	if (filters_lookup != tuiSystem.fid_objs.end()) {
+		fid_obj_table& filters = filters_lookup->second;
+		fid_obj_lookup filter_obj = filters.find(&fiducial);
+		VideoFilter *filter;
+		if (filter_obj != filters.end()) {
+			filter = dynamic_cast<VideoFilter*>(filter_obj->second);
+
+			filter->fiducial = NULL;
+			filter->enabled = false;
+			delete filter;
+			
+			filters.erase(filter_obj);
+		}
+	}
+
+	fid_objs_lookup pipelines_lookup = tuiSystem.fid_objs.find(FIDUCIAL_PIPELINE_TYPE);
+	if (pipelines_lookup != tuiSystem.fid_objs.end()) {
+		fid_obj_table& pipelines = pipelines_lookup->second;
+		fid_obj_lookup pipeline_obj = pipelines.find(&fiducial);
+		VideoPipeline *pipeline;
+		if (pipeline_obj != pipelines.end()) {
+			pipeline = dynamic_cast<VideoPipeline*>(pipeline_obj->second);
+
+			pipeline->fiducial = NULL;
+			pipeline->enabled = false;
+			videoSystem.dropPipeline(pipeline);
+			delete pipeline;
+			
+			pipelines.erase(pipeline_obj);
+		}
+	}
+}
+
+void testApp::fiducialUpdated(ofxFiducial &fiducial) {
+//	printf("fiducial %d < %4.2f\n", fiducial.getId(), filter->angle);
+	fid_objs_lookup filters_lookup = tuiSystem.fid_objs.find(FIDUCIAL_FILTER_TYPE);
+	
+	if (filters_lookup != tuiSystem.fid_objs.end()) {
+		fid_obj_table& filters = filters_lookup->second;
+		fid_obj_lookup filter_obj = filters.find(&fiducial);
+		ofxPoint2f pos, ref;
+		
+		if (filter_obj != filters.end()) {
+			VideoFilter* filter = dynamic_cast<VideoFilter*>(filter_obj->second);
+
+			float x_scale=window.width/tuiSystem.getVideoSize().x;
+			float y_scale=window.height/tuiSystem.getVideoSize().y;
+			
+			float angle = fiducial.getAngle();
+			float aspect_ratio = filter->videoSize.y/filter->videoSize.x;
+
+			ref.set(fiducial.current.xpos*x_scale,
+					fiducial.current.ypos*y_scale);
+
+			pos = ref;
+			pos.y += filter->width*aspect_ratio;
+			
+			pos.rotateRad(angle, ref);
+
+			filter->setMidPoint(pos.x, pos.y, angle);
+
+/*			
+			pos.set(ref.x - filter->width/2,
+					ref.y + filter->width*aspect_ratio);
+			pos.rotateRad(-angle, ref);
+
+			filter->setPos(pos.x, pos.y, angle);
+			filter->setPos((fiducial.current.xpos - 1.4*fiducial.r_size)*x_scale,
+						   (fiducial.current.ypos - 0.6*fiducial.r_size)*y_scale,
+						   angle);
+
+			filter->setPos(fiducial.current.xpos*x_scale,
+						   fiducial.current.ypos*y_scale,
+						   fiducial.getAngle());
+*/
+		}
+	}
 }

@@ -15,6 +15,8 @@ public:
 	
 	void destroy();
 
+	bool verbose;
+
 private:
 	Xapian::QueryParser qp;
 	Xapian::Database db;

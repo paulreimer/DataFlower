@@ -3,55 +3,67 @@
 #include "FiducialTrackingFilter.h"
 
 FiducialTrackingFilter::FiducialTrackingFilter() {
-	printf("FiducialTrackingFilter::FiducialTrackingFilter()\n");
+	if (verbose) printf("FiducialTrackingFilter::FiducialTrackingFilter()\n");
 }
 
 FiducialTrackingFilter::~FiducialTrackingFilter() {
-	printf("FiducialTrackingFilter::~FiducialTrackingFilter()\n");
+	if (verbose) printf("FiducialTrackingFilter::~FiducialTrackingFilter()\n");
 	destroy();
 }
 
 void FiducialTrackingFilter::setup() {
-	VideoFilter::setup();
-	grayInput.allocate(VIDEO_SIZE);
-	grayOutput.allocate(VIDEO_SIZE);
-
+	GrayscaleFilter::setup();
 	fidFinder.detectFinger		= true;
 	fidFinder.maxFingerSize		= 25;
 	fidFinder.minFingerSize		= 5;
 	fidFinder.fingerSensitivity	= 0.05f; //from 0 to 2.0f
 
-	addContent("Output", &output);
-	addToggle("Detect Fingers",
-			  &fidFinder.detectFinger);
-	addSlider("Min Finger Size",
-			  &fidFinder.minFingerSize, 0, 50);
-	addSlider("Max Finger Size",
-			  &fidFinder.maxFingerSize, 0, 50);
-	addSlider("Finger Sensitivity",
-			  &fidFinder.fingerSensitivity, 0, 0.5, 0);
+	addContent("Output", output);
+	addToggle("Detect Fingers", fidFinder.detectFinger);
+	addSlider("Min Finger Size", fidFinder.minFingerSize, 0, 50);
+	addSlider("Max Finger Size", fidFinder.maxFingerSize, 0, 50);
+	addSlider("Finger Sensitivity", fidFinder.fingerSensitivity, 0, 2.0, 0);
 
 }
 
 void FiducialTrackingFilter::update() {
-	grayInput = input;
-
-	fidFinder.findFiducials( grayInput );
+	fidFinder.findFiducials(input);
 }
 
 void FiducialTrackingFilter::draw() {
 	VideoFilter::draw();
+	list<ofxFiducial>& fiducials = fidFinder.fiducialsList;	
+	list<ofxFinger>& fingers = fidFinder.fingersList;	
+	
+	if (!fiducials.size() && !fingers.size()) return;
+	
+	// Draw on top of gui
 	float _x=0, _y=0;
-	for (list<ofxFiducial>::iterator fiducial = fidFinder.fiducialsList.begin(); fiducial != fidFinder.fiducialsList.end(); fiducial++) {
-		// Draw on top of gui
-//		glTranslatef(x+width/2, y+height/2, 0);
-//		glRotatef(angle*180.0/PI, 0, 0, 1.0); // must flip degrees to compensate for image flip
-//		glTranslatef(-width/2, -height/2, 0);
-//		fiducial->draw( x, y );//draw fiducial
-//		fiducial->drawCorners( x, y );//draw corners
+	glPushMatrix();
+	glTranslatef(x+width/2, y+height/2, 0);
+	glRotatef(angle*180.0/PI, 0, 0, 1.0); // must flip degrees to compensate for image flip
+	glTranslatef(-width/2, -height/2, 0);
+//	glScalef(controls[0]->width/(float)videoSize.x, controls[0]->height/(float)videoSize.y, 0.0);
+	glScalef(width/(float)videoSize.x, width/(float)videoSize.x, 0.0);
+
+	for (list<ofxFiducial>::iterator fiducial = fiducials.begin();
+		 fiducial != fiducials.end();
+		 fiducial++) {
+
+		fiducial->draw(0,0);
+		fiducial->drawCorners(0,0);
 	}
+	
+	for (list<ofxFinger>::iterator finger = fingers.begin();
+		 finger != fingers.end();
+		 finger++) {
+
+		finger->draw(0,0);
+	}
+	
+	glPopMatrix();
 }
 
 void FiducialTrackingFilter::destroy() {
-	printf("FiducialTrackingFilter::destroy()\n");
+	if (verbose) printf("FiducialTrackingFilter::destroy()\n");
 }

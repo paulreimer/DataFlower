@@ -2,7 +2,7 @@
 
 #include "VideoFilter.h"
 
-class CaptureFilter : public VideoFilter  {
+class CaptureFilter : public ColorFilter  {
 public:
 	CaptureFilter();
 	virtual ~CaptureFilter();
@@ -12,8 +12,14 @@ public:
 
 	void destroy();
 
-	struct CaptureSettings {
+	class CaptureSettings {
+		friend class CaptureFilter;
+	protected:
 		bool capture;
+		
+		CaptureSettings() {
+			capture = false;
+		}
 	} settings;
 
 	vector <ofxCvColorImage*>	captures;

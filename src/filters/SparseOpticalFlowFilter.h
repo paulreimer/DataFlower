@@ -5,17 +5,19 @@
 #define MAX_CORNERS 500
 
 
-class OpticalFlowFilter : public VideoFilter  {
+class SparseOpticalFlowFilter : public GrayscaleFilter  {
 public:
-	OpticalFlowFilter();
-	virtual ~OpticalFlowFilter();
+	SparseOpticalFlowFilter();
+	virtual ~SparseOpticalFlowFilter();
 
 	void setup();
 	void update();
 
 	void destroy();
 
-	struct OpticalFlowSettings {
+	class SparseOpticalFlowSettings {
+		friend class SparseOpticalFlowFilter;
+	protected:
 		int		dv_min_error;
 		int		dv_max_error;
 		float	dv_scale;
@@ -24,18 +26,21 @@ public:
 		float	eps;
 		int		max_features;
 		int		pyr_levels;
+
+		SparseOpticalFlowSettings() {			
+			dv_min_error	= 0;
+			dv_max_error	= 550;
+			dv_scale		= 1.0;
+			max_iter		= 20;
+			win_size		= 10;
+			eps				= 0.03;
+			max_features	= 100;
+			pyr_levels		= 5;
+		}
 	} settings;
 
 private:
-	ofxCvGrayscaleImage		grayInput;
-	ofxCvGrayscaleImage 	grayOutput;
-
-	ofxCvColorImage 		inputPrev;
-	ofxCvGrayscaleImage		grayInputPrev;
-
-	ofxCvFloatImage			velx;
-	ofxCvFloatImage			vely;
-	ofxCvGrayscaleImage		dv;
+	ofxCvGrayscaleImage 	inputPrev;
 
 	CvSize					img_sz;
 
@@ -51,5 +56,4 @@ private:
 	int						corner_count;
 	char					features_found[ MAX_CORNERS ];
 	float					feature_errors[ MAX_CORNERS ];
-
 };

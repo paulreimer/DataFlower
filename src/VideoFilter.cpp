@@ -2,36 +2,34 @@
 
 #include "VideoFilter.h"
 #include "testApp.h"
-#include "ofxPoint2f.h"
-
-//#include "TuiSystem.h"
 
 extern testApp* myApp;
 
-VideoFilter::VideoFilter() {
+VideoFilter::VideoFilter() : hitPoint(FLT_MIN,FLT_MIN) {
+	ref_type = FIDUCIAL_FILTER_TYPE;
+
 	config = &defaultSimpleGuiConfig;
 	width = height = 0;
 	rotateEvents = true;
 	translateEvents = false;
 
-	printf("VideoFilter::VideoFilter()\n");
+	verbose = SYSTEM_VERBOSE;
+	if (verbose) printf("VideoFilter::VideoFilter()\n");
+	
+	ofAddListener(ofEvents.draw, (ofxMSAInteractiveObject*) this, &ofxMSAInteractiveObject::_draw);
+	enableMouseEvents();
 }
 
 VideoFilter::~VideoFilter() {
-	printf("VideoFilter::~VideoFilter()\n");
+	if (verbose) printf("VideoFilter::~VideoFilter()\n");
 	destroy();
 }
 
 void VideoFilter::setConfig(ofxSimpleGuiConfig *config) {
 	this->config = config;
-}
 
-void VideoFilter::setup() {
-    input.allocate(VIDEO_SIZE);
-
-	output.allocate(VIDEO_SIZE);
-
-	enableMouseEvents();
+	for(int i=0; i<controls.size(); i++)
+		controls[i]->setConfig(this->config);
 }
 
 void VideoFilter::draw() {
@@ -41,6 +39,7 @@ void VideoFilter::draw() {
 	ofSetRectMode(OF_RECTMODE_CORNER);
 
 	for(int i=0; i<controls.size(); i++) {
+		// TODO: should be in MODEL_VIEW?
 		glPushMatrix();
 			glTranslatef(x+width/2, y+height/2, 0);
 			glRotatef(angle*180.0/PI, 0, 0, 1.0); // must flip degrees to compensate for image flip
@@ -58,50 +57,106 @@ void VideoFilter::draw() {
 	}
 }
 
-ofxSimpleGuiControl *VideoFilter::addControl(ofxSimpleGuiControl* control) {
+void VideoFilter::setMidPoint(float _x, float _y, float _angle) {
+	setOrigin(_x - (width/2), _y - (height/2), _angle);
+}
+
+void VideoFilter::setOrigin(float _x, float _y, float _angle) {
+	ofxMSAInteractiveObject::setPos(_x, _y);
+	
+	rotateRad(_angle);
+	
+	//	hitPoint.set(FLT_MIN, FLT_MIN);
+	
+	midPoint.set(_x + width/2, _y + height/2);
+	
+	inputPoint.set(_x, midPoint.y);
+	if (_angle != 0.0)
+		inputPoint.rotateRad(_angle, midPoint);
+	
+	outputPoint.set(_x + width, midPoint.y);
+	if (_angle != 0.0)
+		outputPoint.rotateRad(_angle, midPoint);
+}
+
+void VideoFilter::setPos(float _x, float _y, float _angle) {
+	setOrigin(_x, _y, _angle);
+}
+
+void VideoFilter::setHitPoint(ofxPoint2f hitPoint) {
+	printf("fiducial %d hit @ (%4.2f,%4.2f)\n", fiducial->getId(), hitPoint.x, hitPoint.y);
+	this->hitPoint = hitPoint;
+}
+
+bool VideoFilter::wasHit() {
+	return (hitPoint.x != FLT_MIN && hitPoint.y != FLT_MIN);
+}
+
+ofxPoint2f VideoFilter::input_point() {
+	if (wasHit())
+		return hitPoint;
+	else
+		return inputPoint;
+}
+
+ofxPoint2f VideoFilter::mid_point() {
+	return midPoint;
+}
+
+ofxPoint2f VideoFilter::output_point() {
+	return outputPoint;
+}
+
+ofxSimpleGuiControl &VideoFilter::addControl(ofxSimpleGuiControl& control) {
 	// VideoFilter calls the shots
-	control->disableAllEvents();
-	controls.push_back(control);
-	height += control->height + config->padding.y;
-	width = MAX(control->width, width);
+	control.disableAllEvents();
+	control.setConfig(this->config);
+	
+	controls.push_back(&control);
+	height += control.height + config->padding.y;
+	width = MAX(control.width, width);
 	return control;
 }
 
-ofxSimpleGuiContent *VideoFilter::addContent(string name, ofBaseDraws *content, float fixwidth) {
+ofxSimpleGuiContent &VideoFilter::addContent(string name, ofBaseDraws &content, float fixwidth) {
 	if(fixwidth == -1) fixwidth = config->gridSize.x - config->padding.x;
-	return (ofxSimpleGuiContent *)addControl(new ofxSimpleGuiContent(name, content, fixwidth));
+	return (ofxSimpleGuiContent &)addControl(* new ofxSimpleGuiContent(name, content, fixwidth));
 }
 
-ofxSimpleGuiButton *VideoFilter::addButton(string name, bool *value) {
-	return (ofxSimpleGuiButton *)addControl(new ofxSimpleGuiButton(name, value));
+ofxSimpleGuiButton &VideoFilter::addButton(string name, bool &value) {
+	return (ofxSimpleGuiButton &)addControl(* new ofxSimpleGuiButton(name, value));
 }
 
-ofxSimpleGuiFPSCounter *VideoFilter::addFPSCounter() {
-	return (ofxSimpleGuiFPSCounter *)addControl(new ofxSimpleGuiFPSCounter());
+ofxSimpleGuiFPSCounter &VideoFilter::addFPSCounter() {
+	return (ofxSimpleGuiFPSCounter &)addControl(* new ofxSimpleGuiFPSCounter());
 }
 
-ofxSimpleGuiSliderInt *VideoFilter::addSlider(string name, int *value, int min, int max) {
-	return (ofxSimpleGuiSliderInt *)addControl(new ofxSimpleGuiSliderInt(name, value, min, max, 0));
+ofxSimpleGuiSliderInt &VideoFilter::addSlider(string name, int &value, int min, int max) {
+	return (ofxSimpleGuiSliderInt &)addControl(* new ofxSimpleGuiSliderInt(name, value, min, max, 0));
 }
 
-ofxSimpleGuiSliderFloat *VideoFilter::addSlider(string name, float *value, float min, float max, float smoothing) {
-	return (ofxSimpleGuiSliderFloat *)addControl(new ofxSimpleGuiSliderFloat(name, value, min, max, smoothing));
+ofxSimpleGuiSliderByte &VideoFilter::addSlider(string name, byte &value, byte min, byte max) {
+	return (ofxSimpleGuiSliderByte &)addControl(* new ofxSimpleGuiSliderByte(name, value, min, max, 0));
 }
 
-ofxSimpleGuiSlider2d *VideoFilter::addSlider2d(string name, ofPoint* value, float xmin, float xmax, float ymin, float ymax) {
-	return (ofxSimpleGuiSlider2d *)addControl(new ofxSimpleGuiSlider2d(name, value, xmin, xmax, ymin, ymax));
+ofxSimpleGuiSliderFloat &VideoFilter::addSlider(string name, float &value, float min, float max, float smoothing) {
+	return (ofxSimpleGuiSliderFloat &)addControl(* new ofxSimpleGuiSliderFloat(name, value, min, max, smoothing));
 }
 
-ofxSimpleGuiTitle *VideoFilter::addTitle(string name, bool *value) {
-	return (ofxSimpleGuiTitle *)addControl(new ofxSimpleGuiTitle(name, value));
+ofxSimpleGuiSliderDouble &VideoFilter::addSlider(string name, double &value, double min, double max, double smoothing) {
+	return (ofxSimpleGuiSliderDouble &)addControl(* new ofxSimpleGuiSliderDouble(name, value, min, max, smoothing));
 }
 
-ofxSimpleGuiToggle *VideoFilter::addToggle(string name, bool *value) {
-	return (ofxSimpleGuiToggle *)addControl(new ofxSimpleGuiToggle(name, value));
+ofxSimpleGuiSlider2d &VideoFilter::addSlider2d(string name, ofPoint& value, float xmin, float xmax, float ymin, float ymax) {
+	return (ofxSimpleGuiSlider2d &)addControl(* new ofxSimpleGuiSlider2d(name, value, xmin, xmax, ymin, ymax));
 }
 
-void VideoFilter::update() {
-	for(int i=0; i<controls.size(); i++) controls[i]->update();
+ofxSimpleGuiTitle &VideoFilter::addTitle(string name) {
+	return (ofxSimpleGuiTitle &)addControl(* new ofxSimpleGuiTitle(name));
+}
+
+ofxSimpleGuiToggle &VideoFilter::addToggle(string name, bool &value) {
+	return (ofxSimpleGuiToggle &)addControl(* new ofxSimpleGuiToggle(name, value));
 }
 
 void VideoFilter::_mouseMoved(ofMouseEventArgs &e) {
@@ -109,7 +164,8 @@ void VideoFilter::_mouseMoved(ofMouseEventArgs &e) {
 	relocateMouseEvent(&new_e);
 	for(int i=0; i<controls.size(); i++) controls[i]->_mouseMoved(new_e);
 	
-	FiducialBackedObject::_mouseMoved(e);
+	ofxMSAInteractiveObject::_mouseMoved(e);
+//	_mouseMoved(e);
 }
 
 void VideoFilter::_mousePressed(ofMouseEventArgs &e) {
@@ -117,7 +173,8 @@ void VideoFilter::_mousePressed(ofMouseEventArgs &e) {
 	relocateMouseEvent(&new_e);
 	for(int i=0; i<controls.size(); i++) controls[i]->_mousePressed(new_e);
 
-	FiducialBackedObject::_mousePressed(e);
+	ofxMSAInteractiveObject::_mousePressed(e);
+//	_mousePressed(e);
 }
 
 void VideoFilter::_mouseDragged(ofMouseEventArgs &e) {
@@ -125,7 +182,8 @@ void VideoFilter::_mouseDragged(ofMouseEventArgs &e) {
 	relocateMouseEvent(&new_e);
 	for(int i=0; i<controls.size(); i++) controls[i]->_mouseDragged(new_e);
 
-	FiducialBackedObject::_mouseDragged(e);
+	ofxMSAInteractiveObject::_mouseDragged(e);
+//	_mouseDragged(e);
 }
 
 void VideoFilter::_mouseReleased(ofMouseEventArgs &e) {
@@ -133,7 +191,8 @@ void VideoFilter::_mouseReleased(ofMouseEventArgs &e) {
 	relocateMouseEvent(&new_e);
 	for(int i=0; i<controls.size(); i++) controls[i]->_mouseReleased(new_e);
 	
-	FiducialBackedObject::_mouseReleased(e);
+	ofxMSAInteractiveObject::_mouseReleased(e);
+//	_mouseReleased(e);
 }
 
 void VideoFilter::_keyPressed(ofKeyEventArgs &e) {
@@ -172,15 +231,15 @@ void VideoFilter::onDragOver(int mx, int my, int button) {
 	}
 	
 	if (content) { //ahhh
-		x = mx - saveX;    // update x position
-		y = my - saveY;    // update mouse y position
+//		x = mx - saveX;    // update x position
+//		y = my - saveY;    // update mouse y position
+		setPos(mx - saveX, my - saveY, angle);
 	}
 }
 
-void VideoFilter::fiducialDetected(ofxFiducial &fiducial) {
-	printf("Detected fiducial #%d\n", fiducial.getId());
-}
-
 void VideoFilter::destroy() {
-	printf("VideoFilter::destroy()\n");
+	disableMouseEvents();
+	disableAppEvents();
+
+	if (verbose) printf("VideoFilter::destroy()\n");
 }

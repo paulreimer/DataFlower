@@ -2,7 +2,7 @@
 
 #include "VideoFilter.h"
 
-class SimpleThresholdingFilter : public VideoFilter  {
+class SimpleThresholdingFilter : public GrayscaleFilter  {
 public:
 	SimpleThresholdingFilter();
 	virtual ~SimpleThresholdingFilter();
@@ -12,12 +12,15 @@ public:
 
 	void destroy();
 
-	struct SimpleThresholdSettings {
+	class SimpleThresholdSettings {
+		friend class SimpleThresholdingFilter;
+	protected:
 		int		threshold;
 		bool	invert;
+
+		SimpleThresholdSettings() {
+			threshold = 120;
+			invert = false;
+		}
 	} settings;
-
-protected:
-	ofxCvGrayscaleImage 	grayOutput;
-
 };

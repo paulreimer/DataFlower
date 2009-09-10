@@ -38,6 +38,8 @@ public:
 	} detected;
 	
 	ofxDraggable lastSentDragger;
+
+	bool verbose;
 private:
 	Jconf *jconf;
 	string jconf_filename;

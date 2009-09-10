@@ -1,9 +1,5 @@
 #include "testApp.h"
 
-#define	CPU_PROFILE
-#undef	HEAP_PROFILE
-#undef	MANUAL_PROFILE
-
 #ifdef CPU_PROFILE
 	#include <google/profiler.h>
 #endif
@@ -15,7 +11,7 @@
 testApp *myApp;
 int main( ){
 	ofSetDataPathRoot("../Resources/");
-	ofSetupOpenGL(1280, 720, OF_WINDOW);			// <-------- setup the GL context
+	ofSetupOpenGL(1280, 720, OF_FULLSCREEN);			// <-------- setup the GL context
 	myApp = new testApp;
 
 #ifdef MANUAL_PROFILE
@@ -29,12 +25,15 @@ int main( ){
 
 	ofRunApp(myApp);
 
+#ifdef MANUAL_PROFILE
 #ifdef CPU_PROFILE
 	ProfilerStop();
 #endif
 #ifdef HEAP_PROFILE
 	HeapProfilerStop();
 #endif
+#endif	
+	delete myApp;
 }
 
 extern testApp *myApp;

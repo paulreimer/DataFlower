@@ -5,7 +5,7 @@
 #include "VideoFilter.h"
 #include "cvaux.h"
 
-class AdaptiveSkinFilter : public VideoFilter {
+class AdaptiveSkinFilter : public ColorFilter {
 public:
 	AdaptiveSkinFilter();
 	virtual ~AdaptiveSkinFilter();
@@ -15,9 +15,16 @@ public:
 
 	void destroy();
 
-	struct AdaptiveSkinSettings {
+	class AdaptiveSkinSettings {
+		friend class AdaptiveSkinFilter;
+	protected:
 		int		sampling_scale;
 		int		morphing_mode;
+		
+		AdaptiveSkinSettings() {
+			sampling_scale	= 1;
+			morphing_mode	= CvAdaptiveSkinDetector::MORPHING_METHOD_ERODE;
+		}
 	} settings;
 
 protected:
