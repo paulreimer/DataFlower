@@ -5,7 +5,8 @@
 
 #include "ofxSimpleGuiToo.h"
 
-class GuiSystem : public ofxMSAInteractiveObject {
+class GuiSystem : public ofxMSAInteractiveObject 
+{
 public:
 	GuiSystem();
 	virtual ~GuiSystem();

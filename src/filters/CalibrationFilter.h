@@ -5,7 +5,8 @@
 #define CHESSBOARD_CORNERS_X 7
 #define CHESSBOARD_CORNERS_Y 7
 
-class CalibrationFilter : public ColorFilter  {
+class CalibrationFilter : public ColorFilter  
+{
 public:
 	CalibrationFilter();
 	virtual ~CalibrationFilter();
@@ -78,7 +79,8 @@ public:
 		CvPoint3D32f* objectPoints;
 		int numPoints;
 
-		CalibrationObject(CvPoint3D32f objPts, int nPts) {
+		CalibrationObject(CvPoint3D32f objPts, int nPts)
+	{
 			objectPoints = scrPts;
 			numPoints = nPts;
 		}
@@ -111,7 +113,8 @@ public:
 			image.allocate(videoSize.x, videoSize.y);
 		}
 		
-		void setPoints(CvPoint2D32f pts, int numPts) {
+		void setPoints(CvPoint2D32f pts, int numPts)
+	{
 			
 			for(int i=0; i<numPts; i++) {
 				capture.foundPoints[i] = points[i];

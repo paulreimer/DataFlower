@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class ContourFindingFilter : public GrayscaleFilter {
+class ContourFindingFilter : public GrayscaleFilter 
+{
 public:
 	ContourFindingFilter();
 	virtual ~ContourFindingFilter();

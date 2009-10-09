@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class CamShiftTrackingFilter : public GrayscaleFilter  {
+class CamShiftTrackingFilter : public GrayscaleFilter  
+{
 public:
 	CamShiftTrackingFilter();
 	virtual ~CamShiftTrackingFilter();
@@ -12,13 +13,13 @@ public:
 
 	void destroy();
 
-	class SimpleThresholdSettings {
+	class CamShiftTrackingSettings {
 		friend class CamShiftTrackingFilter;
 	protected:
 		int		threshold;
 		bool	invert;
 
-		SimpleThresholdSettings() {
+		CamShiftTrackingSettings() {
 			threshold	= 120;
 			invert		= false;
 		}

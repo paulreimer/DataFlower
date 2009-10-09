@@ -2,16 +2,19 @@
 
 #include "SparseOpticalFlowFilter.h"
 
-SparseOpticalFlowFilter::SparseOpticalFlowFilter() {
+SparseOpticalFlowFilter::SparseOpticalFlowFilter()
+{
 	if (verbose) printf("SparseOpticalFlowFilter::SparseOpticalFlowFilter()\n");
 }
 
-SparseOpticalFlowFilter::~SparseOpticalFlowFilter() {
+SparseOpticalFlowFilter::~SparseOpticalFlowFilter()
+{
 	if (verbose) printf("SparseOpticalFlowFilter::~SparseOpticalFlowFilter()\n");
 	destroy();
 }
 
-void SparseOpticalFlowFilter::setup() {
+void SparseOpticalFlowFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	inputPrev.allocate(videoSize.x, videoSize.y);
@@ -28,7 +31,8 @@ void SparseOpticalFlowFilter::setup() {
 	pyrPrev = cvCreateImage( pyr_sz, IPL_DEPTH_32F, 1 );
 }
 
-void SparseOpticalFlowFilter::update() {
+void SparseOpticalFlowFilter::update() 
+{
 	corner_count = settings.max_features;
 	cvGoodFeaturesToTrack(input.getCvImage(),
 						  eig_image,
@@ -73,7 +77,8 @@ void SparseOpticalFlowFilter::update() {
 	inputPrev = input;
 }
 
-void SparseOpticalFlowFilter::destroy() {
+void SparseOpticalFlowFilter::destroy() 
+{
 	if (verbose) printf("SparseOpticalFlowFilter::destroy()\n");
 	
 	delete cornersImg;

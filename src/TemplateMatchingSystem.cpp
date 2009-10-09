@@ -6,17 +6,20 @@
 
 extern testApp* myApp;
 
-TemplateMatchingSystem::TemplateMatchingSystem() {
+TemplateMatchingSystem::TemplateMatchingSystem()
+{
 	verbose = SYSTEM_VERBOSE;
 	if (verbose) printf("TemplateMatchingSystem::TemplateMatchingSystem()\n");
 }
 
-TemplateMatchingSystem::~TemplateMatchingSystem() {
+TemplateMatchingSystem::~TemplateMatchingSystem()
+{
 	if (verbose) printf("TemplateMatchingSystem::~TemplateMatchingSystem()\n");
 	destroy();
 }
 
-void TemplateMatchingSystem::setup(){
+void TemplateMatchingSystem::setup()
+{
 	pipe.addFilter(new BackgroundSubtractionFilter());
 //	pipe->addFilter(&templCaptureFilter);
 	
@@ -24,12 +27,15 @@ void TemplateMatchingSystem::setup(){
 }
 
 //--------------------------------------------------------------
-void TemplateMatchingSystem::update(){
+void TemplateMatchingSystem::update()
+{
 }
 //--------------------------------------------------------------
-void TemplateMatchingSystem::draw(){
+void TemplateMatchingSystem::draw()
+{
 }
 
-void TemplateMatchingSystem::destroy() {
+void TemplateMatchingSystem::destroy() 
+{
 	if (verbose) printf("TemplateMatchingSystem::destroy()\n");
 }

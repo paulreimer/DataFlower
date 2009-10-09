@@ -10,6 +10,7 @@
 // Pre-processing
 #include "filters/HomographyFilter.h"
 #include "filters/DifferencingFilter.h"
+#include "filters/ColorspaceConversionFilter.h"
 
 // Thresholding
 #include "filters/ThresholdingFilter.h"
@@ -40,6 +41,8 @@
 #ifdef USE_OPENCV_TRUNK
 #include "filters/DenseOpticalFlowFilter.h"
 #endif
+#include "filters/DistanceTransformFilter.h"
+#include "filters/MotionHistoryImageFilter.h"
 
 // Capturing
 #include "filters/CaptureFilter.h"
@@ -47,4 +50,3 @@
 #ifdef USE_OPENCL
 #include "filters/VoxelBufferFilter.h"
 #endif
-

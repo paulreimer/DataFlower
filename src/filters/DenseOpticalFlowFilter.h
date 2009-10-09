@@ -3,7 +3,8 @@
 #include "VideoFilter.h"
 
 
-class DenseOpticalFlowFilter : public GrayscaleFilter  {
+class DenseOpticalFlowFilter : public GrayscaleFilter  
+{
 public:
 	DenseOpticalFlowFilter();
 	virtual ~DenseOpticalFlowFilter();

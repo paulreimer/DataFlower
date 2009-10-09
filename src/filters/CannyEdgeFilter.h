@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class CannyEdgeFilter : public GrayscaleFilter  {
+class CannyEdgeFilter : public GrayscaleFilter  
+{
 public:
 	CannyEdgeFilter();
 	virtual ~CannyEdgeFilter();

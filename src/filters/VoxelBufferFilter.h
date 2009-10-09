@@ -6,7 +6,8 @@
 // Unfortunately, we schedule our own invocation
 #include "ofxClScheduler.h"
 
-class VoxelBufferFilter : public GrayscaleFilter  {
+class VoxelBufferFilter : public GrayscaleFilter  
+{
 public:
 	VoxelBufferFilter(ofxClScheduler& _clScheduler, RayTracingKernel& _rayTracer);
 	VoxelBufferFilter();

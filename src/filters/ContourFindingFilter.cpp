@@ -2,16 +2,19 @@
 
 #include "ContourFindingFilter.h"
 
-ContourFindingFilter::ContourFindingFilter() {
+ContourFindingFilter::ContourFindingFilter()
+{
 	if (verbose) printf("ContourFindingFilter::ContourFindingFilter()\n");
 }
 
-ContourFindingFilter::~ContourFindingFilter() {
+ContourFindingFilter::~ContourFindingFilter()
+{
 	if (verbose) printf("ContourFindingFilter::~ContourFindingFilter()\n");
 	destroy();
 }
 
-void ContourFindingFilter::setup() {
+void ContourFindingFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	addContent("Output", output);
@@ -19,16 +22,19 @@ void ContourFindingFilter::setup() {
 	addToggle("Find Holes", settings.find_holes);
 }
 
-void ContourFindingFilter::update() {
+void ContourFindingFilter::update() 
+{
 	contourFinder.findContours(input, 20, (videoSize.x*videoSize.y)/3,
 							   settings.num_blobs, settings.find_holes);
 }
 
-void ContourFindingFilter::draw() {
+void ContourFindingFilter::draw() 
+{
 	VideoFilter::draw();
 	contourFinder.draw(x, y, width, width*videoSize.y/videoSize.x);
 }
 
-void ContourFindingFilter::destroy() {
+void ContourFindingFilter::destroy() 
+{
 	if (verbose) printf("ContourFindingFilter::destroy()\n");
 }

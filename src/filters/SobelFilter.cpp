@@ -2,16 +2,19 @@
 
 #include "SobelFilter.h"
 
-SobelFilter::SobelFilter() {
+SobelFilter::SobelFilter()
+{
 	if (verbose) printf("SobelFilter::SobelFilter()\n");
 }
 
-SobelFilter::~SobelFilter() {
+SobelFilter::~SobelFilter()
+{
 	if (verbose) printf("SobelFilter::~SobelFilter()\n");
 	destroy();
 }
 
-void SobelFilter::setup() {
+void SobelFilter::setup() 
+{
 	ColorFilter::setup();
 
 	grayInput.allocate(videoSize.x, videoSize.y);
@@ -30,10 +33,12 @@ void SobelFilter::setup() {
 	addSlider("Aperture Size", settings.aperture_size, 1, 7);
 }
 
-void SobelFilter::update() {
+void SobelFilter::update() 
+{
 	settings.aperture_size |= 1;
 	
-	if (settings.x_order) {
+	if (settings.x_order)
+	{
 		cvSobel(grayInput.getCvImage(), tmpOutputX,
 				settings.x_order, 0,
 				settings.aperture_size);
@@ -41,7 +46,8 @@ void SobelFilter::update() {
 		outputX.flagImageChanged();
 	}
 
-	if (settings.y_order) {
+	if (settings.y_order)
+	{
 		cvSobel(grayInput.getCvImage(), tmpOutputY,
 				0, settings.y_order,
 				settings.aperture_size);
@@ -58,7 +64,8 @@ void SobelFilter::update() {
 
 }
 
-void SobelFilter::destroy() {
+void SobelFilter::destroy() 
+{
 	if (verbose) printf("SobelFilter::destroy()\n");
 	
 	cvReleaseImage(&tmpOutputX);

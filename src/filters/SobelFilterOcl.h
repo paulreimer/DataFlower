@@ -7,7 +7,8 @@
 // Unfortunately, we schedule our own invocation
 #include "ofxClScheduler.h"
 
-class SobelFilterOcl : public ColorFilter  {
+class SobelFilterOcl : public ColorFilter  
+{
 public:
 	friend class testApp;
 

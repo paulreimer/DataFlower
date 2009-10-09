@@ -5,43 +5,46 @@
 
 extern testApp* myApp;
 
-GuiSystem::GuiSystem() {
+GuiSystem::GuiSystem()
+{
 	verbose = SYSTEM_VERBOSE;
 	if (verbose) printf("GuiSystem::GuiSystem()\n");
 }
 
-GuiSystem::~GuiSystem() {
+GuiSystem::~GuiSystem()
+{
 	if (verbose) printf("GuiSystem::~GuiSystem()\n");
 	destroy();
 }
 
-void GuiSystem::setup() {
+void GuiSystem::setup() 
+{
 #ifdef USE_FLUID
 	gui.addPage("Fluid");
 
-	PhysicsSystem* phy = &myApp->physicsSystem;
+	PhysicsSystem& phy = myApp->physicsSystem;
 	gui.addToggle("Draw Fluid",
-				  phy->settings.drawFluid);
+				  phy.settings.drawFluid);
 	gui.addSlider("fs.viscocity",
-				  phy->fluidSolver.viscocity, 0.0, 0.0002, 0.5);
+				  phy.fluidSolver.viscocity, 0.0, 0.0002, 0.5);
 	gui.addSlider("fs.colorDiffusion",
-				  phy->fluidSolver.colorDiffusion, 0.0, 0.0003, 0.5);
+				  phy.fluidSolver.colorDiffusion, 0.0, 0.0003, 0.5);
 	gui.addSlider("fs.fadeSpeed",
-				  phy->fluidSolver.fadeSpeed, 0.0, 0.1, 0.5);
+				  phy.fluidSolver.fadeSpeed, 0.0, 0.1, 0.5);
 	gui.addSlider("fs.solverIterations",
-				  phy->fluidSolver.solverIterations, 1, 20);
+				  phy.fluidSolver.solverIterations, 1, 20);
 	gui.addSlider("fd.drawMode",
-				  phy->fluidDrawer.drawMode, 0, FLUID_DRAW_MODE_COUNT-1);
+				  phy.fluidDrawer.drawMode, 0, FLUID_DRAW_MODE_COUNT-1);
 	gui.addToggle("fs.doRGB",
-				  phy->fluidSolver.doRGB);
+				  phy.fluidSolver.doRGB);
 	gui.addToggle("fs.doVorticityConfinement",
-				  phy->fluidSolver.doVorticityConfinement);
+				  phy.fluidSolver.doVorticityConfinement);
 	gui.addToggle("drawFluid",
-				  phy->settings.drawFluid);
+				  phy.settings.drawFluid);
 	gui.addToggle("drawParticles",
-				  phy->settings.drawParticles);
+				  phy.settings.drawParticles);
 	gui.addToggle("renderUsingVA",
-				  phy->settings.renderUsingVA);
+				  phy.settings.renderUsingVA);
 #endif
 	
 #ifdef USE_VBO
@@ -63,32 +66,33 @@ void GuiSystem::setup() {
 				  myApp->settings.gl_draw_mode, 0, 9);
 #endif
 #ifdef USE_GPU_VIS
-#ifndef USE_REMOTE_CONTROL
-	RenderSettings* re = myApp->renderSystem.settings;
+	RenderSystem& re = myApp->renderSystem;
 	gui.addPage("Render Position");
 	gui.addSlider2d("Rendering Offset",
-					re->offset, 0, 1, 0, 1);
+					*(re.settings.offset), 0, 1, 0, 1);
 	gui.addPage("Rendering");
 	gui.addSlider("Zoom",
-				  re->offset.z, -10.0, 10.0, 0.0);
+				  re.settings.offset->z, -10.0, 10.0, 0.0);
 	gui.addSlider("X Rotation",
-				  re->rot.x, 0.0, 360.0, 0.0);
+				  re.settings.rot->x, 0.0, 360.0, 0.0);
 	gui.addSlider("Y Rotation",
-				  re->rot.y, 0.0, 360.0, 0.0);
+				  re.settings.rot->y, 0.0, 360.0, 0.0);
 	gui.addSlider("Z Rotation",
-				  re->rot.z, 0.0, 360.0, 0.0);
-#endif
+				  re.settings.rot->z, 0.0, 360.0, 0.0);
 #endif
 }
 
-void GuiSystem::toggleDraw() {
+void GuiSystem::toggleDraw() 
+{
 	gui.toggleDraw();
 }
 
-void GuiSystem::draw() {
+void GuiSystem::draw() 
+{
 	gui.draw();
 }
 
-void GuiSystem::destroy() {
+void GuiSystem::destroy() 
+{
 	if (verbose) printf("GuiSystem::destroy()\n");
 }

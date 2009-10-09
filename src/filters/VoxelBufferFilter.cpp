@@ -2,22 +2,26 @@
 
 #include "VoxelBufferFilter.h"
 
-VoxelBufferFilter::VoxelBufferFilter(ofxClScheduler& _clScheduler, RayTracingKernel& _rayTracer) {
+VoxelBufferFilter::VoxelBufferFilter(ofxClScheduler& _clScheduler, RayTracingKernel& _rayTracer) 
+{
 	if (verbose) printf("VoxelBufferFilter::VoxelBufferFilter(_clScheduler, _rayTracer)\n");
 	clScheduler = &_clScheduler;
 	rayTracer = &_rayTracer;
 }
 
-VoxelBufferFilter::VoxelBufferFilter() {
+VoxelBufferFilter::VoxelBufferFilter()
+{
 	if (verbose) printf("VoxelBufferFilter::VoxelBufferFilter()\n");
 }
 
-VoxelBufferFilter::~VoxelBufferFilter() {
+VoxelBufferFilter::~VoxelBufferFilter()
+{
 	if (verbose) printf("VoxelBufferFilter::~VoxelBufferFilter()\n");
 	destroy();
 }
 
-void VoxelBufferFilter::setup() {
+void VoxelBufferFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	numCaptureFrames = 90;
@@ -38,7 +42,8 @@ void VoxelBufferFilter::setup() {
 	enableKeyEvents();
 }
 
-void VoxelBufferFilter::update() {
+void VoxelBufferFilter::update() 
+{
 	if (numCaptureFrames != volumeSize[2] && !isMouseDown()) {
 		resizeVolume(videoSize.x, videoSize.y, numCaptureFrames);
 		captureProgressSlider->max = numCaptureFrames;
@@ -47,8 +52,10 @@ void VoxelBufferFilter::update() {
 		frameOffsetBytes = 0;
 	}
 
-	if (settings.do_capture) {
-		if (capturedFrames < numCaptureFrames) {
+	if (settings.do_capture)
+	{
+		if (capturedFrames < numCaptureFrames)
+	{
 			char* latestFrame = input.getCvImage()->imageData;
 
 			frameOffsetBytes = volumeSize[0]*volumeSize[1]*capturedFrames;
@@ -59,7 +66,8 @@ void VoxelBufferFilter::update() {
 //			frameOffsetBytes += videoSize.x*videoSize.y;
 			capturedFrames++;
 		}
-		if (capturedFrames >= numCaptureFrames) {
+		if (capturedFrames >= numCaptureFrames)
+	{
 			settings.do_capture = false;
 			// Update the GPU's copy
 			rayTracer->updateVolume(clScheduler->context, h_volume, volumeSize[0], volumeSize[1], volumeSize[2]);
@@ -70,14 +78,16 @@ void VoxelBufferFilter::update() {
 	}
 }
 
-void VoxelBufferFilter::destroy() {
+void VoxelBufferFilter::destroy() 
+{
 	free(h_volume);
 
 	printf("VoxelBufferFilter::destroy()\n");
 }
 
 //--------------------------------------------------------------
-void VoxelBufferFilter::resizeVolume(int width, int height, int depth) {
+void VoxelBufferFilter::resizeVolume(int width, int height, int depth) 
+{
 	// Case 1: same size
 	if (width == volumeSize[0] && height == volumeSize[1] && depth == volumeSize[2]) {
 		//		break;
@@ -87,7 +97,8 @@ void VoxelBufferFilter::resizeVolume(int width, int height, int depth) {
 		free(h_volume + (volumeSize[0]*volumeSize[1]*depth));
 		
 		// Case 3: free and reallocate entire volume
-	} else {
+	}
+	else {
 		free(h_volume);
 		h_volume = (unsigned char*)malloc(width*height*depth);
 	}
@@ -99,8 +110,10 @@ void VoxelBufferFilter::resizeVolume(int width, int height, int depth) {
 	// Extremely unlikely Case 4: same memory requirements (ie width+, height-)
 }
 
-void VoxelBufferFilter::keyPressed(int key) {
-    switch(key) {
+void VoxelBufferFilter::keyPressed(int key) 
+{
+    switch(key)
+	{
 		case ' ':
 			settings.do_capture = !settings.do_capture;
 			break;

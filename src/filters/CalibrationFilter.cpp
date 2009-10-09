@@ -2,16 +2,19 @@
 
 #include "CalibrationFilter.h"
 
-CalibrationFilter::CalibrationFilter() {
+CalibrationFilter::CalibrationFilter()
+{
 	if (verbose) printf("CalibrationFilter::CalibrationFilter()\n");
 }
 
-CalibrationFilter::~CalibrationFilter() {
+CalibrationFilter::~CalibrationFilter()
+{
 	if (verbose) printf("CalibrationFilter::~CalibrationFilter()\n");
 	destroy();
 }
 
-void CalibrationFilter::setup() {
+void CalibrationFilter::setup() 
+{
 	ColorFilter::setup();
 
 	grayInput.allocate(videoSize.x, videoSize.y);
@@ -31,11 +34,14 @@ void CalibrationFilter::setup() {
 }
 
 
-void CalibrationFilter::update() {
-	if (captures.size() > 0) {
+void CalibrationFilter::update() 
+{
+	if (captures.size() > 0)
+	{
 		shownCapture = *(captures[settings.show_capture-1]);
 	}
-	if (settings.capture == true){
+	if (settings.capture == true)
+	{
 		settings.capture = !settings.once;
 		grayInput = input;
 		if (findTarget()) {
@@ -44,14 +50,16 @@ void CalibrationFilter::update() {
 		}
 	}
 	
-	if (settings.calc_undistort == true) {
+	if (settings.calc_undistort == true)
+	{
 		settings.calc_undistort = false;
 		if (captures.size() >= settings.min_captures)
 			calibrateCamera();
 	}
 
 	if (settings.do_undistort == true &&
-		camera.undistMap != NULL) {
+		camera.undistMap != NULL)
+	{
 		cvUnDistort(input.getCvImage(),
 					output.getCvImage(),
 					camera.undistMap,
@@ -59,7 +67,8 @@ void CalibrationFilter::update() {
 	}
 }
 
-bool CalibrationFilter::findTarget() {
+bool CalibrationFilter::findTarget() 
+{
 	int numExpectedPoints = chessBoardCalibObject.numPoints;
 
 	CvPoint2D32f* points = new CvPoint2D32f[numExpectedPoints];
@@ -75,7 +84,8 @@ bool CalibrationFilter::findTarget() {
 											   CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
 #endif
 	
-	if (found_target) {
+	if (found_target)
+	{
 		cvFindCornerSubPix(grayInput.getCvImage(),
 						   points,
 						   numFoundPoints,
@@ -99,7 +109,8 @@ bool CalibrationFilter::findTarget() {
 	return found_target;
 }
 
-bool CalibrationFilter::calibrateCamera() {
+bool CalibrationFilter::calibrateCamera() 
+{
 	int numImages = captures.size();
 //	int numExpectedPoints = targetCorners.nx*targetCorners.ny;
 	
@@ -123,7 +134,8 @@ bool CalibrationFilter::calibrateCamera() {
 	CvVect32f translation_vectors = NULL;
 	CvMatr32f rotation_matrices = NULL;
 	
-	if (settings.calc_obj_pos) {
+	if (settings.calc_obj_pos)
+	{
 		translation_vectors = new float[3*numImages];
 		rotation_matrices = new float[9*numImages];
 	}
@@ -142,12 +154,14 @@ bool CalibrationFilter::calibrateCamera() {
 	delete screenPoints;
 	delete worldPoints;
 	
-	if (settings.calc_obj_pos) {
+	if (settings.calc_obj_pos)
+	{
 		delete translation_vectors;
 		delete rotation_matrices;
 	}
 	
-	if (settings.do_interpolate != camera.was_interpolated) {
+	if (settings.do_interpolate != camera.was_interpolated)
+	{
 		delete camera.undistMap;
 
 		int mult = settings.do_interpolate? 3 : 1;
@@ -163,7 +177,8 @@ bool CalibrationFilter::calibrateCamera() {
 	camera.was_interpolated = settings.do_interpolate;
 }
 
-void CalibrationFilter::destroy() {
+void CalibrationFilter::destroy() 
+{
 	grayInput.clear();
 	tempImage.clear();
 	

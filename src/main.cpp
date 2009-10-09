@@ -9,9 +9,11 @@
 #endif
 
 testApp *myApp;
-int main( ){
+int main( )
+{
 	ofSetDataPathRoot("../Resources/");
-	ofSetupOpenGL(1280, 720, OF_FULLSCREEN);			// <-------- setup the GL context
+//	ofSetupOpenGL(1280, 720, OF_FULLSCREEN);			// <-------- setup the GL context
+	ofSetupOpenGL(1280, 720, OF_WINDOW);
 	myApp = new testApp;
 
 #ifdef MANUAL_PROFILE

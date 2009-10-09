@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class SobelFilter : public ColorFilter  {
+class SobelFilter : public ColorFilter  
+{
 public:
 	SobelFilter();
 	virtual ~SobelFilter();

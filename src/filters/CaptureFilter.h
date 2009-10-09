@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class CaptureFilter : public ColorFilter  {
+class CaptureFilter : public ColorFilter  
+{
 public:
 	CaptureFilter();
 	virtual ~CaptureFilter();

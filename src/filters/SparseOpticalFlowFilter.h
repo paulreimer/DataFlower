@@ -5,7 +5,8 @@
 #define MAX_CORNERS 500
 
 
-class SparseOpticalFlowFilter : public GrayscaleFilter  {
+class SparseOpticalFlowFilter : public GrayscaleFilter  
+{
 public:
 	SparseOpticalFlowFilter();
 	virtual ~SparseOpticalFlowFilter();

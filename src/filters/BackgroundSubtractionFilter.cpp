@@ -3,16 +3,19 @@
 #include "BackgroundSubtractionFilter.h"
 
 
-BackgroundSubtractionFilter::BackgroundSubtractionFilter() {
+BackgroundSubtractionFilter::BackgroundSubtractionFilter()
+{
 	if (verbose) printf("BackgroundSubtractionFilter::BackgroundSubtractionFilter()\n");
 }
 
-BackgroundSubtractionFilter::~BackgroundSubtractionFilter() {
+BackgroundSubtractionFilter::~BackgroundSubtractionFilter()
+{
 	if (verbose) printf("BackgroundSubtractionFilter::~BackgroundSubtractionFilter()\n");
 	destroy();
 }
 
-void BackgroundSubtractionFilter::setup() {
+void BackgroundSubtractionFilter::setup() 
+{
 	ColorFilter::setup();
 
     inputCapture.allocate(videoSize.x, videoSize.y);
@@ -36,7 +39,8 @@ void BackgroundSubtractionFilter::setup() {
 	addSlider("Threshold", settings.threshold, 0, 255);
 }
 
-void BackgroundSubtractionFilter::update() {
+void BackgroundSubtractionFilter::update() 
+{
 	fgMask = input;
 
 	fgMask.absDiff(fgMask, grayCapture);
@@ -48,14 +52,16 @@ void BackgroundSubtractionFilter::update() {
 	output.set(0);
 	cvCopy(input.getCvImage(), output.getCvImage(), fgMask.getCvImage());
 	
-	if (settings.capture == true){
+	if (settings.capture == true)
+	{
 		settings.capture = false;
 		inputCapture = input;
 		grayCapture = inputCapture;
 	}
 }
 
-void BackgroundSubtractionFilter::destroy() {
+void BackgroundSubtractionFilter::destroy() 
+{
 	inputCapture.clear();
 	grayCapture.clear();
 	fgMask.clear();

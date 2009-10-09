@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class SimpleThresholdingFilter : public GrayscaleFilter  {
+class SimpleThresholdingFilter : public GrayscaleFilter  
+{
 public:
 	SimpleThresholdingFilter();
 	virtual ~SimpleThresholdingFilter();

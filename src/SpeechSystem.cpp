@@ -2,7 +2,8 @@
 
 #include "SpeechSystem.h"
 
-SpeechSystem::SpeechSystem() {
+SpeechSystem::SpeechSystem()
+{
 	verbose = SYSTEM_VERBOSE;
 	if (verbose) printf("SpeechSystem::SpeechSystem()\n");
 	jconf_filename = ofToDataPath("julian.jconf");
@@ -15,12 +16,14 @@ SpeechSystem::SpeechSystem() {
 	detected.sentences = "<<< none >>>";
 }
 
-SpeechSystem::~SpeechSystem() {
+SpeechSystem::~SpeechSystem()
+{
 	if (verbose) printf("SpeechSystem::~SpeechSystem()\n");
 	destroy();
 }
 
-void SpeechSystem::setup() {
+void SpeechSystem::setup() 
+{
 	// ewwww
 	jconf = j_config_load_file_new(const_cast<char*>(jconf_filename.c_str()));
 	
@@ -28,7 +31,8 @@ void SpeechSystem::setup() {
 	/* it loads models, setup final parameters, build lexicon
      and set up work area for recognition */
 	recog = j_create_instance_from_jconf(jconf);
-	if (recog == NULL) {
+	if (recog == NULL)
+	{
 		fprintf(stderr, "Error in startup\n");
 		return;
 	}
@@ -74,7 +78,8 @@ void SpeechSystem::setup() {
 	startThread(true, false); // blocking, verbose
 }
 
-void SpeechSystem::threadedFunction() {
+void SpeechSystem::threadedFunction() 
+{
 	/**********************/
 	/* Recognization Loop */
 	/**********************/
@@ -85,7 +90,8 @@ void SpeechSystem::threadedFunction() {
 	if (verbose) printf("SpeechSystem::threadedFunction()\n");
 }
 
-void SpeechSystem::destroy() {
+void SpeechSystem::destroy() 
+{
 	if (verbose) printf("SpeechSystem::destroy()\n");
 	/* calling j_close_stream(recog) at any time will terminate
      recognition and exit j_recognize_stream() */
@@ -98,8 +104,10 @@ void SpeechSystem::destroy() {
  * Callback to be called when start waiting speech input. 
  * 
  */
-static void recready(Recog *recog, void *speech_sys) {
-	if (recog->jconf->input.speech_input == SP_MIC || recog->jconf->input.speech_input == SP_NETAUDIO) {
+static void recready(Recog *recog, void *speech_sys) 
+{
+	if (recog->jconf->input.speech_input == SP_MIC || recog->jconf->input.speech_input == SP_NETAUDIO)
+	{
 		fprintf(stderr, "<<< please speak >>>\n");
 	}
 }
@@ -109,7 +117,8 @@ static void recready(Recog *recog, void *speech_sys) {
  * 
  */
 static void recstart(Recog *recog, void *speech_sys) {	
-	if (recog->jconf->input.speech_input == SP_MIC || recog->jconf->input.speech_input == SP_NETAUDIO) {
+	if (recog->jconf->input.speech_input == SP_MIC || recog->jconf->input.speech_input == SP_NETAUDIO)
+	{
 		fprintf(stderr, "\n<<< listening >>>\n\n");
 	}
 }
@@ -118,12 +127,14 @@ static void recstart(Recog *recog, void *speech_sys) {
  * Sub function to output phoneme sequence.
  * 
  */
-void put_hypo_phoneme(WORD_ID *seq, int n, WORD_INFO *winfo) {
+void put_hypo_phoneme(WORD_ID *seq, int n, WORD_INFO *winfo) 
+{
 	int i,j;
 	WORD_ID w;
 	static char buf[MAX_HMMNAME_LEN];
 	
-	if (seq != NULL) {
+	if (seq != NULL)
+	{
 		for (i=0;i<n;i++) {
 			if (i > 0) printf(" |");
 			w = seq[i];
@@ -140,7 +151,8 @@ void put_hypo_phoneme(WORD_ID *seq, int n, WORD_INFO *winfo) {
  * This function will be called just after recognition of an input ends
  * 
  */
-static void recdone(Recog *recog, void *speech_sys) {
+static void recdone(Recog *recog, void *speech_sys) 
+{
 	int i, j;
 	int len;
 	WORD_INFO *winfo;
@@ -155,7 +167,8 @@ static void recdone(Recog *recog, void *speech_sys) {
 	/*	all recognition results are stored at each recognition process
 	 instance
 	 */
-	for(r=recog->process_list;r;r=r->next) {
+	for(r=recog->process_list;r;r=r->next)
+	{
 		
 		/* skip the process if the process is not alive */
 		if (! r->live) continue;
@@ -163,7 +176,8 @@ static void recdone(Recog *recog, void *speech_sys) {
 		/* result are in r->result.	See recog.h for details */
 		
 		/* check result status */
-		if (r->result.status < 0) {
+		if (r->result.status < 0)
+	{
 			/* no results obtained */
 			debug_julius_result(r);
 			/* continue to next process instance */
@@ -198,9 +212,11 @@ static void recdone(Recog *recog, void *speech_sys) {
 	fflush(stdout);
 }
 
-void debug_julius_result(RecogProcess *r) {
+void debug_julius_result(RecogProcess *r) 
+{
 	/* outout message according to the status code */
-	switch(r->result.status) {
+	switch(r->result.status)
+	{
 		case J_RESULT_STATUS_REJECT_POWER:
 			printf("<input rejected by power>\n");
 			break;

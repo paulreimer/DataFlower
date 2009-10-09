@@ -33,10 +33,12 @@
 
 #include "ofMain.h"
 
-class msaColor : public ofColor{
+class msaColor : public ofColor
+{
 public:
 	
-	void set(float r, float g, float b, float a = 1) {
+	void set(float r, float g, float b, float a = 1)
+	{
 		this->r = r;
 		this->g = g;
 		this->b = b;
@@ -47,7 +49,8 @@ public:
 		glColor4f(r, g, b, a);
 	}
 	
-	void setClamp(float r, float g, float b, float a = 1) {
+	void setClamp(float r, float g, float b, float a = 1)
+	{
 		set(r, g, b, a);
 		clamp();
 	}
@@ -70,7 +73,8 @@ public:
 	
 	
 	// H [0..360], S and V [0..1]
-	void setHSV(float h, float s, float v, float a = 1) {
+	void setHSV(float h, float s, float v, float a = 1)
+	{
 		h = int(h) % 360;
 		int i = (int)floor(h/60.0f) % 6;
 		float f = h/60.0f - floor(h/60.0f);
@@ -90,7 +94,8 @@ public:
 	
 	// assumes RGB is normalized [0..1]
 	// returns H [0..360], S and V [0..1]
-	void getHSV(ofPoint& outHSV) {
+	void getHSV(ofPoint& outHSV)
+	{
 		float h, s, v;
 		float y, r1,g1,b1;
 		
@@ -102,7 +107,8 @@ public:
 		if (y>b) y=b;
 		if (v != 0) s = (v-y)/v;
 		else s = 0;
-		if (s == 0) {
+		if (s == 0)
+	{
 			h = 0;
 			s = 0;
 			v = (int)(v*100);
@@ -110,11 +116,13 @@ public:
 		r1 = (v-r)/(v-y);
 		g1 = (v-g)/(v-y);
 		b1 = (v-b)/(v-y);
-		if (r == v){
+		if (r == v)
+	{
 			if (g == y) h = 5.+b1;
 			else h = 1.-g1;
 		}
-		else if (g == v){
+		else if (g == v)
+	{
 			if (b == y) h = r1+1.;
 			else h = 3.-b1;
 		}
@@ -133,7 +141,8 @@ public:
 		set(r, g, b, a);
     }
 	
-    msaColor( const msaColor & col){
+    msaColor( const msaColor & col)
+	{
 		set(col.r, col.g, col.b, col.a);
     }
 	
@@ -226,7 +235,8 @@ public:
     }
 	
     msaColor operator/( const float &val ) const {
-		if( val != 0){
+		if( val != 0)
+	{
 			return msaColor( r/val, g/val, b/val, a/val );
 		}
         return msaColor(r, g, b, a);

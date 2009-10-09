@@ -3,12 +3,15 @@
 #pragma mark App callbacks
 
 //--------------------------------------------------------------
-void testApp::setup() {
+void testApp::setup() 
+{
 	// initialize stuff according to current window size
+/*
 	glutReshapeWindow(1152, 864);
 	glutPositionWindow(-1152,0);
 	glutFullScreen();
-	
+*/
+
 	windowResized(ofGetWidth(), ofGetHeight());
 
 	ofBackground(0, 0, 0);
@@ -41,7 +44,7 @@ void testApp::setup() {
 #ifdef USE_VIDEO
 	videoSystem.gui = &guiSystem.gui.addPage("Video Inputs");
 	
-	videoSystem.grabSizes.resize(3, ofPoint(VIDEO_SIZE));
+	videoSystem.grabSizes.resize(2, ofPoint(VIDEO_SIZE));
 	
 	videoSystem.enableAppEvents();
 #endif
@@ -61,23 +64,16 @@ void testApp::setup() {
 #endif
 
 #ifdef USE_TUI
-	tuiSystem.toggleDraw();
+//	tuiSystem.toggleDraw();
 	tuiSystem.enableAppEvents();
 	
-	ofAddListener(tuiSystem.fiducialFound, this, &testApp::fiducialFound);
-	ofAddListener(tuiSystem.fiducialLost, this, &testApp::fiducialLost);
-	ofAddListener(tuiSystem.fiducialUpdated, this, &testApp::fiducialUpdated);
-	
-#ifdef USE_GUI
-	fid_gui_conf.sliderHeight		= 10;
-	fid_gui_conf.sliderTextHeight	= 12;
+	ofAddListener(tuiSystem.fiducialFoundEvt,	&videoSystem,	&VideoSystem::fiducialFound);
+	ofAddListener(tuiSystem.fiducialLostEvt,	&videoSystem,	&VideoSystem::fiducialLost);
+	ofAddListener(tuiSystem.fiducialUpdatedEvt,	&videoSystem,	&VideoSystem::fiducialUpdated);
 
-	fid_gui_conf.fontSize			= 8;
-	fid_gui_conf.fontOffset.set		(0, fid_gui_conf.fontSize-1);
-	
-	fid_gui_conf.setup();
-#endif
-
+	ofAddListener(tuiSystem.fiducialRayIntersectionFoundEvt,	&videoSystem,	&VideoSystem::fiducialRayIntersectionFound);
+	ofAddListener(tuiSystem.fiducialRayIntersectionLostEvt,		&videoSystem,	&VideoSystem::fiducialRayIntersectionLost);
+	ofAddListener(tuiSystem.fiducialRayIntersectionUpdatedEvt,	&videoSystem,	&VideoSystem::fiducialRayIntersectionUpdated);
 #endif
 	
 #ifdef USE_SPEECH_TO_TEXT
@@ -94,51 +90,23 @@ void testApp::setup() {
 	
 #ifdef USE_GUI
 	guiSystem.enableAppEvents();
-/*	
-	mx = my = 1.0;
-	bx = by = 0;
-	guiSystem.gui.addSlider("mx", &mx, 0.8, 1.2, 0.0);
-	guiSystem.gui.addSlider("my", &my, 0.8, 1.2, 0.0);
-	guiSystem.gui.addSlider("bx", &bx, -40, 40);
-	guiSystem.gui.addSlider("by", &by, -40, 40);
-*/
 #endif
 }
 
-// TODO: these don't belong here
-bool null_fiducial_id (ofxFiducial& l) {
-	return (l.getId()==NULL_FIDUCIAL_ID);
-}
-
-bool null_fid_obj_id (pair<ofxFiducial*,FiducialBackedObject*> l) {
-	return (l.first->getId()==NULL_FIDUCIAL_ID);
-}
-
-bool null_fid_filter (pair<ofxFiducial*,FiducialBackedObject*> l) {
-	return null_fid_obj_id(l) && (l.second->type()==FIDUCIAL_FILTER_TYPE);
-}
-
-bool null_fid_pipeline (pair<ofxFiducial*,FiducialBackedObject*> l) {
-	return null_fid_obj_id(l) && (l.second->type()==FIDUCIAL_PIPELINE_TYPE);
-}
-
-struct fiducial_id_asc {
-	bool operator() (const ofxFiducial* & l, const ofxFiducial* & r) const {
-		// TODO: stupid const casts
-		return (const_cast<ofxFiducial* &>(l)->getId() < const_cast<ofxFiducial* &>(r)->getId());
-	}
-};
-
 //--------------------------------------------------------------
-void testApp::update(){
+void testApp::update()
+{
 	// save old mouse position (openFrameworks doesn't do this automatically like processing does)
 	pmouseX = mouseX;
 	pmouseY = mouseY;
 
+	/*
 #ifdef USE_TUI
+	
 	fid_objs_table* fid_objs = &tuiSystem.fid_objs;
 
-	if (fid_objs->size() > 0) {
+	if (fid_objs->size() > 0)
+	{
 	 	map<ofxFiducial*, bool> marked_fiducials;
 
 		fid_objs_lookup pipelines_lookup = fid_objs->find(FIDUCIAL_PIPELINE_TYPE);
@@ -151,8 +119,8 @@ void testApp::update(){
 			fid_obj_lookup pipeline_obj, pipeline_1st_stage;
 			fid_obj_lookup filter_obj, chk_filter_obj;//, pipelines;
 			
-			VideoPipeline *pipeline;
-			VideoFilter *filter, *chk_filter, *hit_filter;
+			VideoPipelinePtr pipeline;
+			VideoFilterPtr filter, chk_filter, hit_filter;
 
 			ofxFiducial *fiducial, *chk_fiducial, *hit_fiducial;
 			
@@ -168,21 +136,29 @@ void testApp::update(){
 			for(pipeline_obj = pipelines.begin(); pipeline_obj != pipelines.end(); pipeline_obj++) {
 
 				fiducial = pipeline_obj->first;
+#ifdef USE_SMART_POINTERS
+				pipeline = pipeline_obj->second->cast<VideoPipeline>();
+#else
 				pipeline = dynamic_cast<VideoPipeline*>(pipeline_obj->second);
+#endif
 				pipeline->truncate();
 				
 				pipeline_1st_stage = filters.find(pipeline->fiducial);
 				if (pipeline_1st_stage == filters.end())
 					continue;
 				
-				filter = dynamic_cast<VideoFilter*>((*pipeline_1st_stage).second);
+#ifdef USE_SMART_POINTERS
+				filter = pipeline_1st_stage->second->cast<VideoFilter>();
+#else
+				filter = dynamic_cast<VideoFilter*>(pipeline_1st_stage->second);
+#endif
 				pipeline->addFilter(filter);
 
 				angle = filter->angle;
-
-				ref = filter->mid_point();
-				
 				origin = filter->output_point();
+
+				ref = filter->origin();
+
 				endpoint.set(origin.x + window.width + window.height, origin.y);
 				endpoint.rotateRad(angle, ref);
 
@@ -198,22 +174,20 @@ void testApp::update(){
 						bPipelineFirstStage = false;
 					else {
 						fiducial = filter_obj->first;
+#ifdef USE_SMART_POINTERS
+						filter = filter_obj->second->cast<VideoFilter>();
+#else
 						filter = dynamic_cast<VideoFilter*>(filter_obj->second);
-					}
-
-					// Don't check any fiducial already assigned to a pipeline
-					if (marked_fiducials.find(fiducial) != marked_fiducials.end()) {
-						filter_obj++;
-						continue;
+#endif
 					}
 
 					// Setup this candidate fiducial as the ray source
 					angle = filter->angle;
 
-					ref = filter->mid_point();
-
 					origin = filter->output_point();
-//					origin.rotateRad(angle, ref);
+
+					ref = filter->origin();
+
 					endpoint.set(origin.x + window.width + window.height, origin.y);
 					endpoint.rotateRad(angle, ref);
 
@@ -229,19 +203,14 @@ void testApp::update(){
 					for (chk_filter_obj = filters.begin(); chk_filter_obj != filters.end(); chk_filter_obj++) {
 						// Don't check initial pipeline stages, ourselves, or any pre-assigned fiducials
 						chk_fiducial = chk_filter_obj->first;
+#ifdef USE_SMART_POINTERS
+						chk_filter = chk_filter_obj->second->cast<VideoFilter>();
+#else
 						chk_filter = dynamic_cast<VideoFilter*>(chk_filter_obj->second);
-/*
-						printf("Fiducial %d (from %d) is: ", chk_fiducial->getId(), fiducial->getId());
-						if (null_fiducial_id(*chk_fiducial))
-							printf("null\n");
-						if (chk_fiducial == fiducial)
-							printf("a dupe\n");
-						if (marked_fiducials.find(chk_fiducial) != marked_fiducials.end())
-							printf("marked\n");
-*/						
-						if (null_fiducial_id(*chk_fiducial)
-							|| chk_fiducial == fiducial
-							|| marked_fiducials.find(chk_fiducial) != marked_fiducials.end()) continue;
+#endif
+
+						if (null_fiducial_id(*chk_fiducial) || chk_fiducial == fiducial)
+							continue;
 
 						box_origin.set(chk_filter->x, chk_filter->y);
 						box_angle = chk_filter->angle;
@@ -250,9 +219,11 @@ void testApp::update(){
 											   box_origin, box_angle,
 											   chk_filter->width, chk_filter->height);
 						
-						if (hit_point.x >= 0 && hit_point.y >= 0) {
+						if (hit_point.x >= 0 && hit_point.y >= 0)
+	{
 							dist = origin.distance(hit_point);
-							if (dist < min_dist) {
+							if (dist < min_dist)
+	{
 								min_dist = dist;
 								first_hit_point = hit_point;
 
@@ -266,27 +237,29 @@ void testApp::update(){
 						}
 					}
 					
-					if (hit_fiducial != NULL) {
+					if (hit_fiducial != NULL)
+	{
 						pipeline->addFilter(hit_filter);
-
-						marked_fiducials[fiducial] = true;
 					} else
 						filter_obj++;
 				}
 				
-				pipeline->setHitPoint(edge_hit_point);
+				pipeline->setEdgeHitPoint(edge_hit_point);
 			}
 		}
 	}
 #endif
+	*/
 }
 
 //--------------------------------------------------------------
-void testApp::draw() {
+void testApp::draw() 
+{
 /*
 	fid_objs_table* fid_objs = &tuiSystem.fid_objs;
 
-	if (fid_objs->size() > 0) {
+	if (fid_objs->size() > 0)
+	{
 		fid_objs_lookup filters_lookup = fid_objs->find(FIDUCIAL_FILTER_TYPE);
 		fid_obj_table& filters = filters_lookup->second;
 
@@ -294,7 +267,7 @@ void testApp::draw() {
 
 		ofxPoint2f corners[BOX_CORNERS];
 
-		VideoFilter *filter;
+		VideoFilterPtr filter;
 		ofxFiducial *fiducial;
 
 		ofxPoint2f box_origin;
@@ -338,7 +311,8 @@ void testApp::draw() {
 */
 }
 
-void testApp::windowResized(int w, int h) {
+void testApp::windowResized(int w, int h) 
+{
 	printf("TEST windowResized(%i, %i)\n", w, h);
 	window.width		= w;
 	window.height		= h;
@@ -347,15 +321,20 @@ void testApp::windowResized(int w, int h) {
 	window.invHeight	= 1.0f/window.height;
 	window.aspectRatio	= window.width * window.invHeight;
 	window.aspectRatio2 = window.aspectRatio * window.aspectRatio;
+	
+	tuiSystem.x_scale=window.width/tuiSystem.videoSize.x;
+	tuiSystem.y_scale=window.height/tuiSystem.videoSize.y;
 }
 
 
 #pragma mark Input callbacks
 
 //--------------------------------------------------------------
-void testApp::keyPressed(int key){
+void testApp::keyPressed(int key)
+{
 	static int modkey;
-    switch(key) {
+    switch(key)
+	{
 		case 'g':
 #ifdef USE_GUI
 			guiSystem.toggleDraw();
@@ -397,7 +376,8 @@ void testApp::keyPressed(int key){
 	if ('0' <= key && key <= '9') {
 	int v = key-'0'-1;
 /*
-	if (modkey == SHIFT_KEY) {
+	if (modkey == SHIFT_KEY)
+	{
 		list<ofVideoPlayer>::iterator v_player = videoSystem.vidPlayers.find(v);
 		if (v_player != videoSystem.vidPlayers.end())
 			v_player->videoSettings();
@@ -411,118 +391,35 @@ void testApp::keyPressed(int key){
 
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ) {
+void testApp::mouseMoved(int x, int y ) 
+{
 	float mouseNormX = x * window.invWidth;
     float mouseNormY = y * window.invHeight;
     float mouseVelX = (x - pmouseX) * window.invWidth;
     float mouseVelY = (y - pmouseY) * window.invHeight;
 }
 
-void testApp::mouseDragged(int x, int y, int button) {
+void testApp::mouseDragged(int x, int y, int button) 
+{
 	float mouseNormX = x * window.invWidth;
     float mouseNormY = y * window.invHeight;
     float mouseVelX = (x - pmouseX) * window.invWidth;
     float mouseVelY = (y - pmouseY) * window.invHeight;
 }
 
-testApp::~testApp() {
+testApp::~testApp()
+{
 	printf("Goodbye!\n");
 }
 
-ofxPoint2f intersects_window_edge(ofxPoint2f origin, ofxPoint2f endpoint, double angle) {
-	return intersects(origin, endpoint, angle,
-					  ofxPoint2f(0,0), 0.0, ofGetWidth(), ofGetHeight());
-}
+/*
 
-//http://newsgroups.archived.at/comp/graphics.algorithms/200603/12/0603122551.html
-ofxPoint2f intersects(ofxPoint2f origin, ofxPoint2f endpoint, double angle,
-					  ofxPoint2f box_origin, double box_angle, int box_w, int box_h) {
-	
-	ofxPoint2f corners[BOX_CORNERS];
-	corners[0].set(box_origin.x,		box_origin.y);
-	corners[1].set(box_origin.x+box_w,	box_origin.y);
-	corners[2].set(box_origin.x+box_w,	box_origin.y+box_h);
-	corners[3].set(box_origin.x,		box_origin.y+box_h);
-
-	ofxPoint2f ref(box_origin.x + box_w/2, box_origin.y + box_h/2);
-	ofxPoint2f hit_point = endpoint;
-
-	int c, next_c;
-	for (int c=0; c<BOX_CORNERS; c++)
-		corners[c].rotateRad(box_angle, ref);
-	
-	double min_dist = origin.distance(endpoint);
-	double d, la, lb, dist;
-	for (int c=0; c<BOX_CORNERS; c++) {
-		next_c=(c+1)%BOX_CORNERS;
-		ofxPoint2f dp(corners[c].x - origin.x, corners[c].y - origin.y);
-		ofxPoint2f qa(endpoint.x - origin.x, endpoint.y - origin.y);
-		ofxPoint2f qb(corners[next_c].x - corners[c].x, corners[next_c].y - corners[c].y);
-		
-		d  = qa.y * qb.x - qb.y * qa.x;
-		la = (qb.x * dp.y - qb.y * dp.x)/d;
-		lb = (qa.x * dp.y - qa.y * dp.x)/d;
-		
-		if (0 <= la && la <= 1 && 0 <= lb && lb <= 1) {
-			hit_point.set(origin.x + la * qa.x,
-						  origin.y + la * qa.y);
-			dist = origin.distance(hit_point);
-			
-			if (d-(5*DBL_EPSILON) <= dist && dist <= d+(5*DBL_EPSILON))
-				printf("Trust d value");
-
-			if (dist < min_dist) {
-				min_dist = dist;
-				endpoint = hit_point;
-			}
-		}
-	}
-	return endpoint;
-}
-
-ofxPoint2f intersects_window_edge(ofxPoint2f origin, double angle) {
-	int w=ofGetWidth();
-	int h=ofGetHeight();
-	ofxPoint2f endpoint;
-	double slope=tan(angle), wall_y;
-	if (slope >=0) {
-		if (angle < PI) {	// Quadrant 1 [TR]
-			wall_y = slope*(w - origin.x) + origin.y;
-			if (wall_y < h)	// Right!
-				endpoint.set(w, wall_y);
-			else			// Top!
-				endpoint.set(origin.x+(h-origin.y)/slope, h);
-		}
-		else {				// Quadrant 3 [BL]
-			wall_y = -slope*(w-origin.x) + origin.y;
-			if (wall_y > 0)	// Left!
-				endpoint.set(0, wall_y);
-			else			// Bottom!
-				endpoint.set(origin.x + (-origin.y/slope), 0);
-		}
-	} else {
-		if (angle < PI)	{	// Quadrant 2 [TL]
-			wall_y = -slope*(w - origin.x) + origin.y;
-			if (wall_y < h)	// Left!
-				endpoint.set(0, wall_y);
-			else			// Top!
-				endpoint.set(origin.x + origin.y/slope, h);
-		}
-		else {				// Quadrant 4 [BR]
-			wall_y = slope*(w - origin.x) + origin.y;
-			if (wall_y > 0)	// Right!
-				endpoint.set(w, wall_y);
-			else			// Bottom!
-				endpoint.set(origin.x - origin.y/slope, 0);
-		}
-	}
-	return endpoint;
-}
-
-void testApp::fiducialFound(ofxFiducial &fiducial) {
+void testApp::fiducialFound(ofxFiducial &fiducial) 
+{
 //	printf("Found fiducial #%d\n", fiducial.getId());
 	fid_obj_table& filters = tuiSystem.fid_objs[FIDUCIAL_FILTER_TYPE];
 	fid_obj_lookup filter_obj = filters.find(&fiducial);
+
 	if (filter_obj == filters.end()) {
 		VideoFilter* filter = tuiSystem.createFiducialFilter(&fiducial);
 		filter->setConfig(&fid_gui_conf);
@@ -534,14 +431,17 @@ void testApp::fiducialFound(ofxFiducial &fiducial) {
 		filters.insert(make_pair(&fiducial,filter));
 	}
 
-	if (fiducial.getId() == NULL_FIDUCIAL_ID) {
+	if (fiducial.getId() == NULL_FIDUCIAL_ID)
+	{
 		fid_obj_table& pipelines = tuiSystem.fid_objs[FIDUCIAL_PIPELINE_TYPE];
 		fid_obj_lookup pipeline_obj = pipelines.find(&fiducial);
 
 		if (pipeline_obj == pipelines.end()) {
+//			VideoPipelinePtr pipeline = new VideoPipeline();
 			VideoPipeline* pipeline = new VideoPipeline();
 			pipeline->fiducial = &fiducial;
 			videoSystem.addPipeline(pipeline, &(videoSystem.grabImgs.back()));
+
 			pipelines.insert(make_pair(&fiducial,pipeline));
 		}
 	}
@@ -549,85 +449,112 @@ void testApp::fiducialFound(ofxFiducial &fiducial) {
 	fiducial.life += MAX_FIDUCIAL_LIFE;	
 }
 
-void testApp::fiducialLost(ofxFiducial &fiducial) {
+void testApp::fiducialLost(ofxFiducial &fiducial) 
+{
 //	printf("Lost fiducial #%d\n", fiducial.getId());
 	
 	fid_objs_lookup filters_lookup = tuiSystem.fid_objs.find(FIDUCIAL_FILTER_TYPE);
+	VideoFilterPtr filter = NULL;
+	
 	if (filters_lookup != tuiSystem.fid_objs.end()) {
 		fid_obj_table& filters = filters_lookup->second;
 		fid_obj_lookup filter_obj = filters.find(&fiducial);
-		VideoFilter *filter;
-		if (filter_obj != filters.end()) {
-			filter = dynamic_cast<VideoFilter*>(filter_obj->second);
 
+		if (filter_obj != filters.end()) {
+#ifdef USE_SMART_POINTERS
+			filter = filter_obj->second->cast<VideoFilter>();
+#else
+			filter = dynamic_cast<VideoFilter*>(filter_obj->second);
+#endif
+			
 			filter->fiducial = NULL;
 			filter->enabled = false;
-			delete filter;
-			
+			filter->disableAllEvents();
+
 			filters.erase(filter_obj);
 		}
 	}
 
 	fid_objs_lookup pipelines_lookup = tuiSystem.fid_objs.find(FIDUCIAL_PIPELINE_TYPE);
+	VideoPipelinePtr pipeline = NULL;
+	
 	if (pipelines_lookup != tuiSystem.fid_objs.end()) {
 		fid_obj_table& pipelines = pipelines_lookup->second;
 		fid_obj_lookup pipeline_obj = pipelines.find(&fiducial);
-		VideoPipeline *pipeline;
 		if (pipeline_obj != pipelines.end()) {
+#ifdef USE_SMART_POINTERS
+			pipeline = pipeline_obj->second->cast<VideoPipeline>();
+#else
 			pipeline = dynamic_cast<VideoPipeline*>(pipeline_obj->second);
+#endif
 
 			pipeline->fiducial = NULL;
 			pipeline->enabled = false;
+			pipeline->disableAllEvents();
+
 			videoSystem.dropPipeline(pipeline);
-			delete pipeline;
-			
+
 			pipelines.erase(pipeline_obj);
+#ifndef USE_SMART_POINTERS			
+			delete pipeline;
+#endif
+		}
+		
+#ifdef USE_SMART_POINTERS			
+		if (!filter.isNull()) {
+#else
+		if (filter != NULL)
+	{
+#endif
+			for (pipeline_obj=pipelines.begin(); pipeline_obj!=pipelines.end(); pipeline_obj++) {
+#ifdef USE_SMART_POINTERS
+				pipeline = pipeline_obj->second->cast<VideoPipeline>();
+#else
+				pipeline = dynamic_cast<VideoPipeline*>(pipeline_obj->second);
+#endif
+				
+				if (pipeline->dropFilter(filter))
+					break;
+			}
 		}
 	}
+#ifndef USE_SMART_POINTERS
+	if (filter != NULL)
+		delete filter;
+#endif
 }
 
-void testApp::fiducialUpdated(ofxFiducial &fiducial) {
-//	printf("fiducial %d < %4.2f\n", fiducial.getId(), filter->angle);
+void testApp::fiducialUpdated(ofxFiducial &fiducial) 
+{
 	fid_objs_lookup filters_lookup = tuiSystem.fid_objs.find(FIDUCIAL_FILTER_TYPE);
 	
 	if (filters_lookup != tuiSystem.fid_objs.end()) {
 		fid_obj_table& filters = filters_lookup->second;
 		fid_obj_lookup filter_obj = filters.find(&fiducial);
-		ofxPoint2f pos, ref;
 		
 		if (filter_obj != filters.end()) {
-			VideoFilter* filter = dynamic_cast<VideoFilter*>(filter_obj->second);
-
+			VideoFilterPtr filter;
+#ifdef USE_SMART_POINTERS
+			filter = filter_obj->second->cast<VideoFilter>();
+#else
+			filter = dynamic_cast<VideoFilter*>(filter_obj->second);
+#endif
 			float x_scale=window.width/tuiSystem.getVideoSize().x;
 			float y_scale=window.height/tuiSystem.getVideoSize().y;
+			
+			ofxPoint2f fidPos(fiducial.current.xpos*x_scale,
+							  fiducial.current.ypos*y_scale);
 			
 			float angle = fiducial.getAngle();
 			float aspect_ratio = filter->videoSize.y/filter->videoSize.x;
 
-			ref.set(fiducial.current.xpos*x_scale,
-					fiducial.current.ypos*y_scale);
+			ofxPoint2f filterPos(fidPos.x - (filter->width/2),
+								 fidPos.y + (filter->width*aspect_ratio) - 20);
 
-			pos = ref;
-			pos.y += filter->width*aspect_ratio;
-			
-			pos.rotateRad(angle, ref);
+			filterPos.rotateRad(angle, fidPos);
 
-			filter->setMidPoint(pos.x, pos.y, angle);
-
-/*			
-			pos.set(ref.x - filter->width/2,
-					ref.y + filter->width*aspect_ratio);
-			pos.rotateRad(-angle, ref);
-
-			filter->setPos(pos.x, pos.y, angle);
-			filter->setPos((fiducial.current.xpos - 1.4*fiducial.r_size)*x_scale,
-						   (fiducial.current.ypos - 0.6*fiducial.r_size)*y_scale,
-						   angle);
-
-			filter->setPos(fiducial.current.xpos*x_scale,
-						   fiducial.current.ypos*y_scale,
-						   fiducial.getAngle());
-*/
+			filter->setPos(filterPos.x, filterPos.y, angle);
 		}
 	}
 }
+ */

@@ -9,16 +9,19 @@ MORPHING_METHOD_ERODE_DILATE = 3
 #ifdef USE_OPENCV_TRUNK
 #include "AdaptiveSkinFilter.h"
 
-AdaptiveSkinFilter::AdaptiveSkinFilter() : filter(1, CvAdaptiveSkinDetector::MORPHING_METHOD_ERODE_DILATE){
+AdaptiveSkinFilter::AdaptiveSkinFilter() : filter(1, CvAdaptiveSkinDetector::MORPHING_METHOD_ERODE_DILATE)
+{
 	if (verbose) printf("AdaptiveSkinFilter::AdaptiveSkinFilter()\n");
 }
 
-AdaptiveSkinFilter::~AdaptiveSkinFilter() {
+AdaptiveSkinFilter::~AdaptiveSkinFilter()
+{
 	if (verbose) printf("AdaptiveSkinFilter::~AdaptiveSkinFilter()\n");
 	destroy();
 }
 
-void AdaptiveSkinFilter::setup() {
+void AdaptiveSkinFilter::setup() 
+{
 	ColorFilter::setup();
 
 	bgrInput.allocate(videoSize.x, videoSize.y);
@@ -30,7 +33,8 @@ void AdaptiveSkinFilter::setup() {
 			  &settings.morphing_mode, 0, 3);
 }
 
-void AdaptiveSkinFilter::update() {
+void AdaptiveSkinFilter::update() 
+{
 	cvCvtColor(input.getCvImage(), bgrInput.getCvImage(), CV_RGB2BGR);
 	bgrInput.flagImageChanged();
 
@@ -38,7 +42,8 @@ void AdaptiveSkinFilter::update() {
 	output = grayOutput;
 }
 
-void AdaptiveSkinFilter::destroy() {
+void AdaptiveSkinFilter::destroy() 
+{
 	bgrInput.clear();
 	grayOutput.clear();
 

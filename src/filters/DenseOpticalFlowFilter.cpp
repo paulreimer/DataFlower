@@ -2,16 +2,19 @@
 
 #include "DenseOpticalFlowFilter.h"
 
-DenseOpticalFlowFilter::DenseOpticalFlowFilter() {
+DenseOpticalFlowFilter::DenseOpticalFlowFilter()
+{
 	if (verbose) printf("DenseOpticalFlowFilter::DenseOpticalFlowFilter()\n");
 }
 
-DenseOpticalFlowFilter::~DenseOpticalFlowFilter() {
+DenseOpticalFlowFilter::~DenseOpticalFlowFilter()
+{
 	if (verbose) printf("DenseOpticalFlowFilter::~DenseOpticalFlowFilter()\n");
 	destroy();
 }
 
-void DenseOpticalFlowFilter::setup() {
+void DenseOpticalFlowFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	grayInputPrev.allocate(videoSize.x, videoSize.y);
@@ -36,13 +39,14 @@ void DenseOpticalFlowFilter::setup() {
 
 	addSlider("Max Iterations", settings.max_iter, 1, 10);
 	addSlider("Window Size", settings.win_size, 1, 11);
-	addSlider("Pyr. Scale", settings.pyr_scale, 0.0, 1.0, 0.0);
-	addSlider("Pyr. Levels", settings.pyr_levels, 1.0, 10);
-	addSlider("Poly. n", settings.poly_n, 1.0, 20.0, 0.0);
-	addSlider("Poly. sigma", settings.poly_sigma, 0.1, 5.0, 0.0);
+	addSlider("Pyr. Scale", settings.pyr_scale, 0.0, 1.0);
+	addSlider("Pyr. Levels", settings.pyr_levels, 1, 10);
+	addSlider("Poly. n", settings.poly_n, 1.0, 20.0);
+	addSlider("Poly. sigma", settings.poly_sigma, 0.1, 5.0);
 }
 
-void DenseOpticalFlowFilter::update() {
+void DenseOpticalFlowFilter::update() 
+{
 #ifdef USE_OPENCV_TRUNK
 	inputMatPrev = cv::cvarrToMat(grayInputPrev.getCvImage());
 	inputMat = cv::cvarrToMat(input.getCvImage());
@@ -68,7 +72,8 @@ void DenseOpticalFlowFilter::update() {
 #endif
 }
 
-void DenseOpticalFlowFilter::destroy() {
+void DenseOpticalFlowFilter::destroy() 
+{
 	grayInputPrev.clear();
 
 	flowX.clear();

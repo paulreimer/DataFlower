@@ -74,7 +74,7 @@
 		876FD2891005AD6D00E57585 /* libhighgui.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 876FD2831005AD6D00E57585 /* libhighgui.dylib */; };
 		876FD28A1005AD6D00E57585 /* libml.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 876FD2841005AD6D00E57585 /* libml.dylib */; };
 		877FB1541003B56600FDA90C /* VoxelBufferFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 877FB1521003B56600FDA90C /* VoxelBufferFilter.cpp */; };
-		878C9BD91002E2B900E4638A /* RemoteSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 878C9BD51002E2B900E4638A /* RemoteSystem.cpp */; };
+		87895CDC107EAA060005DB9B /* GuiElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87895CDA107EAA060005DB9B /* GuiElements.cpp */; };
 		878C9BDA1002E2B900E4638A /* RenderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 878C9BD71002E2B900E4638A /* RenderSystem.cpp */; };
 		878C9BDF1002E2F100E4638A /* LiBgFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 878C9BDB1002E2F100E4638A /* LiBgFilter.cpp */; };
 		878C9BE01002E2F100E4638A /* ZivkovicBgFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 878C9BDD1002E2F100E4638A /* ZivkovicBgFilter.cpp */; };
@@ -114,6 +114,13 @@
 		87B95B1D103E1009002202AD /* thresholdfilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87B95B0C103E1009002202AD /* thresholdfilter.cpp */; };
 		87B95B1E103E1009002202AD /* ofxCvDtouchMarkers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87B95B10103E1009002202AD /* ofxCvDtouchMarkers.cpp */; };
 		87B95B24103E1CF0002202AD /* MarkerFindingFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87B95B22103E1CF0002202AD /* MarkerFindingFilter.cpp */; };
+		87CB80CD106988740030FFA2 /* DistanceTransformFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87CB80C9106988740030FFA2 /* DistanceTransformFilter.cpp */; };
+		87CB80CE106988740030FFA2 /* MotionHistoryImageFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87CB80CB106988740030FFA2 /* MotionHistoryImageFilter.cpp */; };
+		87CB80D610698D0D0030FFA2 /* ColorspaceConversionFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87CB80D410698D0D0030FFA2 /* ColorspaceConversionFilter.cpp */; };
+		87DD427D107D1034008B53DA /* VideoFilterGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87DD427B107D1034008B53DA /* VideoFilterGraph.cpp */; };
+		87DD439D107D5A60008B53DA /* ofxFiducialBackedGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87DD4399107D5A60008B53DA /* ofxFiducialBackedGui.cpp */; };
+		87DD439E107D5A60008B53DA /* ofxFiducialBackedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87DD439B107D5A60008B53DA /* ofxFiducialBackedObject.cpp */; };
+		87DD44E5107E6593008B53DA /* ofxRemoteControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87DD44E3107E6593008B53DA /* ofxRemoteControl.cpp */; };
 		87EA93FE104068BD00EE4962 /* sequencefilestore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87EA93FA104068BD00EE4962 /* sequencefilestore.cpp */; };
 		87EA93FF104068BD00EE4962 /* ofxCvDtouchStores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87EA93FC104068BD00EE4962 /* ofxCvDtouchStores.cpp */; };
 		87EA940210406ABA00EE4962 /* dtouchmarkers.txt in Resources */ = {isa = PBXBuildFile; fileRef = 87EA940110406ABA00EE4962 /* dtouchmarkers.txt */; };
@@ -394,10 +401,11 @@
 		876FD2921005B72F00E57585 /* DenseOpticalFlowFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DenseOpticalFlowFilter.h; path = src/filters/DenseOpticalFlowFilter.h; sourceTree = SOURCE_ROOT; };
 		876FD2931005B72F00E57585 /* SparseOpticalFlowFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SparseOpticalFlowFilter.cpp; path = src/filters/SparseOpticalFlowFilter.cpp; sourceTree = SOURCE_ROOT; };
 		876FD2941005B72F00E57585 /* SparseOpticalFlowFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparseOpticalFlowFilter.h; path = src/filters/SparseOpticalFlowFilter.h; sourceTree = SOURCE_ROOT; };
+		877F3872106D353D00A19B54 /* ofxSimpleGuiSliderString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxSimpleGuiSliderString.h; path = ../../../addons/ofxSimpleGuiToo/src/Controls/ofxSimpleGuiSliderString.h; sourceTree = SOURCE_ROOT; };
 		877FB1521003B56600FDA90C /* VoxelBufferFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VoxelBufferFilter.cpp; path = src/filters/VoxelBufferFilter.cpp; sourceTree = SOURCE_ROOT; };
 		877FB1531003B56600FDA90C /* VoxelBufferFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoxelBufferFilter.h; path = src/filters/VoxelBufferFilter.h; sourceTree = SOURCE_ROOT; };
-		878C9BD51002E2B900E4638A /* RemoteSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteSystem.cpp; path = src/RemoteSystem.cpp; sourceTree = SOURCE_ROOT; };
-		878C9BD61002E2B900E4638A /* RemoteSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteSystem.h; path = src/RemoteSystem.h; sourceTree = SOURCE_ROOT; };
+		87895CDA107EAA060005DB9B /* GuiElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiElements.cpp; path = src/GuiElements.cpp; sourceTree = SOURCE_ROOT; };
+		87895CDB107EAA060005DB9B /* GuiElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiElements.h; path = src/GuiElements.h; sourceTree = SOURCE_ROOT; };
 		878C9BD71002E2B900E4638A /* RenderSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderSystem.cpp; path = src/RenderSystem.cpp; sourceTree = SOURCE_ROOT; };
 		878C9BD81002E2B900E4638A /* RenderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderSystem.h; path = src/RenderSystem.h; sourceTree = SOURCE_ROOT; };
 		878C9BDB1002E2F100E4638A /* LiBgFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LiBgFilter.cpp; path = src/filters/LiBgFilter.cpp; sourceTree = SOURCE_ROOT; };
@@ -411,7 +419,6 @@
 		878C9BEA1002E30100E4638A /* ofxClKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxClKernel.h; path = ../../../addons/ofxOpenCl/src/ofxClKernel.h; sourceTree = SOURCE_ROOT; };
 		878C9BEB1002E30100E4638A /* ofxClScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxClScheduler.cpp; path = ../../../addons/ofxOpenCl/src/ofxClScheduler.cpp; sourceTree = SOURCE_ROOT; };
 		878C9BEC1002E30100E4638A /* ofxClScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxClScheduler.h; path = ../../../addons/ofxOpenCl/src/ofxClScheduler.h; sourceTree = SOURCE_ROOT; };
-		878C9BF01002E3CB00E4638A /* msaRemoteClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = msaRemoteClient.h; path = src/msaRemoteClient.h; sourceTree = SOURCE_ROOT; };
 		878C9BF11002E3CB00E4638A /* ofxCvRgbaImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxCvRgbaImage.h; path = src/ofxCvRgbaImage.h; sourceTree = SOURCE_ROOT; };
 		878C9BF51002E3DA00E4638A /* sobelFilter.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = sobelFilter.cl; path = src/kernels/sobelFilter.cl; sourceTree = SOURCE_ROOT; };
 		878C9BF61002E3DA00E4638A /* volumeRender.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = volumeRender.cl; path = src/kernels/volumeRender.cl; sourceTree = SOURCE_ROOT; };
@@ -478,6 +485,21 @@
 		87B95B22103E1CF0002202AD /* MarkerFindingFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MarkerFindingFilter.cpp; path = src/filters/MarkerFindingFilter.cpp; sourceTree = SOURCE_ROOT; };
 		87B95B23103E1CF0002202AD /* MarkerFindingFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarkerFindingFilter.h; path = src/filters/MarkerFindingFilter.h; sourceTree = SOURCE_ROOT; };
 		87BB869B1013F7DA00F1E6E8 /* ofxSimpleGuiSliderDouble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxSimpleGuiSliderDouble.h; path = ../../../addons/ofxSimpleGuiToo/src/Controls/ofxSimpleGuiSliderDouble.h; sourceTree = SOURCE_ROOT; };
+		87CB80C9106988740030FFA2 /* DistanceTransformFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DistanceTransformFilter.cpp; path = src/filters/DistanceTransformFilter.cpp; sourceTree = SOURCE_ROOT; };
+		87CB80CA106988740030FFA2 /* DistanceTransformFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DistanceTransformFilter.h; path = src/filters/DistanceTransformFilter.h; sourceTree = SOURCE_ROOT; };
+		87CB80CB106988740030FFA2 /* MotionHistoryImageFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MotionHistoryImageFilter.cpp; path = src/filters/MotionHistoryImageFilter.cpp; sourceTree = SOURCE_ROOT; };
+		87CB80CC106988740030FFA2 /* MotionHistoryImageFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MotionHistoryImageFilter.h; path = src/filters/MotionHistoryImageFilter.h; sourceTree = SOURCE_ROOT; };
+		87CB80D410698D0D0030FFA2 /* ColorspaceConversionFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ColorspaceConversionFilter.cpp; path = src/filters/ColorspaceConversionFilter.cpp; sourceTree = SOURCE_ROOT; };
+		87CB80D510698D0D0030FFA2 /* ColorspaceConversionFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorspaceConversionFilter.h; path = src/filters/ColorspaceConversionFilter.h; sourceTree = SOURCE_ROOT; };
+		87DD427B107D1034008B53DA /* VideoFilterGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoFilterGraph.cpp; path = src/VideoFilterGraph.cpp; sourceTree = SOURCE_ROOT; };
+		87DD427C107D1034008B53DA /* VideoFilterGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoFilterGraph.h; path = src/VideoFilterGraph.h; sourceTree = SOURCE_ROOT; };
+		87DD4399107D5A60008B53DA /* ofxFiducialBackedGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFiducialBackedGui.cpp; path = ../../../addons/ofxFiducialBackedGui/src/ofxFiducialBackedGui.cpp; sourceTree = SOURCE_ROOT; };
+		87DD439A107D5A60008B53DA /* ofxFiducialBackedGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFiducialBackedGui.h; path = ../../../addons/ofxFiducialBackedGui/src/ofxFiducialBackedGui.h; sourceTree = SOURCE_ROOT; };
+		87DD439B107D5A60008B53DA /* ofxFiducialBackedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxFiducialBackedObject.cpp; path = ../../../addons/ofxFiducialBackedGui/src/ofxFiducialBackedObject.cpp; sourceTree = SOURCE_ROOT; };
+		87DD439C107D5A60008B53DA /* ofxFiducialBackedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFiducialBackedObject.h; path = ../../../addons/ofxFiducialBackedGui/src/ofxFiducialBackedObject.h; sourceTree = SOURCE_ROOT; };
+		87DD44E2107E6593008B53DA /* msaRemoteClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = msaRemoteClient.h; path = ../../../addons/ofxRemoteControl/src/msaRemoteClient.h; sourceTree = SOURCE_ROOT; };
+		87DD44E3107E6593008B53DA /* ofxRemoteControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxRemoteControl.cpp; path = ../../../addons/ofxRemoteControl/src/ofxRemoteControl.cpp; sourceTree = SOURCE_ROOT; };
+		87DD44E4107E6593008B53DA /* ofxRemoteControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxRemoteControl.h; path = ../../../addons/ofxRemoteControl/src/ofxRemoteControl.h; sourceTree = SOURCE_ROOT; };
 		87EA93FA104068BD00EE4962 /* sequencefilestore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sequencefilestore.cpp; path = ../../../addons/ofxCvMarkers/src/dtouch/sequencefilestore.cpp; sourceTree = SOURCE_ROOT; };
 		87EA93FB104068BD00EE4962 /* sequencefilestore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sequencefilestore.h; path = ../../../addons/ofxCvMarkers/src/dtouch/sequencefilestore.h; sourceTree = SOURCE_ROOT; };
 		87EA93FC104068BD00EE4962 /* ofxCvDtouchStores.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxCvDtouchStores.cpp; path = ../../../addons/ofxCvMarkers/src/ofxCvDtouchStores.cpp; sourceTree = SOURCE_ROOT; };
@@ -963,6 +985,7 @@
 		873D176D0FAF4C8C009378A2 /* Controls */ = {
 			isa = PBXGroup;
 			children = (
+				877F3872106D353D00A19B54 /* ofxSimpleGuiSliderString.h */,
 				876E2EFE101CE54D004E051F /* ofxSimpleGuiSliderByte.h */,
 				87BB869B1013F7DA00F1E6E8 /* ofxSimpleGuiSliderDouble.h */,
 				873D176E0FAF4C8C009378A2 /* ofxSimpleGuiButton.h */,
@@ -1468,6 +1491,47 @@
 			path = ../../../addons/ofxCvMarkers/src;
 			sourceTree = SOURCE_ROOT;
 		};
+		87DD4397107D5A60008B53DA /* ofxFiducialBackedGui */ = {
+			isa = PBXGroup;
+			children = (
+				87DD4398107D5A60008B53DA /* src */,
+			);
+			name = ofxFiducialBackedGui;
+			path = ../../../addons/ofxFiducialBackedGui;
+			sourceTree = SOURCE_ROOT;
+		};
+		87DD4398107D5A60008B53DA /* src */ = {
+			isa = PBXGroup;
+			children = (
+				87DD4399107D5A60008B53DA /* ofxFiducialBackedGui.cpp */,
+				87DD439A107D5A60008B53DA /* ofxFiducialBackedGui.h */,
+				87DD439B107D5A60008B53DA /* ofxFiducialBackedObject.cpp */,
+				87DD439C107D5A60008B53DA /* ofxFiducialBackedObject.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxFiducialBackedGui/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		87DD44E0107E6593008B53DA /* ofxRemoteControl */ = {
+			isa = PBXGroup;
+			children = (
+				87DD44E1107E6593008B53DA /* src */,
+			);
+			name = ofxRemoteControl;
+			path = ../../../addons/ofxRemoteControl;
+			sourceTree = SOURCE_ROOT;
+		};
+		87DD44E1107E6593008B53DA /* src */ = {
+			isa = PBXGroup;
+			children = (
+				87DD44E2107E6593008B53DA /* msaRemoteClient.h */,
+				87DD44E3107E6593008B53DA /* ofxRemoteControl.cpp */,
+				87DD44E4107E6593008B53DA /* ofxRemoteControl.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxRemoteControl/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		87EA93F9104068BD00EE4962 /* dtouch */ = {
 			isa = PBXGroup;
 			children = (
@@ -1483,6 +1547,12 @@
 		87F8849F0FC138F200983FD4 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				87CB80D410698D0D0030FFA2 /* ColorspaceConversionFilter.cpp */,
+				87CB80D510698D0D0030FFA2 /* ColorspaceConversionFilter.h */,
+				87CB80C9106988740030FFA2 /* DistanceTransformFilter.cpp */,
+				87CB80CA106988740030FFA2 /* DistanceTransformFilter.h */,
+				87CB80CB106988740030FFA2 /* MotionHistoryImageFilter.cpp */,
+				87CB80CC106988740030FFA2 /* MotionHistoryImageFilter.h */,
 				87B95B22103E1CF0002202AD /* MarkerFindingFilter.cpp */,
 				87B95B23103E1CF0002202AD /* MarkerFindingFilter.h */,
 				872CC87C103CD761006C5B61 /* GrayscalePassthroughFilter.cpp */,
@@ -1651,6 +1721,8 @@
 		E44665C70F5B3E03005D0BF0 /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				87DD44E0107E6593008B53DA /* ofxRemoteControl */,
+				87DD4397107D5A60008B53DA /* ofxFiducialBackedGui */,
 				87B95AEE103E1009002202AD /* ofxCvMarkers */,
 				878C9BE11002E30100E4638A /* ofxOpenCl */,
 				873F6FF50FD73CF80020C2C3 /* ofxDraggable */,
@@ -2049,13 +2121,14 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				87895CDA107EAA060005DB9B /* GuiElements.cpp */,
+				87895CDB107EAA060005DB9B /* GuiElements.h */,
+				87DD427B107D1034008B53DA /* VideoFilterGraph.cpp */,
+				87DD427C107D1034008B53DA /* VideoFilterGraph.h */,
 				878C9BFB1002E54000E4638A /* CvBSLib */,
 				878C9BF41002E3DA00E4638A /* kernels */,
-				878C9BF01002E3CB00E4638A /* msaRemoteClient.h */,
 				878C9BF11002E3CB00E4638A /* ofxCvRgbaImage.h */,
 				878C9C0A1002FBBE00E4638A /* ofxCvRgbaImage.cpp */,
-				878C9BD51002E2B900E4638A /* RemoteSystem.cpp */,
-				878C9BD61002E2B900E4638A /* RemoteSystem.h */,
 				878C9BD71002E2B900E4638A /* RenderSystem.cpp */,
 				878C9BD81002E2B900E4638A /* RenderSystem.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
@@ -2250,7 +2323,6 @@
 				879019890FE2B3220069C4C7 /* CaptureFilter.cpp in Sources */,
 				8790198C0FE2B32F0069C4C7 /* TemplateMatchingSystem.cpp in Sources */,
 				8748E6340FEACC66002E8CB1 /* SobelFilter.cpp in Sources */,
-				878C9BD91002E2B900E4638A /* RemoteSystem.cpp in Sources */,
 				878C9BDA1002E2B900E4638A /* RenderSystem.cpp in Sources */,
 				878C9BDF1002E2F100E4638A /* LiBgFilter.cpp in Sources */,
 				878C9BE01002E2F100E4638A /* ZivkovicBgFilter.cpp in Sources */,
@@ -2285,6 +2357,14 @@
 				87EA93FE104068BD00EE4962 /* sequencefilestore.cpp in Sources */,
 				87EA93FF104068BD00EE4962 /* ofxCvDtouchStores.cpp in Sources */,
 				87EA943A10406E0C00EE4962 /* binarytree.cpp in Sources */,
+				87CB80CD106988740030FFA2 /* DistanceTransformFilter.cpp in Sources */,
+				87CB80CE106988740030FFA2 /* MotionHistoryImageFilter.cpp in Sources */,
+				87CB80D610698D0D0030FFA2 /* ColorspaceConversionFilter.cpp in Sources */,
+				87DD427D107D1034008B53DA /* VideoFilterGraph.cpp in Sources */,
+				87DD439D107D5A60008B53DA /* ofxFiducialBackedGui.cpp in Sources */,
+				87DD439E107D5A60008B53DA /* ofxFiducialBackedObject.cpp in Sources */,
+				87DD44E5107E6593008B53DA /* ofxRemoteControl.cpp in Sources */,
+				87895CDC107EAA060005DB9B /* GuiElements.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2297,12 +2377,16 @@
 				ARCHS = "$(NATIVE_ARCH)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_OPENMP_SUPPORT = YES;
+				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
+				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
@@ -2313,10 +2397,6 @@
 					/usr/local/include,
 					../../../libs/poco/include,
 				);
-				ICC_LANG_OPENMP = parallel;
-				ICC_OPTLEVEL = speedHLO;
-				ICC_OPT_PARALLEL = YES;
-				ICC_OPT_USE_ARCH_IA32 = SSE41;
 				KEEP_PRIVATE_EXTERNS = YES;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2341,8 +2421,14 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_OPENMP_SUPPORT = YES;
+				GCC_AUTO_VECTORIZATION = YES;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
+				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
@@ -2351,31 +2437,15 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
-					/opt/local/include,
 					../../../libs/poco/include,
 				);
-				ICC_LANG_OPENMP = parallel;
-				ICC_OPTLEVEL = speedHLO;
-				ICC_OPT_PARALLEL = YES;
-				ICC_OPT_USE_ARCH_IA32 = SSE41;
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					/opt/local/lib,
-				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
 					"-lpthread",
 				);
-				OTHER_LDFLAGS = (
-					"-lxapian",
-					"-lz",
-					"-lsent",
-					"-ljulius",
-					"-lcvaux",
-					"-lprofiler",
-					"-ltcmalloc",
-				);
+				OTHER_LDFLAGS = "";
 				SDKROOT = macosx10.6;
 				WARNING_CFLAGS = "-Wno-write-strings";
 			};

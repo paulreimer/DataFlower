@@ -2,16 +2,19 @@
 
 #include "CannyEdgeFilter.h"
 
-CannyEdgeFilter::CannyEdgeFilter() {
+CannyEdgeFilter::CannyEdgeFilter()
+{
 	if (verbose) printf("CannyEdgeFilter::CannyEdgeFilter()\n");
 }
 
-CannyEdgeFilter::~CannyEdgeFilter() {
+CannyEdgeFilter::~CannyEdgeFilter()
+{
 	if (verbose) printf("CannyEdgeFilter::~CannyEdgeFilter()\n");
 	destroy();
 }
 
-void CannyEdgeFilter::setup() {
+void CannyEdgeFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	addContent("Output", output);
@@ -20,12 +23,14 @@ void CannyEdgeFilter::setup() {
 	addSlider("Aperture Size", settings.aperture_size, 0, 10);
 }
 
-void CannyEdgeFilter::update() {
+void CannyEdgeFilter::update() 
+{
 	cvCanny(input.getCvImage(), input.getCvImage(),
 			settings.low_threshold, settings.high_threshold,
 			settings.aperture_size);
 }
 
-void CannyEdgeFilter::destroy() {
+void CannyEdgeFilter::destroy() 
+{
 	if (verbose) printf("CannyEdgeFilter::destroy()\n");
 }

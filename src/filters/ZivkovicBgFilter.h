@@ -7,7 +7,8 @@
 //Z.Zivkovic, F. van der Heijden 
 //Pattern Recognition Letters, vol. 27, no. 7, pages 773-780, 2006.
 
-class ZivkovicBgFilter : public ColorFilter  {
+class ZivkovicBgFilter : public ColorFilter  
+{
 public:
 	ZivkovicBgFilter();
 	virtual ~ZivkovicBgFilter();

@@ -2,16 +2,19 @@
 
 #include "CamShiftTrackingFilter.h"
 
-CamShiftTrackingFilter::CamShiftTrackingFilter() {
+CamShiftTrackingFilter::CamShiftTrackingFilter()
+{
 	if (verbose) printf("CamShiftTrackingFilter::CamShiftTrackingFilter()\n");
 }
 
-CamShiftTrackingFilter::~CamShiftTrackingFilter() {
+CamShiftTrackingFilter::~CamShiftTrackingFilter()
+{
 	if (verbose) printf("CamShiftTrackingFilter::~CamShiftTrackingFilter()\n");
 	destroy();
 }
 
-void CamShiftTrackingFilter::setup() {
+void CamShiftTrackingFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	addContent("Output", output);
@@ -19,10 +22,12 @@ void CamShiftTrackingFilter::setup() {
 	addToggle("Invert", settings.invert);
 }
 
-void CamShiftTrackingFilter::update() {
+void CamShiftTrackingFilter::update() 
+{
 	output.threshold(settings.threshold, settings.invert);
 }
 
-void CamShiftTrackingFilter::destroy() {
+void CamShiftTrackingFilter::destroy() 
+{
 	if (verbose) printf("CamShiftTrackingFilter::destroy()\n");
 }

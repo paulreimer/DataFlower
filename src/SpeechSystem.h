@@ -5,13 +5,15 @@
 #include "ofxMSAInteractiveObject.h"
 #include "ofxDraggable.h"
 
-extern "C" {
+extern "C" 
+{
 	#include <julius/juliuslib.h>
 }
 
 #define JULIUS_DEBUG
 
-class SpeechSystem : public ofxThread, public ofxMSAInteractiveObject {
+class SpeechSystem : public ofxThread, public ofxMSAInteractiveObject 
+{
 public:
 	SpeechSystem();
 	virtual ~SpeechSystem();
@@ -29,10 +31,12 @@ public:
 		float getWidth() { return width; }
 		float getHeight() { return height; }
 		
-		void draw(float x, float y, float w, float h) {
+		void draw(float x, float y, float w, float h)
+	{
 			ofDrawBitmapString(sentences, x, y);
 		}
-		void draw(float x, float y) {
+		void draw(float x, float y)
+	{
 			draw(x, y, width, height);
 		}
 	} detected;

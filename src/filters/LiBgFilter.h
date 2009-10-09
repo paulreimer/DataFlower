@@ -7,7 +7,8 @@
 //Li, Huan, Gu, Tian 2003 9p
 //http://muq.org/~cynbe/bib/foreground-object-detection-from-videos-containing-complex-background.pdf
 
-class LiBgFilter : public ColorFilter  {
+class LiBgFilter : public ColorFilter  
+{
 public:
 	LiBgFilter();
 	virtual ~LiBgFilter();

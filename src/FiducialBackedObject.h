@@ -3,7 +3,8 @@
 #include "ofxMSAInteractiveObject.h"
 #include "ofxFiducial.h"
 
-class FiducialBackedObject : public ofxMSAInteractiveObject {
+class FiducialBackedObject : public ofxMSAInteractiveObject 
+{
 public:
 	FiducialBackedObject();
 	virtual ~FiducialBackedObject();

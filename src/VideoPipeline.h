@@ -8,7 +8,8 @@
 #include "ofxOpenCv.h"
 #include "ofxPoint2f.h"
 
-class VideoPipeline : public FiducialBackedObject {
+class VideoPipeline : public FiducialBackedObject 
+{
 public:
 	VideoPipeline();
 	virtual ~VideoPipeline();
@@ -29,22 +30,32 @@ public:
 	VideoFilter*			filter(string name);
 
 	VideoFilter*			addFilter(VideoFilter *filter);
+	bool					dropFilter(VideoFilter *filter);
 
 	ofxCvColorImage			input;
 
 	ofxCvColorImage			output;
 
 	void setConfig(ofxSimpleGuiConfig *config);
-	void setHitPoint(ofxPoint2f hitPoint);
+	void setEdgeHitPoint(ofxPoint2f edgeHitPoint);
 	void setVideoSize(ofPoint sze);
 
 	int size() { return filters.size(); }
 	void truncate(int newlen=0);
 	
-	ofxPoint2f hitPoint;
 	
+	ofxPoint2f edgeHitPoint;
+
+//	list<lineSegment> rays;
+
 protected:
-	list <VideoFilter*>	filters;
+	list <VideoFilterPtr>	filters;
 
 	ofxSimpleGuiConfig*		config;
 };
+
+#ifdef USE_SMART_POINTERS
+	typedef Poco::SharedPtr<VideoPipeline> VideoPipelinePtr;
+#else
+	typedef VideoPipeline* VideoPipelinePtr;
+#endif

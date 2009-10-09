@@ -2,24 +2,29 @@
 
 #include "PassthroughFilter.h"
 
-PassthroughFilter::PassthroughFilter() {
+PassthroughFilter::PassthroughFilter()
+{
 	if (verbose) printf("PassthroughFilter::PassthroughFilter()\n");
 }
 
-PassthroughFilter::~PassthroughFilter() {
+PassthroughFilter::~PassthroughFilter()
+{
 	if (verbose) printf("PassthroughFilter::~PassthroughFilter()\n");
 	destroy();
 }
 
-void PassthroughFilter::setup() {
+void PassthroughFilter::setup() 
+{
 	ColorFilter::setup();
 	addContent("Output", output);
 }
 
-void PassthroughFilter::update() {
+void PassthroughFilter::update() 
+{
 	output = input;
 }
 
-void PassthroughFilter::destroy() {
+void PassthroughFilter::destroy() 
+{
 	if (verbose) printf("PassthroughFilter::destroy()\n");
 }

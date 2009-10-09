@@ -2,16 +2,19 @@
 
 #include "ThresholdingFilter.h"
 
-ThresholdingFilter::ThresholdingFilter() {
+ThresholdingFilter::ThresholdingFilter()
+{
 	if (verbose) printf("ThresholdingFilter::ThresholdingFilter()\n");
 }
 
-ThresholdingFilter::~ThresholdingFilter() {
+ThresholdingFilter::~ThresholdingFilter()
+{
 	if (verbose) printf("ThresholdingFilter::~ThresholdingFilter()\n");
 	destroy();
 }
 
-void ThresholdingFilter::setup() {
+void ThresholdingFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	addContent("Output", output);
@@ -21,7 +24,8 @@ void ThresholdingFilter::setup() {
 	addToggle("Use Otsu", settings.use_otsu);
 }
 
-void ThresholdingFilter::update() {
+void ThresholdingFilter::update() 
+{
 	int mode = settings.mode;
 	if (settings.use_otsu)
 		mode |= CV_THRESH_OTSU;
@@ -32,6 +36,7 @@ void ThresholdingFilter::update() {
     output.flagImageChanged();
 }
 
-void ThresholdingFilter::destroy() {
+void ThresholdingFilter::destroy() 
+{
 	if (verbose) printf("ThresholdingFilter::destroy()\n");
 }

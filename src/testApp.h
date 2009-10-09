@@ -33,7 +33,7 @@
 #endif
 
 #ifdef USE_REMOTE_CONTROL
-	#include "RemoteSystem.h"
+	#include "ofxRemoteControl.h"
 #endif
 
 #ifdef USE_OPENCL
@@ -43,7 +43,8 @@
 //#include "ofxFiducial.h"
 //#include "VideoPipeline.h"
 
-class testApp : public ofSimpleApp {
+class testApp : public ofSimpleApp 
+{
 public:
 	virtual ~testApp();
 
@@ -57,9 +58,6 @@ public:
 
 #ifdef USE_TUI
 	TuiSystem tuiSystem;
-#ifdef USE_GUI
-	ofxSimpleGuiConfig fid_gui_conf;
-#endif
 #endif
 
 #ifdef USE_VIDEO
@@ -83,9 +81,9 @@ public:
 #endif
 
 #ifdef USE_REMOTE_CONTROL
-	RemoteSystem remoteSystem;
+	ofxRemoteControl remoteSystem;
 #endif
-	
+
 #ifdef USE_OPENCL
 	ofxClScheduler clScheduler;
 #endif
@@ -115,7 +113,8 @@ public:
 	struct AppSettings {
 		float	lerpSpeed;
 	} settings;
-	
+};
+/*
 	void fiducialFound(ofxFiducial &fiducial);
 	void fiducialLost(ofxFiducial &fiducial);
 	void fiducialUpdated(ofxFiducial &fiducial);
@@ -126,3 +125,4 @@ ofxPoint2f intersects(ofxPoint2f origin, ofxPoint2f endpoint, double angle,
 
 ofxPoint2f intersects_window_edge(ofxPoint2f origin, double angle);
 ofxPoint2f intersects_window_edge(ofxPoint2f origin, ofxPoint2f endpoint, double angle);
+*/

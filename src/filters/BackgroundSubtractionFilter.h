@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class BackgroundSubtractionFilter : public ColorFilter  {
+class BackgroundSubtractionFilter : public ColorFilter  
+{
 public:
 	BackgroundSubtractionFilter();
 	virtual ~BackgroundSubtractionFilter();

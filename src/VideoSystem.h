@@ -5,10 +5,12 @@
 
 #include "ofxOpenCv.h"
 #include "VideoPipeline.h"
+#include "VideoFilterGraph.h"
 
 #include "settings.h"
 
-class VideoSystem : public ofxMSAInteractiveObject {
+class VideoSystem : public ofxMSAInteractiveObject 
+{
 public:
 	VideoSystem();
 	virtual ~VideoSystem();
@@ -26,7 +28,10 @@ public:
 //	VideoPipeline			*pipeline(int i);
 
 	VideoPipeline			*addPipeline(VideoPipeline* pipeline, ofxCvColorImage* src = NULL);
-	void					*dropPipeline(VideoPipeline* pipeline);
+	void					dropPipeline(VideoPipeline* pipeline);
+
+	VideoFilterGraph		*addGraph(VideoFilterGraph* graph, ofxCvColorImage* src = NULL);
+	void					dropGraph(VideoFilterGraph* graph);
 
 	std::vector<ofVideoGrabber>	vidGrabbers;
 	std::vector<ofPoint>		grabSizes;
@@ -38,12 +43,26 @@ public:
 
 	bool verbose;
 
-	map <VideoPipeline*, ofxCvColorImage*> pipelines;
+	map <VideoPipelinePtr, ofxCvColorImage*> pipelines;
+	map <VideoFilterGraphPtr, ofxCvColorImage*> graphs;
 	
+	map<fiducialIndex,VideoFilter*> filters;
+
 #ifdef USE_GUI
 	ofxSimpleGuiPage* gui;
 	ofxSimpleGuiConfig gui_config;
 #endif
+
+#ifdef USE_TUI
+	void fiducialFound	(fiducialEvtArgs &args);
+	void fiducialLost	(fiducialEvtArgs &args);
+	void fiducialUpdated(fiducialEvtArgs &args);
+
+	void fiducialRayIntersectionFound(fiducialRayIntersectionEvtArgs &args);
+	void fiducialRayIntersectionLost(fiducialRayIntersectionEvtArgs &args);
+	void fiducialRayIntersectionUpdated(fiducialRayIntersectionEvtArgs &args);
+#endif	
+	
 protected:
 
 };

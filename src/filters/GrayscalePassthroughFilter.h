@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class GrayscalePassthroughFilter : public GrayscaleFilter  {
+class GrayscalePassthroughFilter : public GrayscaleFilter  
+{
 public:
 	GrayscalePassthroughFilter();
 	virtual ~GrayscalePassthroughFilter();

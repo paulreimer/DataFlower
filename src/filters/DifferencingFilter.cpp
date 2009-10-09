@@ -3,16 +3,19 @@
 #include "DifferencingFilter.h"
 
 
-DifferencingFilter::DifferencingFilter() {
+DifferencingFilter::DifferencingFilter()
+{
 	if (verbose) printf("DifferencingFilter::DifferencingFilter()\n");
 }
 
-DifferencingFilter::~DifferencingFilter() {
+DifferencingFilter::~DifferencingFilter()
+{
 	if (verbose) printf("DifferencingFilter::~DifferencingFilter()\n");
 	destroy();
 }
 
-void DifferencingFilter::setup() {
+void DifferencingFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	capture.allocate(videoSize.x, videoSize.y);
@@ -23,16 +26,19 @@ void DifferencingFilter::setup() {
 	addToggle("Hold", settings.once);
 }
 
-void DifferencingFilter::update() {
+void DifferencingFilter::update() 
+{
 	output.absDiff(input, capture);
 
-	if (settings.capture == true){
+	if (settings.capture == true)
+	{
 		settings.capture = !settings.once;
 		capture = input;
 	}
 }
 
-void DifferencingFilter::destroy() {
+void DifferencingFilter::destroy() 
+{
 	capture.clear();
 
 	if (verbose) printf("DifferencingFilter::destroy()\n");

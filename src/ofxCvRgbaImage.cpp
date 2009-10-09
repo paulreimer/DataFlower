@@ -4,25 +4,29 @@
 #include "ofxCvRgbaImage.h"
 
 //--------------------------------------------------------------------------------
-ofxCvRgbaImage::ofxCvRgbaImage() {
+ofxCvRgbaImage::ofxCvRgbaImage()
+{
     init();
 }
 
 //--------------------------------------------------------------------------------
-ofxCvRgbaImage::ofxCvRgbaImage( const ofxCvRgbaImage& _mom ) {
+ofxCvRgbaImage::ofxCvRgbaImage( const ofxCvRgbaImage& _mom )
+{
     init();
     if( _mom.bAllocated ) {
         // cast non-const,  to get read access to the mon::cvImage
         ofxCvRgbaImage& mom = const_cast<ofxCvRgbaImage&>(_mom);
         allocate(mom.width, mom.height);
         cvCopy( mom.getCvImage(), cvImage, 0 );
-    } else {
+    }
+	else {
         ofLog(OF_LOG_NOTICE, "in ofxCvRgbaImage copy constructor, mom not allocated");
     }
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::init() {
+void ofxCvRgbaImage::init() 
+{
     ipldepth = IPL_DEPTH_8U;
     iplchannels = 4;
     gldepth = GL_UNSIGNED_BYTE;
@@ -32,8 +36,10 @@ void ofxCvRgbaImage::init() {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::clear() {
-    if (bAllocated == true && cvGrayscaleImage != NULL){
+void ofxCvRgbaImage::clear() 
+{
+    if (bAllocated == true && cvGrayscaleImage != NULL)
+	{
         cvReleaseImage( &cvGrayscaleImage );
     }
     ofxCvImage::clear();    //call clear in base class
@@ -45,33 +51,38 @@ void ofxCvRgbaImage::clear() {
 // Set Pixel Data
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::set( float value ){
+void ofxCvRgbaImage::set( float value )
+{
     cvSet(cvImage, cvScalar(value, value, value));
     flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::set(int valueR, int valueG, int valueB, int valueA){
+void ofxCvRgbaImage::set(int valueR, int valueG, int valueB, int valueA)
+{
     cvSet(cvImage, cvScalar(valueR, valueG, valueB, valueA));
     flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::operator -= ( float value ) {
+void ofxCvRgbaImage::operator -= ( float value ) 
+{
 	cvSubS( cvImage, cvScalar(value, value, value), cvImageTemp );
 	swapTemp();
     flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::operator += ( float value ) {
+void ofxCvRgbaImage::operator += ( float value ) 
+{
 	cvAddS( cvImage, cvScalar(value, value, value), cvImageTemp );
 	swapTemp();
     flagImageChanged();
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
+void ofxCvRgbaImage::setFromPixels( unsigned char* _pixels, int w, int h ) 
+{
     ofRectangle roi = getROI();
     ofRectangle inputROI = ofRectangle( roi.x, roi.y, w, h);
     ofRectangle iRoi = getIntersectionROI( roi, inputROI );
@@ -88,18 +99,22 @@ void ofxCvRgbaImage::setFromPixels( unsigned char* _pixels, int w, int h ) {
         }
 		cvCvtColor(cvColorImage, cvImage, CV_RGB2RGBA);
         flagImageChanged();
-    } else {
+    }
+	else {
         ofLog(OF_LOG_ERROR, "in setFromPixels, ROI mismatch");
     }
 }
 
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::setAlpha(ofxCvGrayscaleImage& alpha) {
-	if( alpha.width == width && alpha.height == height) {
+void ofxCvRgbaImage::setAlpha(ofxCvGrayscaleImage& alpha) 
+{
+	if( alpha.width == width && alpha.height == height)
+	{
 		cvCvtPlaneToPix(NULL, NULL, NULL, alpha.getCvImage(), cvImage);
         flagImageChanged();
-    } else {
+    }
+	else {
         ofLog(OF_LOG_ERROR, "in setFromPixels, images are different sizes");
     }
 }
@@ -110,7 +125,8 @@ void ofxCvRgbaImage::setAlpha(ofxCvGrayscaleImage& alpha) {
 void ofxCvRgbaImage::setFromGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 												  ofxCvGrayscaleImage& green,
 												  ofxCvGrayscaleImage& blue,
-												  ofxCvGrayscaleImage& alpha){
+												  ofxCvGrayscaleImage& alpha)
+	{
 	if( red.width == width && red.height == height &&
 	   green.width == width && green.height == height &&
 	   blue.width == width && blue.height == height &&
@@ -122,7 +138,8 @@ void ofxCvRgbaImage::setFromGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 						alpha.getCvImage(),
 						cvImage);
 		flagImageChanged();
-	} else {
+	}
+	else {
         ofLog(OF_LOG_ERROR, "in setFromGrayscalePlanarImages, images are different sizes");
 	}
 }
@@ -131,7 +148,8 @@ void ofxCvRgbaImage::setFromGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 //--------------------------------------------------------------------------------
 void ofxCvRgbaImage::setFromGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 												  ofxCvGrayscaleImage& green,
-												  ofxCvGrayscaleImage& blue){
+												  ofxCvGrayscaleImage& blue)
+	{
 	if( red.width == width && red.height == height &&
 	   green.width == width && green.height == height &&
 	   blue.width == width && blue.height == height )
@@ -142,19 +160,22 @@ void ofxCvRgbaImage::setFromGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 						NULL,
 						cvImage);
 		flagImageChanged();
-	} else {
+	}
+	else {
         ofLog(OF_LOG_ERROR, "in setFromGrayscalePlanarImages, images are different sizes");
 	}
 }
 
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::operator = ( unsigned char* _pixels ) {
+void ofxCvRgbaImage::operator = ( unsigned char* _pixels ) 
+{
     setFromPixels( _pixels, width, height );
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
+void ofxCvRgbaImage::operator = ( const ofxCvGrayscaleImage& _mom ) 
+{
     // cast non-const,  no worries, we will reverse any chages
     ofxCvGrayscaleImage& mom = const_cast<ofxCvGrayscaleImage&>(_mom);
 	if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
@@ -162,13 +183,15 @@ void ofxCvRgbaImage::operator = ( const ofxCvGrayscaleImage& _mom ) {
         popROI();       //restore prevoius ROI
         mom.popROI();   //restore prevoius ROI
         flagImageChanged();
-	} else {
+	}
+	else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
 	}
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::operator = ( const ofxCvRgbaImage& _mom ) {
+void ofxCvRgbaImage::operator = ( const ofxCvRgbaImage& _mom ) 
+{
     if(this != &_mom) {  //check for self-assignment
         // cast non-const,  no worries, we will reverse any chages
         ofxCvRgbaImage& mom = const_cast<ofxCvRgbaImage&>(_mom);
@@ -177,29 +200,35 @@ void ofxCvRgbaImage::operator = ( const ofxCvRgbaImage& _mom ) {
             popROI();       //restore prevoius ROI
             mom.popROI();   //restore prevoius ROI
             flagImageChanged();
-        } else {
+        }
+	else {
             ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
         }
-    } else {
+    }
+	else {
         ofLog(OF_LOG_WARNING, "in =, you are assigning a ofxCvRgbaImage to itself");
     }
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::operator = ( const ofxCvColorImage& _mom ) {
+void ofxCvRgbaImage::operator = ( const ofxCvColorImage& _mom ) 
+{
     // cast non-const,  no worries, we will reverse any chages
     ofxCvColorImage& mom = const_cast<ofxCvColorImage&>(_mom);
 
-/*	if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
+/*	if( pushSetBothToTheirIntersectionROI(*this,mom) ) 
+{
 		cvCvtColor(mom.getCvImage(), cvImage, CV_RGB2RGBA);
         popROI();       //restore prevoius ROI
         mom.popROI();   //restore prevoius ROI
         cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
         flagImageChanged();
 */
-	if (true) {
+	if (true)
+	{
 		cvCvtColor(mom.getCvImage(), cvImage, CV_RGB2RGBA);
-	} else {
+	}
+	else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
 	}
 
@@ -207,7 +236,8 @@ void ofxCvRgbaImage::operator = ( const ofxCvColorImage& _mom ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::operator = ( const ofxCvFloatImage& _mom ) {
+void ofxCvRgbaImage::operator = ( const ofxCvFloatImage& _mom ) 
+{
     // cast non-const,  no worries, we will reverse any chages
     ofxCvFloatImage& mom = const_cast<ofxCvFloatImage&>(_mom);
 	if( pushSetBothToTheirIntersectionROI(*this,mom) ) {
@@ -221,13 +251,15 @@ void ofxCvRgbaImage::operator = ( const ofxCvFloatImage& _mom ) {
         mom.popROI();   //restore prevoius ROI
         cvSetImageROI(cvGrayscaleImage, cvRect(roiX,roiY,width,height));
         flagImageChanged();
-	} else {
+	}
+	else {
         ofLog(OF_LOG_ERROR, "in =, ROI mismatch");
 	}
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::operator = ( const IplImage* _mom ) {
+void ofxCvRgbaImage::operator = ( const IplImage* _mom ) 
+{
     ofxCvImage::operator = (_mom);
 }
 
@@ -235,14 +267,18 @@ void ofxCvRgbaImage::operator = ( const IplImage* _mom ) {
 // Get Pixel Data
 
 //--------------------------------------------------------------------------------
-unsigned char* ofxCvRgbaImage::getPixels() {
-    if(bPixelsDirty) {
-        if(pixels == NULL) {
+unsigned char* ofxCvRgbaImage::getPixels() 
+{
+    if(bPixelsDirty)
+	{
+        if(pixels == NULL)
+	{
             // we need pixels, allocate it
             pixels = new unsigned char[width*height*iplchannels];
             pixelsWidth = width;
             pixelsHeight = height;
-        } else if(pixelsWidth != width || pixelsHeight != height) {
+        } else if(pixelsWidth != width || pixelsHeight != height)
+	{
             // ROI changed, reallocate pixels for new size
             delete pixels;
             pixels = new unsigned char[width*height*iplchannels];
@@ -266,7 +302,8 @@ unsigned char* ofxCvRgbaImage::getPixels() {
 void ofxCvRgbaImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 													ofxCvGrayscaleImage& green,
 													ofxCvGrayscaleImage& blue,
-													ofxCvGrayscaleImage& alpha) {
+													ofxCvGrayscaleImage& alpha)
+	{
 	if( red.width == width && red.height == height &&
 	   green.width == width && green.height == height &&
 	   blue.width == width && blue.height == height &&
@@ -277,7 +314,8 @@ void ofxCvRgbaImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 						green.getCvImage(),
 						blue.getCvImage(),
 						alpha.getCvImage());
-	} else {
+	}
+	else {
         ofLog(OF_LOG_ERROR, "in convertToGrayscalePlanarImages, images are different sizes");
 	}
 }
@@ -287,7 +325,8 @@ void ofxCvRgbaImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 //--------------------------------------------------------------------------------
 void ofxCvRgbaImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 													ofxCvGrayscaleImage& green,
-													ofxCvGrayscaleImage& blue) {
+													ofxCvGrayscaleImage& blue)
+	{
 	if( red.width == width && red.height == height &&
 	   green.width == width && green.height == height &&
 	   blue.width == width && blue.height == height )
@@ -297,7 +336,8 @@ void ofxCvRgbaImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 						green.getCvImage(),
 						blue.getCvImage(),
 						NULL);
-	} else {
+	}
+	else {
         ofLog(OF_LOG_ERROR, "in convertToGrayscalePlanarImages, images are different sizes");
 	}
 }
@@ -311,12 +351,14 @@ void ofxCvRgbaImage::convertToGrayscalePlanarImages(ofxCvGrayscaleImage& red,
 // Image Filter Operations
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::contrastStretch() {
+void ofxCvRgbaImage::contrastStretch() 
+{
 	ofLog(OF_LOG_WARNING, "in contrastStratch, not implemented for ofxCvRgbaImage");
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::convertToRange(float min, float max ){
+void ofxCvRgbaImage::convertToRange(float min, float max )
+{
     rangeMap( cvImage, 0,255, min,max);
     flagImageChanged();
 }
@@ -326,7 +368,8 @@ void ofxCvRgbaImage::convertToRange(float min, float max ){
 // Image Transformation Operations
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::resize( int w, int h ) {
+void ofxCvRgbaImage::resize( int w, int h ) 
+{
 	
     // note, one image copy operation could be ommitted by
     // reusing the temporal image storage
@@ -340,7 +383,8 @@ void ofxCvRgbaImage::resize( int w, int h ) {
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
+void ofxCvRgbaImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod )
+{
     //for interpolation you can pass in:
     //CV_INTER_NN - nearest-neigbor interpolation,
     //CV_INTER_LINEAR - bilinear interpolation (used by default)
@@ -362,13 +406,15 @@ void ofxCvRgbaImage::scaleIntoMe( ofxCvImage& mom, int interpolationMethod ){
         cvResize( mom.getCvImage(), cvImage, interpolationMethod );
         flagImageChanged();
 		
-    } else {
+    }
+	else {
         ofLog(OF_LOG_ERROR, "in scaleIntoMe, mom image type has to match");
     }
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::convertRgbToHsv(){
+void ofxCvRgbaImage::convertRgbToHsv()
+{
     cvCvtColor( cvImage, cvImageTemp, CV_RGBA2RGB);
     cvCvtColor( cvImageTemp, cvImageTemp, CV_RGB2HSV);
     swapTemp();
@@ -376,7 +422,8 @@ void ofxCvRgbaImage::convertRgbToHsv(){
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvRgbaImage::convertHsvToRgb(){
+void ofxCvRgbaImage::convertHsvToRgb()
+{
     cvCvtColor( cvImage, cvImageTemp, CV_HSV2RGB);
     cvCvtColor( cvImageTemp, cvImageTemp, CV_RGB2RGBA);
     swapTemp();

@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class HomographyFilter : public ColorFilter  {
+class HomographyFilter : public ColorFilter  
+{
 public:
 	HomographyFilter();
 	virtual ~HomographyFilter();

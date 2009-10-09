@@ -8,7 +8,8 @@
 #define VOLUME_DEPTH	90
 #define VOLUME_SIZE		VOLUME_WIDTH*VOLUME_HEIGHT*VOLUME_DEPTH
 
-class RayTracingKernel : public ofxClKernel {
+class RayTracingKernel : public ofxClKernel 
+{
 public:
 	int width, height;
 	
@@ -33,7 +34,8 @@ public:
 	cl_sampler d_transferFuncSampler;
 	
 	//--------------------------------------------------------------
-	RayTracingKernel() : ofxClKernel("d_render", 2) {
+	RayTracingKernel() : ofxClKernel("d_render", 2)
+	{
 		density = 0.15f;
 		brightness = 1.5f;
 		transferOffset = 0.5f;
@@ -98,7 +100,8 @@ public:
 	}
 
 	//--------------------------------------------------------------
-	bool updateVolume(cl_context context, unsigned char* h_volume, int w, int h, int d) {
+	bool updateVolume(cl_context context, unsigned char* h_volume, int w, int h, int d)
+	{
 		// create 3D array and copy data to device
 		cl_image_format volume_format;
 		volume_format.image_channel_order = CL_R;
@@ -175,10 +178,12 @@ protected:
 	}
 	
 	//--------------------------------------------------------------
-	bool setup(cl_context _context, cl_command_queue _commandQ) {
+	bool setup(cl_context _context, cl_command_queue _commandQ)
+	{
 		if (!ofxClKernel::setup(_context, _commandQ)) return false;
 		
-		if (pbo) {
+		if (pbo)
+	{
 			// delete old buffer
 			clReleaseMemObject(pbo_cl);
 			glDeleteBuffersARB(1, &pbo);

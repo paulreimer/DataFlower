@@ -21,12 +21,14 @@ stopper(sw, sw + sizeof(sw) / sizeof(sw[0]))
 	if (verbose) printf("DataSystem::DataSystem()\n");
 }
 
-DataSystem::~DataSystem() {
+DataSystem::~DataSystem()
+{
 	if (verbose) printf("DataSystem::~DataSystem()\n");
 	destroy();
 }
 
-void DataSystem::setup() {
+void DataSystem::setup() 
+{
 	try {
 		// Parse the query string to produce a Xapian::Query object.
 		qp.set_default_op(Xapian::Query::OP_OR);
@@ -36,12 +38,14 @@ void DataSystem::setup() {
 
 		qp.set_stemming_strategy(Xapian::QueryParser::STEM_SOME);
 		
-	} catch (const Xapian::Error &e) {
+	} catch (const Xapian::Error &e)
+	{
 		printf("%s", e.get_description());
 	}	
 }
 
-void DataSystem::query(string q) {
+void DataSystem::query(string q) 
+{
 	try {
 		// Start an enquire session.
 		Xapian::Enquire enquire(db);
@@ -57,17 +61,20 @@ void DataSystem::query(string q) {
 		printf("%d results found.\n", matches.get_matches_estimated());
 		printf("Matches 1-$d:\n", matches.size());
 
-		for (Xapian::MSetIterator i = matches.begin(); i != matches.end(); ++i) {
+		for (Xapian::MSetIterator i = matches.begin(); i != matches.end(); ++i)
+	{
 			printf("%d: %d\% docid= [%s]\n\n",
 				   i.get_rank() + 1,
 				   i.get_percent(),
 				   i.get_document().get_data().c_str());
 		}
-	} catch (const Xapian::Error &e) {
+	} catch (const Xapian::Error &e)
+	{
 		printf("DataSystem, query error: %s", e.get_description());
 	}
 }
 
-void DataSystem::destroy() {
+void DataSystem::destroy() 
+{
 	if (verbose) printf("DataSystem::destroy()\n");
 }

@@ -2,16 +2,19 @@
 
 #include "FiducialTrackingFilter.h"
 
-FiducialTrackingFilter::FiducialTrackingFilter() {
+FiducialTrackingFilter::FiducialTrackingFilter()
+{
 	if (verbose) printf("FiducialTrackingFilter::FiducialTrackingFilter()\n");
 }
 
-FiducialTrackingFilter::~FiducialTrackingFilter() {
+FiducialTrackingFilter::~FiducialTrackingFilter()
+{
 	if (verbose) printf("FiducialTrackingFilter::~FiducialTrackingFilter()\n");
 	destroy();
 }
 
-void FiducialTrackingFilter::setup() {
+void FiducialTrackingFilter::setup() 
+{
 	GrayscaleFilter::setup();
 	fidFinder.detectFinger		= true;
 	fidFinder.maxFingerSize		= 25;
@@ -22,15 +25,16 @@ void FiducialTrackingFilter::setup() {
 	addToggle("Detect Fingers", fidFinder.detectFinger);
 	addSlider("Min Finger Size", fidFinder.minFingerSize, 0, 50);
 	addSlider("Max Finger Size", fidFinder.maxFingerSize, 0, 50);
-	addSlider("Finger Sensitivity", fidFinder.fingerSensitivity, 0, 2.0, 0);
-
+	addSlider("Finger Sensitivity", fidFinder.fingerSensitivity, 0.0, 2.0);
 }
 
-void FiducialTrackingFilter::update() {
+void FiducialTrackingFilter::update() 
+{
 	fidFinder.findFiducials(input);
 }
 
-void FiducialTrackingFilter::draw() {
+void FiducialTrackingFilter::draw() 
+{
 	VideoFilter::draw();
 	list<ofxFiducial>& fiducials = fidFinder.fiducialsList;	
 	list<ofxFinger>& fingers = fidFinder.fingersList;	
@@ -64,6 +68,7 @@ void FiducialTrackingFilter::draw() {
 	glPopMatrix();
 }
 
-void FiducialTrackingFilter::destroy() {
+void FiducialTrackingFilter::destroy() 
+{
 	if (verbose) printf("FiducialTrackingFilter::destroy()\n");
 }

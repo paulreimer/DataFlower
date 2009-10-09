@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class DifferencingFilter : public GrayscaleFilter  {
+class DifferencingFilter : public GrayscaleFilter  
+{
 public:
 	DifferencingFilter();
 	virtual ~DifferencingFilter();

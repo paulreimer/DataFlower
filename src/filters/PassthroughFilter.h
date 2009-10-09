@@ -2,7 +2,8 @@
 
 #include "VideoFilter.h"
 
-class PassthroughFilter : public ColorFilter  {
+class PassthroughFilter : public ColorFilter  
+{
 public:
 	PassthroughFilter();
 	virtual ~PassthroughFilter();

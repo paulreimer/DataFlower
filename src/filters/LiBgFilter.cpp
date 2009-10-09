@@ -6,12 +6,14 @@ LiBgFilter::LiBgFilter() {
 	if (verbose) printf("LiBgFilter::LiBgFilter()\n");
 }
 
-LiBgFilter::~LiBgFilter() {
+LiBgFilter::~LiBgFilter()
+{
 	if (verbose) printf("LiBgFilter::~LiBgFilter()\n");
 	destroy();
 }
 
-void LiBgFilter::setup() {
+void LiBgFilter::setup() 
+{
 	ColorFilter::setup();
 	
 	fgMask.allocate(videoSize.x, videoSize.y);
@@ -33,20 +35,22 @@ void LiBgFilter::setup() {
 	addSlider("Number of Erode-Dilate-Erosions", settings.numMorphingOps, 0, 10);
 	addToggle("Start w/Open Morph", settings.startOpenMorph);
 	
-	addSlider("[alpha1]", settings.params->alpha1, 0.0, 1.0, 0.0);
-	addSlider("[alpha2]", settings.params->alpha2, 0.0, 0.1, 0.0);
-	addSlider("[alpha3]", settings.params->alpha3, 0.0, 1.0, 0.0);
+	addSlider("[alpha1]", settings.params->alpha1, 0.0, 1.0);
+	addSlider("[alpha2]", settings.params->alpha2, 0.0, 0.1);
+	addSlider("[alpha3]", settings.params->alpha3, 0.0, 1.0);
 	
-	addSlider("[delta] Quantization / color", settings.params->delta, 0.0, 10.0, 0.0);
-	addSlider("[T] New BG Threshold", settings.params->T, 0.0, 1.0, 0.0);
-	addSlider("[minArea] Your blobs must be this tall", settings.params->minArea, 0.0, 60.0, 0.0);
+	addSlider("[delta] Quantization / color", settings.params->delta, 0.0, 10.0);
+	addSlider("[T] New BG Threshold", settings.params->T, 0.0, 1.0);
+	addSlider("[minArea] Your blobs must be this tall", settings.params->minArea, 0.0, 60.0);
 }
 
-void LiBgFilter::update() {
+void LiBgFilter::update() 
+{
 	cvUpdateBGStatModel(input.getCvImage(), pFGD);
 	fgMask = pFGD->foreground;
 
-	if (settings.numMorphingOps > 0) {
+	if (settings.numMorphingOps > 0)
+	{
 		int first_op =	settings.startOpenMorph? CV_MOP_OPEN : CV_MOP_CLOSE;
 		int second_op=	settings.startOpenMorph? CV_MOP_CLOSE : CV_MOP_OPEN;
 		//				for (int op_num = 0; op_num < numMorphingOps; op_num++) {
@@ -62,7 +66,8 @@ void LiBgFilter::update() {
 	output.flagImageChanged();
 }
 
-void LiBgFilter::destroy() {
+void LiBgFilter::destroy() 
+{
 	if (verbose) printf("LiBgFilter::destroy()\n");
 	
 	cvReleaseBGStatModel(&pFGD);

@@ -2,24 +2,29 @@
 
 #include "GrayscalePassthroughFilter.h"
 
-GrayscalePassthroughFilter::GrayscalePassthroughFilter() {
+GrayscalePassthroughFilter::GrayscalePassthroughFilter()
+{
 	if (verbose) printf("GrayscaleFilter::GrayscaleFilter()\n");
 }
 
-GrayscalePassthroughFilter::~GrayscalePassthroughFilter() {
+GrayscalePassthroughFilter::~GrayscalePassthroughFilter()
+{
 	if (verbose) printf("GrayscaleFilter::~GrayscaleFilter()\n");
 	destroy();
 }
 
-void GrayscalePassthroughFilter::setup() {
+void GrayscalePassthroughFilter::setup() 
+{
 	GrayscaleFilter::setup();
 	addContent("Output", output);
 }
 
-void GrayscalePassthroughFilter::update() {
+void GrayscalePassthroughFilter::update() 
+{
 	output = input;
 }
 
-void GrayscalePassthroughFilter::destroy() {
+void GrayscalePassthroughFilter::destroy() 
+{
 	if (verbose) printf("GrayscaleFilter::destroy()\n");
 }

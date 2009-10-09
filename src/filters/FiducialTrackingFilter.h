@@ -3,7 +3,8 @@
 #include "VideoFilter.h"
 #include "ofxFidMain.h"
 
-class FiducialTrackingFilter : public GrayscaleFilter  {
+class FiducialTrackingFilter : public GrayscaleFilter  
+{
 public:
 	FiducialTrackingFilter();
 	virtual ~FiducialTrackingFilter();

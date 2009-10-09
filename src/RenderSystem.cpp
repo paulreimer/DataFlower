@@ -5,17 +5,20 @@
 
 extern testApp* myApp;
 
-RenderSystem::RenderSystem() {
+RenderSystem::RenderSystem()
+{
 	verbose = SYSTEM_VERBOSE;
 	if (verbose) printf("RenderSystem::RenderSystem()\n");
 }
 
-RenderSystem::~RenderSystem() {
+RenderSystem::~RenderSystem()
+{
 	if (verbose) printf("RenderSystem::~RenderSystem()\n");
 	destroy();
 }
 
-void RenderSystem::setup() {
+void RenderSystem::setup() 
+{
 	settings.do_draw = true;
 
 	rayTracer.loadFromFile("volumeRender.cl");
@@ -29,15 +32,18 @@ void RenderSystem::setup() {
 //	myApp->videoSystem.addPipeline(&pipe);
 }
 
-void RenderSystem::toggleDraw() {
+void RenderSystem::toggleDraw() 
+{
 	settings.do_draw = !settings.do_draw;
 }
 
-void RenderSystem::update() {
+void RenderSystem::update() 
+{
 	clScheduler->enqueueKernel(rayTracer);
 }
 
-void RenderSystem::draw() {
+void RenderSystem::draw() 
+{
 	if (!settings.do_draw) return;
 	
 	glViewport(0, 0, rayTracer.width, rayTracer.height);
@@ -158,12 +164,15 @@ void RenderSystem::draw() {
 }
 
 	
-void RenderSystem::destroy() {
+void RenderSystem::destroy() 
+{
 	if (verbose) printf("RenderSystem::destroy()\n");
 }
 
-void RenderSystem::keyPressed(int key) {
-	switch (key){
+void RenderSystem::keyPressed(int key) 
+{
+	switch (key)
+	{
 		case '=':
 			rayTracer.density += 0.01;
 			break;
@@ -200,7 +209,8 @@ void RenderSystem::keyPressed(int key) {
 	}
 }
 
-void RenderSystem::mouseMoved(int x, int y) {
+void RenderSystem::mouseMoved(int x, int y) 
+{
 	float dx, dy;
     dx = x - ox;
     dy = y - oy;
@@ -212,12 +222,14 @@ void RenderSystem::mouseMoved(int x, int y) {
     oy = y;
 }
 
-void RenderSystem::onMouseDragOver(int x, int y, int button) {
+void RenderSystem::onMouseDragOver(int x, int y, int button) 
+{
 	float dx, dy;
     dx = x - ox;
     dy = y - oy;
 	
-	switch (button) {
+	switch (button)
+	{
 		case 0:
 			// left = zoom
 			settings.offset->z += dy / 100.0;

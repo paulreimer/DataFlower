@@ -5,7 +5,8 @@
 #include "VideoFilter.h"
 #include "cvaux.h"
 
-class AdaptiveSkinFilter : public ColorFilter {
+class AdaptiveSkinFilter : public ColorFilter 
+{
 public:
 	AdaptiveSkinFilter();
 	virtual ~AdaptiveSkinFilter();

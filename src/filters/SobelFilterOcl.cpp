@@ -2,21 +2,25 @@
 
 #include "SobelFilterOcl.h"
 
-SobelFilterOcl::SobelFilterOcl(ofxClScheduler& _clScheduler) {
+SobelFilterOcl::SobelFilterOcl(ofxClScheduler& _clScheduler) 
+{
 	if (verbose) printf("SobelFilterOcl::SobelFilterOcl(_clScheduler)\n");
 	clScheduler = &_clScheduler;
 }
 
-SobelFilterOcl::SobelFilterOcl() {
+SobelFilterOcl::SobelFilterOcl()
+{
 	if (verbose) printf("SobelFilterOcl::SobelFilterOcl()\n");
 }
 
-SobelFilterOcl::~SobelFilterOcl() {
+SobelFilterOcl::~SobelFilterOcl()
+{
 	if (verbose) printf("SobelFilterOcl::~SobelFilterOcl()\n");
 	destroy();
 }
 
-void SobelFilterOcl::setup() {
+void SobelFilterOcl::setup() 
+{
 	ColorFilter::setup();
 	
 	rgbaInput.allocate(videoSize.x, videoSize.y);
@@ -27,13 +31,14 @@ void SobelFilterOcl::setup() {
 
 	addContent("RGBA", rgbaInput);
 	addContent("Output", output);
-	addSlider("Threshold", oclSobelFilter.threshold, 0.0, 255.0, 0.0);
+	addSlider("Threshold", oclSobelFilter.threshold, 0.0, 255.0);
 	
 	oclSobelFilter.loadFromFile("sobelFilter.cl");
 	clScheduler->initKernel(oclSobelFilter);
 }
 
-void SobelFilterOcl::update() {
+void SobelFilterOcl::update() 
+{
 	rgbaInput = input;
 	
 	clScheduler->enqueueKernel(oclSobelFilter);
@@ -47,7 +52,8 @@ void SobelFilterOcl::update() {
 	//rgbaInput.setAlpha(grayOutput);
 }
 
-void SobelFilterOcl::destroy() {
+void SobelFilterOcl::destroy() 
+{
 	rgbaInput.clear();
 	grayOutput.clear();
 

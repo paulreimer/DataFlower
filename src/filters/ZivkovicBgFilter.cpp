@@ -2,7 +2,19 @@
 
 #include "ZivkovicBgFilter.h"
 
-ZivkovicBgFilter::ZivkovicBgFilter() {
+ZivkovicBgFilter::ZivkovicBgFilter()
+{
+	if (verbose) printf("ZivkovicBgFilter::ZivkovicBgFilter()\n");
+}
+
+ZivkovicBgFilter::~ZivkovicBgFilter()
+{
+	if (verbose) printf("ZivkovicBgFilter::~ZivkovicBgFilter()\n");
+	destroy();
+}
+
+void ZivkovicBgFilter::setup() 
+{
 	pGMM=cvCreatePixelBackgroundGMM(videoSize.x, videoSize.y);
 	// K - max number of Gaussians per pixel
 	pGMM->nM = 4;
@@ -22,15 +34,6 @@ ZivkovicBgFilter::ZivkovicBgFilter() {
 	pGMM->bShadowDetection = true;//turn on
 	pGMM->fTau = 0.5f;// Tau - shadow threshold
 	
-	if (verbose) printf("ZivkovicBgFilter::ZivkovicBgFilter()\n");
-}
-
-ZivkovicBgFilter::~ZivkovicBgFilter() {
-	if (verbose) printf("ZivkovicBgFilter::~ZivkovicBgFilter()\n");
-	destroy();
-}
-
-void ZivkovicBgFilter::setup() {
 	ColorFilter::setup();
 	
 	fgMask.allocate(videoSize.x, videoSize.y);
@@ -38,23 +41,25 @@ void ZivkovicBgFilter::setup() {
 	addContent("FG Mask", fgMask);
 	addContent("Output", output);
 	addSlider("[nM] Max Gaussians per pixel", pGMM->nM, 0, 12);
-	addSlider("[Tb] Threshold n var", pGMM->fTb, 0.0, 255.0, 0.0);
-	addSlider("[TB] Threshold", pGMM->fTB, 0.0, 1.0, 0.0);
-	addSlider("[Tg] Generate Mode Threshold", pGMM->fTg, 0.0, 100.0, 0.0);
-	addSlider("[Sigma] Sigma for new mode", pGMM->fSigma, 0.0, 100.0, 0.0);
-	addSlider("[Alpha] Learning Rate", pGMM->fAlphaT, 0.0, 0.1, 0.0);
-	addSlider("[CT] Complexity Reduction Const.", pGMM->fCT, 0.0, 1.0, 0.0);
+	addSlider("[Tb] Threshold n var", pGMM->fTb, 0.0, 255.0);
+	addSlider("[TB] Threshold", pGMM->fTB, 0.0, 1.0);
+	addSlider("[Tg] Generate Mode Threshold", pGMM->fTg, 0.0, 100.0);
+	addSlider("[Sigma] Sigma for new mode", pGMM->fSigma, 0.0, 100.0);
+	addSlider("[Alpha] Learning Rate", pGMM->fAlphaT, 0.0, 0.1);
+	addSlider("[CT] Complexity Reduction Const.", pGMM->fCT, 0.0, 1.0);
 	addToggle("Shadow Detection", pGMM->bShadowDetection);
-	addSlider("[Tau] Shadow Threshold", pGMM->fTau, 0.0, 1.0, 0.0);
+	addSlider("[Tau] Shadow Threshold", pGMM->fTau, 0.0, 1.0);
 	addSlider("Number of Erode-Dilate-Erosions", settings.numMorphingOps, 0, 10);
 	addToggle("Start w/Open Morph", settings.startOpenMorph);
 }
 
-void ZivkovicBgFilter::update() {
+void ZivkovicBgFilter::update() 
+{
 	cvUpdatePixelBackgroundGMM(pGMM,(unsigned char*)input.getCvImage()->imageData,
 							   (unsigned char*)fgMask.getCvImage()->imageData);
 
-	if (settings.numMorphingOps > 0) {
+	if (settings.numMorphingOps > 0)
+	{
 		int first_op =	settings.startOpenMorph? CV_MOP_OPEN : CV_MOP_CLOSE;
 		int second_op=	settings.startOpenMorph? CV_MOP_CLOSE : CV_MOP_OPEN;
 		//				for (int op_num = 0; op_num < numMorphingOps; op_num++) {
@@ -70,7 +75,8 @@ void ZivkovicBgFilter::update() {
 	
 }
 
-void ZivkovicBgFilter::destroy() {
+void ZivkovicBgFilter::destroy() 
+{
 	if (verbose) printf("ZivkovicBgFilter::destroy()\n");
 	
 	cvReleasePixelBackgroundGMM(&pGMM);

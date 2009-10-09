@@ -4,7 +4,8 @@
 #include "ofxMSAInteractiveObject.h"
 #include <xapian.h>
 
-class DataSystem : public ofxMSAInteractiveObject {
+class DataSystem : public ofxMSAInteractiveObject 
+{
 public:
 	DataSystem(string lang="english");
 	virtual ~DataSystem();

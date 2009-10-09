@@ -2,23 +2,27 @@
 
 #include "HomographyFilter.h"
 
-HomographyFilter::HomographyFilter() {
+HomographyFilter::HomographyFilter()
+{
 	if (verbose) printf("HomographyFilter::HomographyFilter()\n");
 }
 
-HomographyFilter::~HomographyFilter() {
+HomographyFilter::~HomographyFilter()
+{
 	if (verbose) printf("HomographyFilter::~HomographyFilter()\n");
 	destroy();
 }
 
-void HomographyFilter::setup() {
+void HomographyFilter::setup() 
+{
 	ColorFilter::setup();
 	addContent("Output", output);
 	addToggle("Flip Horizontally", settings.mirror_h);
 	addToggle("Flip Vertically", settings.mirror_v);	
 }
 
-void HomographyFilter::update() {
+void HomographyFilter::update() 
+{
 	int flipMode = 0;
 	
 	if		( settings.mirror_v && !settings.mirror_h ) flipMode = 0;
@@ -33,6 +37,7 @@ void HomographyFilter::update() {
     output.flagImageChanged();
 }
 
-void HomographyFilter::destroy() {
+void HomographyFilter::destroy() 
+{
 	if (verbose) printf("HomographyFilter::destroy()\n");
 }

@@ -7,7 +7,8 @@
 // Helper to get next up value for integer division
 //*****************************************************************************
 /*
-size_t DivUp(size_t dividend, size_t divisor) {
+size_t DivUp(size_t dividend, size_t divisor) 
+{
 	return (dividend % divisor == 0) ? (dividend / divisor) : (dividend / divisor + 1);
 }
 */
@@ -17,7 +18,8 @@ size_t DivUp(size_t dividend, size_t divisor) {
 #define BLOCKDIMX 16
 #define BLOCKDIMY 16
 
-class SobelKernel : public ofxClKernel {
+class SobelKernel : public ofxClKernel 
+{
 public:
 	size_t width, height;
 
@@ -30,7 +32,8 @@ public:
 	size_t bufferSizeElems;
 	
 	//--------------------------------------------------------------
-	SobelKernel() : ofxClKernel("ckSobel", 2){
+	SobelKernel() : ofxClKernel("ckSobel", 2)
+	{
 		threshold = 35.0;
 		
 		width = VIDEO_WIDTH;

@@ -3,7 +3,8 @@
 #include "ofxCvImage.h"
 
 
-class ofxCvRgbaImage : public ofxCvImage {
+class ofxCvRgbaImage : public ofxCvImage 
+{
 	
 public:
 	

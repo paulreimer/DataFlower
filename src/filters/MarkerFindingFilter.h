@@ -3,7 +3,8 @@
 #include "VideoFilter.h"
 #include "ofxCvDtouchMarkers.h"
 
-class MarkerFindingFilter : public GrayscaleFilter  {
+class MarkerFindingFilter : public GrayscaleFilter  
+{
 public:
 	MarkerFindingFilter();
 	virtual ~MarkerFindingFilter();

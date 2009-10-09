@@ -2,16 +2,19 @@
 
 #include "AdaptiveThresholdingFilter.h"
 
-AdaptiveThresholdingFilter::AdaptiveThresholdingFilter() {
+AdaptiveThresholdingFilter::AdaptiveThresholdingFilter()
+{
 	if (verbose) printf("AdaptiveThresholdingFilter::AdaptiveThresholdingFilter()\n");
 }
 
-AdaptiveThresholdingFilter::~AdaptiveThresholdingFilter() {
+AdaptiveThresholdingFilter::~AdaptiveThresholdingFilter()
+{
 	if (verbose) printf("AdaptiveThresholdingFilter::~AdaptiveThresholdingFilter()\n");
 	destroy();
 }
 
-void AdaptiveThresholdingFilter::setup() {
+void AdaptiveThresholdingFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	addContent("Output", output);
@@ -21,12 +24,14 @@ void AdaptiveThresholdingFilter::setup() {
 	addToggle("Use Gauss", settings.use_gauss);
 }
 
-void AdaptiveThresholdingFilter::update() {
+void AdaptiveThresholdingFilter::update() 
+{
 	output = input;
 	output.adaptiveThreshold(settings.blocksize, settings.offset,
 							 settings.invert, settings.use_gauss);
 }
 
-void AdaptiveThresholdingFilter::destroy() {
+void AdaptiveThresholdingFilter::destroy() 
+{
 	if (verbose) printf("AdaptiveThresholdingFilter::destroy()\n");
 }

@@ -8,7 +8,8 @@
 // Unfortunately, we schedule our own invocation
 #include "ofxClScheduler.h"
 
-class RenderSystem : public ofxMSAInteractiveObject {
+class RenderSystem : public ofxMSAInteractiveObject 
+{
 public:
 	friend class testApp;
 	RenderSystem();

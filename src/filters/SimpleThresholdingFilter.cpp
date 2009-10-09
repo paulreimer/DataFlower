@@ -2,16 +2,19 @@
 
 #include "SimpleThresholdingFilter.h"
 
-SimpleThresholdingFilter::SimpleThresholdingFilter() {
+SimpleThresholdingFilter::SimpleThresholdingFilter()
+{
 	if (verbose) printf("SimpleThresholdingFilter::SimpleThresholdingFilter()\n");
 }
 
-SimpleThresholdingFilter::~SimpleThresholdingFilter() {
+SimpleThresholdingFilter::~SimpleThresholdingFilter()
+{
 	if (verbose) printf("SimpleThresholdingFilter::~SimpleThresholdingFilter()\n");
 	destroy();
 }
 
-void SimpleThresholdingFilter::setup() {
+void SimpleThresholdingFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	addContent("Output", output);
@@ -19,11 +22,13 @@ void SimpleThresholdingFilter::setup() {
 	addToggle("Invert", settings.invert);
 }
 
-void SimpleThresholdingFilter::update() {
+void SimpleThresholdingFilter::update() 
+{
 	output = input;
 	output.threshold(settings.threshold, settings.invert);
 }
 
-void SimpleThresholdingFilter::destroy() {
+void SimpleThresholdingFilter::destroy() 
+{
 	if (verbose) printf("SimpleThresholdingFilter::destroy()\n");
 }

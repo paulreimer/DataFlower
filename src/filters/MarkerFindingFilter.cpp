@@ -2,17 +2,20 @@
 
 #include "MarkerFindingFilter.h"
 
-MarkerFindingFilter::MarkerFindingFilter() {
+MarkerFindingFilter::MarkerFindingFilter()
+{
 	if (verbose) printf("MarkerFindingFilter::MarkerFindingFilter()\n");
 }
 
-MarkerFindingFilter::~MarkerFindingFilter() {
+MarkerFindingFilter::~MarkerFindingFilter()
+{
 	if (verbose) printf("MarkerFindingFilter::~MarkerFindingFilter()\n");
 	destroy();
 
 }
 
-void MarkerFindingFilter::setup() {
+void MarkerFindingFilter::setup() 
+{
 	GrayscaleFilter::setup();
 
 	diagnostics.allocate(videoSize.x, videoSize.y);
@@ -45,7 +48,8 @@ void MarkerFindingFilter::setup() {
 	addSlider("Target Markers", markerFinder.fiducialsTarget, 0, 10);
 }
 
-void MarkerFindingFilter::update() {
+void MarkerFindingFilter::update() 
+{
 	markerFinder.grayImg = input;
 
 	markerFinder.update();
@@ -55,7 +59,8 @@ void MarkerFindingFilter::update() {
 	diagnostics = markerFinder.displayImg;
 }
 
-void MarkerFindingFilter::draw() {
+void MarkerFindingFilter::draw() 
+{
 	VideoFilter::draw();
 	list<FiducialData>& fiducials = markerFinder.fiducials;	
 	
@@ -101,7 +106,8 @@ void MarkerFindingFilter::draw() {
 }
 
 
-void MarkerFindingFilter::destroy() {
+void MarkerFindingFilter::destroy() 
+{
 	diagnostics.clear();
 	if (verbose) printf("MarkerFindingFilter::destroy()\n");
 }
