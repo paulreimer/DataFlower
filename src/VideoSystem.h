@@ -9,6 +9,22 @@
 
 #include "settings.h"
 
+typedef pair<	VideoPipelinePtr,
+				ofxCvColorImage*>	pipeline_t;
+typedef list<pipeline_t>			pipelines_t;
+typedef pipelines_t::iterator		pipeline_iter;
+typedef pipelines_t::const_iterator	pipeline_iter_const;
+
+typedef VideoFilterGraphPtr			filter_graph_t;
+typedef	list<filter_graph_t>		filter_graphs_t;
+typedef filter_graphs_t::iterator	filter_graph_iter;
+typedef filter_graphs_t::const_iterator	filter_graph_iter_const;
+
+typedef map<fiducialIndex,
+			VideoFilterPtr>			filters_t;
+typedef filters_t::iterator			filter_iter;
+typedef filters_t::const_iterator	filter_iter_const;
+
 class VideoSystem : public ofxMSAInteractiveObject 
 {
 public:
@@ -17,7 +33,7 @@ public:
 
 	void setup();
 	void update();
-	void draw();
+	void draw();// const;
 	void toggleDraw();
 
 	void destroy();
@@ -27,11 +43,11 @@ public:
 
 //	VideoPipeline			*pipeline(int i);
 
-	VideoPipeline			*addPipeline(VideoPipeline* pipeline, ofxCvColorImage* src = NULL);
-	void					dropPipeline(VideoPipeline* pipeline);
+	VideoPipeline			*addPipeline(VideoPipeline* const pipeline, ofxCvColorImage* src = NULL);
+	void					dropPipeline(VideoPipeline* const pipeline);
 
-	VideoFilterGraph		*addGraph(VideoFilterGraph* graph, ofxCvColorImage* src = NULL);
-	void					dropGraph(VideoFilterGraph* graph);
+	VideoFilterGraph		*addGraph(VideoFilterGraph* const graph);
+	void					dropGraph(VideoFilterGraph* const graph);
 
 	std::vector<ofVideoGrabber>	vidGrabbers;
 	std::vector<ofPoint>		grabSizes;
@@ -43,10 +59,10 @@ public:
 
 	bool verbose;
 
-	map <VideoPipelinePtr, ofxCvColorImage*> pipelines;
-	map <VideoFilterGraphPtr, ofxCvColorImage*> graphs;
+	pipelines_t		pipelines;
+	filter_graphs_t	graphs;
 	
-	map<fiducialIndex,VideoFilter*> filters;
+	map<fiducialIndex,VideoFilterPtr> filters;
 
 #ifdef USE_GUI
 	ofxSimpleGuiPage* gui;

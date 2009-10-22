@@ -9,49 +9,48 @@
 #include "ofxOpenCv.h"
 #include "GuiElements.h"
 
-typedef unsigned char filter_type_t;
-enum filter_types {
-	NULL_FILTER,
-	COLOR_FILTER,
-	GRAYSCALE_FILTER,
-	MULTI_FILTER,
-	SOURCE_FILTER,
+typedef VideoFilter* vertex_t;
+
+struct edge_t {
+	vertex_t* from;
+	vertex_t* to;
+	GuiElements::types::lineSegment ray;
+
+#ifdef USE_FIDUCIALS
+	fiducialIndex fiducial;
+#endif
 };
 
 class VideoFilterGraph : public FiducialBackedObject {
 public:
 	VideoFilterGraph();
 	virtual ~VideoFilterGraph();
-	
-	void setup();
-	
+
+//	void setup();
+
 	void update();
 	void draw();
-	
+
 	void destroy();
-	
+
 	void setDraw(bool b);
 	void toggleDraw();
 	bool					doDraw;
-	ofPoint					videoSize;
-	
-	ofxCvColorImage			input;	
-	ofxCvColorImage			output;
-	
-	void setConfig(ofxSimpleGuiConfig *config);
-	void setVideoSize(ofPoint sze);
-	
-//	int size() { return filters.size(); }
-	
-	map<fiducialIndex,VideoFilter*> filters;
-	list<map<	pair<filter_type_t,ofxCvImage*>,
-				pair<filter_type_t,ofxCvImage*> > > flows;
+/*
+	ofxCvColorImage&		input_ref() {
+		return flows.front().first;
+	};
+	ofxCvColorImage&		output_ref() {
+		return flows.front().output;
+	};
+*/
+	list	<vertex_t>	vertices;
+	list	<edge_t>	edges;
 
-	list<GuiElements::types::lineSegment> rays;
+	map<ofxCvImage*, ofxCvImage*> image_edges;
 
 protected:
 #ifdef USE_GUI
-	ofxSimpleGuiConfig*		config;
 	ofxSimpleGuiConfig fid_gui_conf;
 #endif
 };

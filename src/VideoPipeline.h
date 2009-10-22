@@ -17,7 +17,7 @@ public:
 	void setup();
 
 	void update();
-	void draw();
+	void draw();// const;
 
 	void destroy();
 
@@ -27,22 +27,21 @@ public:
 	ofPoint					videoSize;
 
 	VideoFilter*			filter(int i);				// 1 based index of page
-	VideoFilter*			filter(string name);
+	VideoFilter*			filter(const std::string& name);
 
-	VideoFilter*			addFilter(VideoFilter *filter);
-	bool					dropFilter(VideoFilter *filter);
+	VideoFilter*			addFilter(VideoFilter* const filter);
+	bool					dropFilter(const VideoFilter* const filter);
 
 	ofxCvColorImage			input;
 
 	ofxCvColorImage			output;
 
-	void setConfig(ofxSimpleGuiConfig *config);
-	void setEdgeHitPoint(ofxPoint2f edgeHitPoint);
-	void setVideoSize(ofPoint sze);
+	void setConfig(ofxSimpleGuiConfig* const config);
+	void setEdgeHitPoint(const ofxPoint2f& edgeHitPoint);
+	void setVideoSize(const ofPoint& sze);
 
-	int size() { return filters.size(); }
+	int size() const { return filters.size(); }
 	void truncate(int newlen=0);
-	
 	
 	ofxPoint2f edgeHitPoint;
 

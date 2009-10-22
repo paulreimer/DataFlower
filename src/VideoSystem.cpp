@@ -63,11 +63,11 @@ void VideoSystem::setup()
 		gui->addContent("Video "+ofToString(v), (vidImgs[v]));
 #endif
 	}
-	
+/*	
 	// TODO:this is an awful hack, to retry
 	//		after a failed race condition with setup event
 	//		for other Systems that add a pipeline
-	map<VideoPipelinePtr, ofxCvColorImage*>::iterator it;
+	pipeline_iter it;
 	VideoPipelinePtr pipeline;
 	ofxCvColorImage* src;
 	for(it = pipelines.begin(); it != pipelines.end(); it++) {
@@ -76,10 +76,11 @@ void VideoSystem::setup()
 		
 		// Try to find a suitable input, *any* input for this pipeline
 		if (src == NULL) addPipeline(pipeline);
-	}		
+	}
+*/
 }
 
-VideoPipeline *VideoSystem::addPipeline(VideoPipeline* pipeline, ofxCvColorImage* src) 
+VideoPipeline *VideoSystem::addPipeline(VideoPipeline* const pipeline, ofxCvColorImage* src) 
 {
 	pipeline->setConfig(&gui_config);
 	
@@ -89,7 +90,6 @@ VideoPipeline *VideoSystem::addPipeline(VideoPipeline* pipeline, ofxCvColorImage
 		else if (!vidImgs.empty())
 			src = &vidImgs[0];//.back());
 
-	pipelines[pipeline] = src;
 
 	if (src != NULL && src->bAllocated)
 	{
@@ -97,38 +97,31 @@ VideoPipeline *VideoSystem::addPipeline(VideoPipeline* pipeline, ofxCvColorImage
 		pipeline->setup();
 	}
 
+	pipelines.push_back(make_pair(pipeline, src));
 	return pipeline;
 }
 
-void VideoSystem::dropPipeline(VideoPipeline* pipeline) 
+void VideoSystem::dropPipeline(VideoPipeline* const pipeline) 
 {
-	pipelines.erase(pipeline);
+	pipeline_iter pipeline_it;
+
+	for (pipeline_it = pipelines.begin(); pipeline_it != pipelines.end(); pipeline_it++)
+		if (pipeline_it->first == pipeline)
+			pipelines.erase(pipeline_it);
+
 }
 
-VideoFilterGraph *VideoSystem::addGraph(VideoFilterGraph* graph, ofxCvColorImage* src) 
+VideoFilterGraph *VideoSystem::addGraph(VideoFilterGraph* const graph) 
 {
-	graph->setConfig(&gui_config);
+	graph->enableAppEvents();
 	
-	if (src == NULL)
-		if (!grabImgs.empty())
-			src = &grabImgs[0];//.back());
-		else if (!vidImgs.empty())
-			src = &vidImgs[0];//.back());
-	
-	graphs[graph] = src;
-	
-	if (src != NULL && src->bAllocated)
-	{
-		graph->videoSize.set(src->width, src->height);
-		graph->setup();
-	}
-	
+	graphs.push_back(graph);
 	return graph;
 }
 
-void VideoSystem::dropGraph(VideoFilterGraph* graph) 
+void VideoSystem::dropGraph(VideoFilterGraph* const graph) 
 {
-	graphs.erase(graph);
+	graphs.remove(graph);
 }
 
 void VideoSystem::update() 
@@ -159,11 +152,11 @@ void VideoSystem::update()
 
 	ofxCvColorImage* src;
 
-	map<VideoPipelinePtr, ofxCvColorImage*>::iterator pipe_it;
+	pipeline_iter pipeline_it;
 	VideoPipelinePtr pipeline;
-	for(pipe_it = pipelines.begin(); pipe_it != pipelines.end(); pipe_it++) {
-		pipeline = pipe_it->first;
-		src = pipe_it->second;
+	for(pipeline_it = pipelines.begin(); pipeline_it != pipelines.end(); pipeline_it++) {
+		pipeline = pipeline_it->first;
+		src = pipeline_it->second;
 
 		if (src != NULL && src->bAllocated)
 		{
@@ -172,60 +165,27 @@ void VideoSystem::update()
 			if (pipeline->enabled)
 				pipeline->update();
 		}
-			//pipeline->input = (ofxCvColorImage&)(*src);
+			pipeline->input = (ofxCvColorImage&)(*src);
 	}
-
-	map<VideoFilterGraphPtr, ofxCvColorImage*>::iterator graph_it;
-	VideoFilterGraphPtr graph;
-	for(graph_it = graphs.begin(); graph_it != graphs.end(); graph_it++) {
-		graph = graph_it->first;
-		src = graph_it->second;
-		
-		if (src != NULL && src->bAllocated)
-		{
-			graph->input = (*src);
-			
-			if (graph->enabled)
-				graph->update();
-		}
-		//graph->input = (ofxCvColorImage&)(*src);
-	}
-	
 }
 
 void VideoSystem::toggleDraw() 
 {
-	map<VideoPipelinePtr, ofxCvColorImage*>::iterator pipe_it;
-	for(pipe_it = pipelines.begin(); pipe_it != pipelines.end(); pipe_it++)
-		pipe_it->first->toggleDraw();
-
-	map<VideoFilterGraphPtr, ofxCvColorImage*>::iterator graph_it;
-	for(graph_it = graphs.begin(); graph_it != graphs.end(); graph_it++)
-		graph_it->first->toggleDraw();
+	pipeline_iter pipeline_it;
+	for(pipeline_it = pipelines.begin(); pipeline_it != pipelines.end(); pipeline_it++)
+		pipeline_it->first->toggleDraw();
 }
 
-void VideoSystem::draw() 
+void VideoSystem::draw()/* const */
 {
-	ofxCvColorImage* src;
-
-	map<VideoPipelinePtr, ofxCvColorImage*>::iterator pipe_it;
+	pipeline_iter_const pipeline_it;
 	VideoPipelinePtr pipeline;
-	for(pipe_it = pipelines.begin(); pipe_it != pipelines.end(); pipe_it++)
+	for(pipeline_it = pipelines.begin(); pipeline_it != pipelines.end(); pipeline_it++)
 	{
-		pipeline = pipe_it->first;
+		pipeline = pipeline_it->first;
 		
 		if (pipeline->enabled && pipeline->doDraw)
 			pipeline->draw();
-	}
-
-	map<VideoFilterGraphPtr, ofxCvColorImage*>::iterator graph_it;
-	VideoFilterGraphPtr graph;
-	for(graph_it = graphs.begin(); graph_it != graphs.end(); graph_it++)
-	{
-		graph = graph_it->first;
-		
-		if (graph->enabled && graph->doDraw)
-			graph->draw();
 	}
 }
 
@@ -237,16 +197,18 @@ void VideoSystem::destroy()
 
 void VideoSystem::fiducialFound(fiducialEvtArgs &args) 
 {
-	ofxFiducial& fiducial = *args.fiducial;
-	fiducialIndex fiducialId = args.fiducial;
-	map<fiducialIndex,VideoFilter*>::iterator filter_it = filters.find(fiducialId);
+	ofxFiducial		&fiducial	= *args.fiducial;
+	fiducialIndex	fiducialId	= fiducial.getId();
+
+	filter_iter filter_it;
+	filter_it = filters.find(fiducialId);
 	
 	VideoFilterPtr filter;
 	
 	if (filter_it == filters.end())
 	{
 		filter = myApp->tuiSystem.createFiducialFilter(&fiducial);
-		myApp->tuiSystem.fiducialCornersMap[&fiducial] = fiducial.cornerPoints;
+		myApp->tuiSystem.fiducialsCornersMap[fiducial.getId()] = fiducial.cornerPoints;
 		
 		filter->setConfig(&gui_config);
 		
@@ -262,17 +224,16 @@ void VideoSystem::fiducialFound(fiducialEvtArgs &args)
 	
 	if (fiducialId == NULL_FIDUCIAL_ID)
 	{
-		//		flows.insert()
+		graphs.push_back(new VideoFilterGraph());
 	}
-	
-	fiducial.life += MAX_FIDUCIAL_LIFE;	
 }
 
 void VideoSystem::fiducialLost(fiducialEvtArgs &args) 
 {
-	ofxFiducial& fiducial = *args.fiducial;
-	fiducialIndex fiducialId = &fiducial;
-	map<fiducialIndex,VideoFilter*>::iterator filter_it = filters.find(fiducialId);
+	ofxFiducial&	fiducial	= *args.fiducial;
+	fiducialIndex	fiducialId	= fiducial.getId();
+
+	filter_iter filter_it = filters.find(fiducialId);
 	
 	VideoFilterPtr filter;
 	
@@ -288,15 +249,16 @@ void VideoSystem::fiducialLost(fiducialEvtArgs &args)
 	
 	if (fiducialId == NULL_FIDUCIAL_ID)
 	{
-		//		flows.erase()
+//		graphs.erase(&fiducial);
 	}
 }
 
 void VideoSystem::fiducialUpdated(fiducialEvtArgs &args)
 {
-	ofxFiducial& fiducial = *args.fiducial;
-	fiducialIndex fiducialId = args.fiducial;
-	map<fiducialIndex,VideoFilter*>::iterator filter_it = filters.find(fiducialId);
+	ofxFiducial&	fiducial	= *args.fiducial;
+	fiducialIndex	fiducialId	= fiducial.getId();
+
+	filter_iter filter_it = filters.find(fiducialId);
 	
 	VideoFilterPtr filter;
 	
@@ -319,25 +281,110 @@ void VideoSystem::fiducialUpdated(fiducialEvtArgs &args)
 	}
 }
 
+
+
 void VideoSystem::fiducialRayIntersectionFound(fiducialRayIntersectionEvtArgs &args)
-{
-	ofxFiducial& from = *args.from;
-	ofxFiducial& to = *args.to;
-	ofxPoint2f pt = args.pt;
+{	
+	VideoFilterGraph& graph = *graphs.front();
+
+	VideoFilterPtr filter;
+	edge_t edge;
+	
+	GuiElements::types::lineSegment ray;
+	ray.to.set(args.pt);	
+
+	filter_iter filter_it;
+	fiducialIndex	from_fiducialId	= args.from->getId(),
+					to_fiducialId	= args.to->getId();
+
+	filter_it = filters.find(args.from->getId());
+	if (filter_it != filters.end())
+	{
+		filter = filter_it->second;
+		ray.from.set(filter->x+filter->width,
+					 filter->y+(filter->height/2));
+
+		switch (filter->type)
+		{
+			case COLOR_FILTER:
+				ray.from_type = GuiElements::types::ACTOR_TYPE_RGB;
+				break;
+			case GRAYSCALE_FILTER:
+				ray.from_type = GuiElements::types::ACTOR_TYPE_GRAY;
+				break;
+		}
+		
+		edge.from = &filter;
+	}
+
+	filter_it = filters.find(args.to->getId());
+	if (filter_it != filters.end())
+	{
+		filter = filter_it->second;
+
+		switch (filter->type)
+		{
+			case COLOR_FILTER:
+				ray.to_type = GuiElements::types::ACTOR_TYPE_RGB;
+				break;
+			case GRAYSCALE_FILTER:
+				ray.to_type = GuiElements::types::ACTOR_TYPE_GRAY;
+				break;
+		}
+
+		edge.to = &filter;
+	}
+	
+	edge.ray = ray;
+
+	graph.edges.push_back(edge);
 }
+
+class edge_is_from {
+public:
+	VideoFilterPtr from;
+	edge_is_from(VideoFilterPtr _from) : from(_from) {}
+	bool operator()(const edge_t& edge) {
+		return *(edge.from)==from;
+	}
+};
+
+class edge_is_to {
+public:
+	VideoFilterPtr to;
+	edge_is_to(VideoFilterPtr _to) : to(_to) {}
+	bool operator()(const edge_t& edge) {
+		return *(edge.to)==to;
+	}
+};
 
 void VideoSystem::fiducialRayIntersectionLost(fiducialRayIntersectionEvtArgs &args)
 {
 	ofxFiducial& from = *args.from;
 	ofxFiducial& to = *args.to;
 	ofxPoint2f pt = args.pt;
-	
+
+	VideoFilterGraph& graph = *graphs.front();
+	list<edge_t>::iterator edge_it;
+	edge_it = find_if(graph.edges.begin(),
+					  graph.edges.end(),
+					  edge_is_from(filters[args.from->getId()]));
+
+	if (edge_it != graph.edges.end())
+		graph.edges.erase(edge_it);
 }
 
 void VideoSystem::fiducialRayIntersectionUpdated(fiducialRayIntersectionEvtArgs &args)
 {
+/*
 	ofxFiducial& from = *args.from;
 	ofxFiducial& to = *args.to;
 	ofxPoint2f pt = args.pt;
-	
+
+	VideoFilterGraph& graph = graphs[x];
+	graph.edges.push_back
+	(make_pair
+	 (filters[from].output_ref(),
+	  filters[to].input_ref()));
+*/
 }

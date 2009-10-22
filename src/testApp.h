@@ -114,15 +114,3 @@ public:
 		float	lerpSpeed;
 	} settings;
 };
-/*
-	void fiducialFound(ofxFiducial &fiducial);
-	void fiducialLost(ofxFiducial &fiducial);
-	void fiducialUpdated(ofxFiducial &fiducial);
-};
-
-ofxPoint2f intersects(ofxPoint2f origin, ofxPoint2f endpoint, double angle,
-					  ofxPoint2f box_origin, double box_angle, int box_w, int box_h);
-
-ofxPoint2f intersects_window_edge(ofxPoint2f origin, double angle);
-ofxPoint2f intersects_window_edge(ofxPoint2f origin, ofxPoint2f endpoint, double angle);
-*/

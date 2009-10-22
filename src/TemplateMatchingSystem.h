@@ -15,7 +15,7 @@ public:
 
 	void setup();
 	void update();
-	void draw();
+	void draw() const;
 
 	void destroy();
 

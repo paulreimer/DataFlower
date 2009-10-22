@@ -12,8 +12,11 @@ testApp *myApp;
 int main( )
 {
 	ofSetDataPathRoot("../Resources/");
-//	ofSetupOpenGL(1280, 720, OF_FULLSCREEN);			// <-------- setup the GL context
+#ifdef START_FULLSCREEN_SECONDARY
+	ofSetupOpenGL(1280, 720, OF_FULLSCREEN);			// <-------- setup the GL context
+#else
 	ofSetupOpenGL(1280, 720, OF_WINDOW);
+#endif
 	myApp = new testApp;
 
 #ifdef MANUAL_PROFILE

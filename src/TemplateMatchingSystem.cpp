@@ -31,7 +31,7 @@ void TemplateMatchingSystem::update()
 {
 }
 //--------------------------------------------------------------
-void TemplateMatchingSystem::draw()
+void TemplateMatchingSystem::draw() const
 {
 }
 

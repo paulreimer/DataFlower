@@ -42,20 +42,20 @@ void RenderSystem::update()
 	clScheduler->enqueueKernel(rayTracer);
 }
 
-void RenderSystem::draw() 
+void RenderSystem::draw()
 {
 	if (!settings.do_draw) return;
 	
-	glViewport(0, 0, rayTracer.width, rayTracer.height);
-	
-	// Begin ray tracing draw
 	float pbo_offset[2];
 	pbo_offset[0] = ofClamp(settings.offset->x, 0, 1);
 	pbo_offset[1] = ofClamp(1-settings.offset->y, 0, 1);
 	
 	rayTracer.viewTranslation[0] = settings.offset->x - pbo_offset[0];
 	rayTracer.viewTranslation[1] = (1-settings.offset->y) - pbo_offset[1];
-
+	
+	// Begin ray tracing draw
+	glViewport(0, 0, rayTracer.width, rayTracer.height);
+	
     glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
     glLoadIdentity();
@@ -79,43 +79,6 @@ void RenderSystem::draw()
 	glRotatef(180-settings.rot->y,   0,   0, 1.0);
 
 	glTranslatef(rayTracer.viewTranslation[0], rayTracer.viewTranslation[1], settings.offset->z);
-	/*
-	// Construct new coordinate system so remote orientation always rotates orthogonal to screen
-	float theta = ofDegToRad(-settings.rot->z);
-	float sinTheta = sinf(theta);
-	float cosTheta = cosf(theta);
-	//angleRad = (angleRad < 0)? -angleRad : angleRad;
-	
-	//printf("Rotatation offset by %f\n", angleRad);
-	glRotatef(settings.rot->z,		0.0, 1.0,	   0.0);
-	glRotatef(settings.rot->x, cosTheta, 0.0, sinTheta);
-	glRotatef(settings.rot->y, sinTheta, 0.0, cosTheta);
-	 */	
-
-//	glTranslatef(0.0, 0.0, settings.offset->z);
-	
-//	glTranslatef(rayTracer.viewTranslation[0], rayTracer.viewTranslation[1], 0);
-//	printf("Rotation: (%f, %f, %f)\n", settings.rot->x, settings.rot->y, settings.rot->z);
-/*	float roll=ofDegToRad(-settings.rot->x), pitch=ofDegToRad(settings.rot->z), yaw=ofDegToRad(settings.rot->y);
-	GLfloat cRoll	=cosf(roll),	sRoll	=sinf(roll);
-	GLfloat cPitch	=cosf(pitch),	sPitch	=sinf(pitch);
-	GLfloat cYaw	=cosf(yaw),		sYaw	=sinf(yaw);
-    GLfloat modelView[16] = {
-		cYaw*cPitch,	cYaw*sRoll*sRoll - sYaw*cRoll,	cYaw*sPitch*cRoll + sYaw*sRoll,	0,
-		sYaw*cPitch,	sYaw*sPitch*sRoll + cYaw*cRoll,	sYaw*sPitch*cRoll - cYaw*sRoll,	0,
-		-sPitch,		cPitch*sRoll,					cPitch*cRoll,					0,
-		0,				0,								0,								1
-	};
-	
-	glMultMatrixf(modelView);
-
-	float theta = ofDegToRad(-settings.rot->z);
-	glRotatef(sinf(theta)*settings.rot->x, 1.0, 0.0, 0.0);
-	glRotatef(			  settings.rot->z, 0.0, 1.0, 0.0);
-	glRotatef(cosf(theta)*settings.rot->y, 0.0, 0.0, 1.0);
- */
-
-//	glTranslatef(0.0, 0.0, settings.offset->z);
 	
 	GLfloat modelView[16];
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelView);
@@ -156,11 +119,6 @@ void RenderSystem::draw()
 	
     glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
-
-	glViewport(0,0, myApp->window.width,myApp->window.height);
-	//	glRasterPos2f(0.0,0.0);
-	ofSetupScreen();
-	
 }
 
 	

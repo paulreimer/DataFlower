@@ -4,3 +4,4 @@ bin
 data/*.mov
 data/*.avi
 data/*.mpg
+src/dead_code.h

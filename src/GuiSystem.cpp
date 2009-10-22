@@ -9,6 +9,7 @@ GuiSystem::GuiSystem()
 {
 	verbose = SYSTEM_VERBOSE;
 	if (verbose) printf("GuiSystem::GuiSystem()\n");
+	startPage = 1;
 }
 
 GuiSystem::~GuiSystem()
@@ -80,6 +81,8 @@ void GuiSystem::setup()
 	gui.addSlider("Z Rotation",
 				  re.settings.rot->z, 0.0, 360.0, 0.0);
 #endif
+	
+	gui.setPage(startPage);
 }
 
 void GuiSystem::toggleDraw() 
@@ -87,7 +90,7 @@ void GuiSystem::toggleDraw()
 	gui.toggleDraw();
 }
 
-void GuiSystem::draw() 
+void GuiSystem::draw()
 {
 	gui.draw();
 }

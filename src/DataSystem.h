@@ -7,12 +7,12 @@
 class DataSystem : public ofxMSAInteractiveObject 
 {
 public:
-	DataSystem(string lang="english");
+	DataSystem(const std::string lang="english");
 	virtual ~DataSystem();
 
 	void setup();
 
-	void query(string q);
+	void query(const std::string q);
 	
 	void destroy();
 
@@ -21,6 +21,6 @@ public:
 private:
 	Xapian::QueryParser qp;
 	Xapian::Database db;
-	Xapian::SimpleStopper stopper;
-	Xapian::Stem stemmer;
+	const Xapian::SimpleStopper stopper;
+	const Xapian::Stem stemmer;
 };

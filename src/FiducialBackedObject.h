@@ -22,7 +22,9 @@ public:
 protected:
 	void translateMouse(int* mx, int* my);
 	void rotateMouse(int* mx, int* my);
-	ofMouseEventArgs* relocateMouseEvent(ofMouseEventArgs *e, bool do_rotate = true, bool do_translate = true);
+	ofMouseEventArgs* relocateMouseEvent(ofMouseEventArgs *e,
+										 bool do_rotate = true,
+										 bool do_translate = true);
 
 	unsigned char ref_type;
 };

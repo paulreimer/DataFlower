@@ -7,7 +7,7 @@
 
 #define USE_VIDEO
 #define _USE_LIVE_VIDEO
-#undef USE_OPENCV_TRUNK
+#undef	USE_OPENCV_TRUNK
 
 #undef	USE_TUIO
 #undef	USE_OSC
@@ -18,15 +18,17 @@
 #undef	USE_SPEECH_TO_TEXT
 #undef	USE_DATA
 #undef	USE_TEMPLATE_MATCHING
-#define	USE_GPU_VIS
+#undef	USE_GPU_VIS
 #define	USE_REMOTE_CONTROL
 #define USE_MSAREMOTE
 #define USE_ACCEL
 #define	USE_OPENCL
 #define USE_TOON
-#undef USE_SMART_POINTERS
+#undef	USE_SMART_POINTERS
 
-#define tuioCursorSpeedMult	0.1f
+#undef	START_FULLSCREEN_SECONDARY
+
+
 #define NULL_FIDUCIAL_ID 0
 
 // enable CL/GL Interop
@@ -41,5 +43,6 @@
 
 #define BOX_CORNERS 4
 #define MAX_FIDUCIAL_LIFE 16
+#define MIN_FIDUCIAL_LIFE 5
 
 #define MARKERS_FILE "dtouchmarkers.txt"

@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxPoint2f.h"
 
-namespace GuiElements 
+namespace GuiElements
 {
 	namespace types {
 		typedef unsigned char actor_type_t;
@@ -20,27 +20,34 @@ namespace GuiElements
 			ARROW_TYPE_END,
 			ARROW_TYPE_BOTH,
 		};
-		
+	
 		struct lineSegment {
-			ofxPoint2f from;
-			ofxPoint2f to;
-			actor_type_t from_type;
-			actor_type_t to_type;
+			ofxPoint2f		from;
+			ofxPoint2f		to;
+			actor_type_t	from_type;
+			actor_type_t	to_type;
+			
+			lineSegment() {
+				from_type	= ACTOR_TYPE_NULL;
+				to_type		= ACTOR_TYPE_NULL;
+			}
 		};
 	}
-	
+
 	namespace style {
-		static bool bSetup = false;
+		static bool bSetup	= false;
 
 		static ofTexture grayLineTex;
 		static ofTexture rgbLineTex;
 		static int lineHeight;
 		static int arrowheadRadius;
-		
+	
 		void setup();
-	}	
+	}
 
 	namespace renderer {
+		void drawArrow(types::lineSegment segment,
+					   types::arrow_type_t arrowtype=types::ARROW_TYPE_BOTH);
 		void drawLine(types::lineSegment segment);
 		void drawLine(ofxPoint2f& startpoint, ofxPoint2f& endpoint,
 					  types::actor_type_t starttype,
@@ -49,7 +56,7 @@ namespace GuiElements
 					   types::actor_type_t starttype,
 					   types::actor_type_t fromtype=types::ACTOR_TYPE_NULL,
 					   types::arrow_type_t arrowtype=types::ARROW_TYPE_BOTH);
-		
+	
 		void grayLine(ofxPoint2f& startpoint, ofxPoint2f& endpoint);
 		void rgbLine(ofxPoint2f& startpoint, ofxPoint2f& endpoint);
 		void drawTexLine(ofxPoint2f& startpoint, ofxPoint2f& endpoint, ofTexture& tex);

@@ -27,17 +27,17 @@ VideoPipeline::~VideoPipeline()
 	destroy();
 }
 
-void VideoPipeline::setConfig(ofxSimpleGuiConfig *config) 
+void VideoPipeline::setConfig(ofxSimpleGuiConfig* const config) 
 {
 	this->config = config;
 }
 
-void VideoPipeline::setEdgeHitPoint(ofxPoint2f edgeHitPoint) 
+void VideoPipeline::setEdgeHitPoint(const ofxPoint2f& edgeHitPoint) 
 {
 	this->edgeHitPoint = edgeHitPoint;
 }
 
-void VideoPipeline::setVideoSize(ofPoint videoSize) 
+void VideoPipeline::setVideoSize(const ofPoint& videoSize) 
 {
 	if (this->videoSize != videoSize)
 	{
@@ -112,7 +112,7 @@ void VideoPipeline::toggleDraw()
 	setDraw(!doDraw);
 }
 
-VideoFilter *VideoPipeline::addFilter(VideoFilter* filter) 
+VideoFilter *VideoPipeline::addFilter(VideoFilter* const filter) 
 {
 	ofPoint sze = videoSize;
 	if (!filters.empty())
@@ -132,18 +132,15 @@ VideoFilter *VideoPipeline::addFilter(VideoFilter* filter)
 		if (!filter->isAllocated())
 			filter->setup();
 	}
-	
-	if (filter->fiducial == NULL)
-	{
-		filter->setPos(this->x + this->width + config->padding.x, this->y);
-		this->width += filter->width + config->padding.x;		
-	}
+
+	filter->setPos(this->x + this->width + config->padding.x, this->y);
+	this->width += filter->width + config->padding.x;		
 
 	filters.push_back(filter);
 	return filter;
 }
 
-bool VideoPipeline::dropFilter(VideoFilter* filter) 
+bool VideoPipeline::dropFilter(const VideoFilter* const filter) 
 {
 	list<VideoFilterPtr>::iterator chk = find(filters.begin(), filters.end(), filter);
 
@@ -155,26 +152,14 @@ bool VideoPipeline::dropFilter(VideoFilter* filter)
 	return false;
 }
 
-void VideoPipeline::draw() 
-{
+void VideoPipeline::draw() /* const */
+{	
 	if(!doDraw || filters.empty()) return;
 	glDisableClientState(GL_COLOR_ARRAY);
 
-/*
-	endpoint.set(filters.front()->x,
-				 filters.front()->y + filters.front()->height/2);
-
-	if (filters.front()->fiducial != NULL)
-	{
-		ref.set(filters.front()->x + filters.front()->width/2,
-				filters.front()->y + filters.front()->height/2);
-		endpoint.rotateRad(-filters.front()->fiducial->current.angle, ref);
-	}
-*/
-	
 	map<VideoFilterPtr, ofxPoint2f>::iterator hit_p;
-	list<VideoFilterPtr>::iterator lhs = filters.begin();
-	list<VideoFilterPtr>::iterator rhs = filters.begin();
+	list<VideoFilterPtr>::const_iterator lhs = filters.begin();
+	list<VideoFilterPtr>::const_iterator rhs = filters.begin();
 
 	VideoFilter *from=*lhs, *to;
 
@@ -222,7 +207,7 @@ void VideoPipeline::draw()
 		
 		drawArrow(startpoint, endpoint, actor_type);
 	}
-	
+/*	
 	if (lhs != filters.end() && from->fiducial != NULL)
 	{
 		startpoint.set(from->x + from->width, from->y + (from->height/2));
@@ -235,7 +220,7 @@ void VideoPipeline::draw()
 
 		drawArrow(startpoint, edgeHitPoint, actor_type);
 	}
-	
+*/	
 #ifndef TARGET_OPENGLES
 	glPopAttrib();
 #endif

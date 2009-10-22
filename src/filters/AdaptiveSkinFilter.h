@@ -3,7 +3,7 @@
 #ifdef USE_OPENCV_TRUNK
 
 #include "VideoFilter.h"
-#include "cvaux.h"
+#include "cvaux.hpp"
 
 class AdaptiveSkinFilter : public ColorFilter 
 {
@@ -24,7 +24,7 @@ public:
 		
 		AdaptiveSkinSettings() {
 			sampling_scale	= 1;
-			morphing_mode	= CvAdaptiveSkinDetector::MORPHING_METHOD_ERODE;
+			morphing_mode	= cv::CvAdaptiveSkinDetector::MORPHING_METHOD_ERODE;
 		}
 	} settings;
 
@@ -32,7 +32,7 @@ protected:
 	ofxCvColorImage			bgrInput;
 	ofxCvGrayscaleImage 	grayOutput;
 
-	CvAdaptiveSkinDetector	filter;
+	cv::CvAdaptiveSkinDetector	filter;
 };
 
 #endif

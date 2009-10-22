@@ -13,7 +13,7 @@ static const char * sw[] = {
 
 #include "DataSystem.h"
 
-DataSystem::DataSystem(string lang) : 
+DataSystem::DataSystem(const std::string lang) : 
 stemmer(lang),
 stopper(sw, sw + sizeof(sw) / sizeof(sw[0]))
 {
@@ -44,7 +44,7 @@ void DataSystem::setup()
 	}	
 }
 
-void DataSystem::query(string q) 
+void DataSystem::query(const std::string q) 
 {
 	try {
 		// Start an enquire session.

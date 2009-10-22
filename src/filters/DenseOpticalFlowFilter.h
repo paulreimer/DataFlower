@@ -2,6 +2,11 @@
 
 #include "VideoFilter.h"
 
+//#include <opencv/cv.h>
+//#include <opencv/cv.hpp>
+#include "cv.hpp"
+
+using namespace cv;
 
 class DenseOpticalFlowFilter : public GrayscaleFilter  
 {

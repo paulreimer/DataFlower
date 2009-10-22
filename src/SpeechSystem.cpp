@@ -177,7 +177,7 @@ static void recdone(Recog *recog, void *speech_sys)
 		
 		/* check result status */
 		if (r->result.status < 0)
-	{
+		{
 			/* no results obtained */
 			debug_julius_result(r);
 			/* continue to next process instance */

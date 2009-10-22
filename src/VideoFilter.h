@@ -10,6 +10,17 @@
 #include "ofxFidMain.h"
 #include "ofxPoint2f.h"
 
+typedef unsigned char filter_type_t;
+enum filter_types {
+	NULL_FILTER,
+	COLOR_FILTER,
+	GRAYSCALE_FILTER,
+	MULTI_FILTER,
+	SOURCE_FILTER,
+	MIRROR_FILTER,
+	PRISM_FILTER,
+};
+
 #ifdef USE_SMART_POINTERS
 typedef Poco::SharedPtr<ofxCvColorImage>		ColorImagePtr;
 typedef Poco::SharedPtr<ofxCvGrayscaleImage>	GrayscaleImagePtr;
@@ -26,6 +37,7 @@ public:
 
 	virtual ~VideoFilter();
 
+	byte type;
 //	vector<ofxCvImageType*>	inputs;
 //	vector<ofxCvImageType*>	outputs;
 	
@@ -41,49 +53,43 @@ public:
 		return outputs.empty()?	NULL : outputs[0];
 	}
 */	
-	virtual void setup() =0;
-	virtual void update()=0;
-	void draw();
+	virtual void setup()	{};
+	virtual void update()	{};
+	void draw();// const;
 
 	void destroy();
 
 	ofPoint					videoSize;
 
 	ofxSimpleGuiControl		&addControl(ofxSimpleGuiControl& control);
-	ofxSimpleGuiButton		&addButton(string name, bool &value);
-	ofxSimpleGuiContent		&addContent(string name, ofBaseDraws &content, float fixwidth = -1);
+	ofxSimpleGuiButton		&addButton	(std::string name, bool &value);
+	ofxSimpleGuiContent		&addContent	(std::string name, ofBaseDraws &content, float fixwidth = -1);
+	ofxSimpleGuiSliderInt	&addSlider	(std::string name, int &value, int min, int max, float smoothing=0);
+	ofxSimpleGuiSliderByte	&addSlider	(std::string name, byte &value, byte min=0, byte max=255, float smoothing=0);
+	ofxSimpleGuiSliderFloat	&addSlider	(std::string name, float &value, float min, float max, float smoothing = 0);
+	ofxSimpleGuiSliderDouble &addSlider	(std::string name, double &value, double min, double max, double smoothing = 0);
+	ofxSimpleGuiSlider2d	&addSlider2d(std::string name, ofPoint& value, float xmin, float xmax, float ymin, float ymax);
+	ofxSimpleGuiTitle		&addTitle	(std::string name);
+	ofxSimpleGuiToggle		&addToggle	(std::string name, bool &value);
 	ofxSimpleGuiFPSCounter	&addFPSCounter();
-	ofxSimpleGuiSliderInt	&addSlider(string name, int &value, int min, int max, float smoothing=0);
-	ofxSimpleGuiSliderByte	&addSlider(string name, byte &value, byte min=0, byte max=255, float smoothing=0);
-	ofxSimpleGuiSliderFloat	&addSlider(string name, float &value, float min, float max, float smoothing = 0);
-	ofxSimpleGuiSliderDouble &addSlider(string name, double &value, double min, double max, double smoothing = 0);
-	ofxSimpleGuiSlider2d	&addSlider2d(string name, ofPoint& value, float xmin, float xmax, float ymin, float ymax);
-	ofxSimpleGuiTitle		&addTitle(string name);
-	ofxSimpleGuiToggle		&addToggle(string name, bool &value);
 
 	void onPress(int mx, int my, int button);
 	void onDragOver(int mx, int my, int button);
 
-	void _mouseMoved(ofMouseEventArgs &e);
-	void _mousePressed(ofMouseEventArgs &e);
-	void _mouseDragged(ofMouseEventArgs &e);
-	void _mouseReleased(ofMouseEventArgs &e);
+	void _mouseMoved	(ofMouseEventArgs &e);
+	void _mousePressed	(ofMouseEventArgs &e);
+	void _mouseDragged	(ofMouseEventArgs &e);
+	void _mouseReleased	(ofMouseEventArgs &e);
 
-	void _keyPressed(ofKeyEventArgs &e);
-	void _keyReleased(ofKeyEventArgs &e);
+	void _keyPressed	(ofKeyEventArgs &e);
+	void _keyReleased	(ofKeyEventArgs &e);
 
-	void setConfig(ofxSimpleGuiConfig *config);
+	void setConfig		(ofxSimpleGuiConfig* config);
 	
 	virtual bool isAllocated() =0;
 
 	ofxSimpleGuiConfig	*config;
 	
-//	void setWasHitPoint(ofxPoint2f hitPoint);
-//	bool wasHit();
-//	ofxPoint2f hitPoint;
-
-//	ofxPoint2f midPoint, outputPoint, inputPoint, originPoint;
-
 	void setPos(float _x, float _y, float _angle=0.0);
 	
 protected:
@@ -97,30 +103,14 @@ protected:
 class GrayscaleFilter : public VideoFilter/*<ofxCvGrayscaleImage>*/ 
 {
 public:
+	GrayscaleFilter() { type = GRAYSCALE_FILTER; }
+
 	ofxCvGrayscaleImage	input;
 	ofxCvGrayscaleImage	output;
 
 	ofxCvGrayscaleImage& input_ref() { return input; }
 	ofxCvGrayscaleImage& output_ref() { return output; }
-/*
-	GrayscaleImagePtr input_ref()
-	{
-#ifdef USE_SMART_POINTERS
-		return GrayscaleImagePtr::cast<ofxCvGrayscaleImage>(VideoFilter::input_ref());
-#else
-		return dynamic_cast<GrayscaleImagePtr>(VideoFilter::input_ref());
-#endif
-	}
 
-	GrayscaleImagePtr output_ref()
-	{
-#ifdef USE_SMART_POINTERS
-		return GrayscaleImagePtr::cast<ofxCvGrayscaleImage>(VideoFilter::output_ref());
-#else
-		return dynamic_cast<GrayscaleImagePtr>(VideoFilter::output_ref());
-#endif
-	}
-*/
 	void setup() {
 		input.allocate(videoSize.x, videoSize.y);
 		output.allocate(videoSize.x, videoSize.y);
@@ -134,29 +124,14 @@ public:
 class ColorFilter : public VideoFilter/*<ofxCvColorImage>*/ 
 {
 public:
+	ColorFilter() { type = COLOR_FILTER; }
+
 	ofxCvColorImage		input;
 	ofxCvColorImage		output;
+
 	ofxCvColorImage& input_ref() { return input; }
 	ofxCvColorImage& output_ref() { return output; }
-/*	
-	ColorImagePtr input_ref()
-	{
-#ifdef USE_SMART_POINTERS
-		return ColorImagePtr::cast<ofxCvGrayscaleImage>(VideoFilter::input_ref());
-#else
-		return dynamic_cast<ColorImagePtr>(VideoFilter::input_ref());
-#endif
-	}
-	
-	ColorImagePtr output_ref()
-	{
-#ifdef USE_SMART_POINTERS
-		return ColorImagePtr::cast<ofxCvGrayscaleImage>(VideoFilter::output_ref());
-#else
-		return dynamic_cast<ColorImagePtr>(VideoFilter::output_ref());
-#endif
-	}
-*/	
+
 	void setup() {
 		input.allocate(videoSize.x, videoSize.y);
 		output.allocate(videoSize.x, videoSize.y);

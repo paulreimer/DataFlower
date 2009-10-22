@@ -18,4 +18,5 @@ public:
 	void destroy();
 	ofxSimpleGuiToo gui;
 	bool verbose;
+	int startPage;
 };

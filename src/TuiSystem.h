@@ -9,16 +9,27 @@
 #include "FiducialTrackingFilter.h"
 #include "MarkerFindingFilter.h"
 
-//typedef int fiducialIndex;
+typedef int fiducialIndex;
+//typedef ofxFiducial* fiducialIndex;
 
-typedef ofxFiducial* fiducialIndex;
-/*
-typedef std::map<byte, std::map<fiducialIndex, FiducialBackedObject*> > fid_objs_table;
-typedef std::map<byte, std::map<fiducialIndex, FiducialBackedObject*> >::iterator fid_objs_lookup;
+typedef map<int, int>				fiducial_edges_t;
+typedef fiducial_edges_t::iterator	fiducial_edge_iter;
 
-typedef std::map<fiducialIndex, FiducialBackedObject*>fid_obj_table;
-typedef std::map<fiducialIndex, FiducialBackedObject*>::iterator fid_obj_lookup;
-*/
+typedef list<ofxFiducial>			fiducials_t;
+typedef fiducials_t::iterator		fiducial_iter;
+
+typedef map<int, int>				my_fiducials_t;
+typedef my_fiducials_t::iterator	my_fiducial_iter;
+
+typedef map<int, vector<ofPoint> >	fiducials_corners_t;
+typedef fiducials_corners_t::iterator		fiducial_corners_iter;
+
+typedef list<ofxFinger>				fingers_t;
+typedef fingers_t::iterator			finger_iter;
+
+typedef map<int, int>				my_fingers_t;
+typedef my_fingers_t::iterator		my_finger_iter;
+
 struct fiducialRayIntersectionEvtArgs {
 	ofxFiducial* from;
 	ofxFiducial* to;
@@ -32,12 +43,15 @@ struct fiducialRayIntersectionEvtArgs {
 
 struct fiducialEvtArgs {
 	ofxFiducial* fiducial;
+	vector<ofPoint>* cornerPts;
+
 	fiducialEvtArgs() {
 		fiducial = NULL;
+		cornerPts = NULL;
 	}
 };
 
-class TuiSystem : public ofxMSAInteractiveObject 
+class TuiSystem : public ofxMSAInteractiveObject
 {
 public:
 	TuiSystem();
@@ -45,20 +59,23 @@ public:
 
 	void setup();
 	void update();
-	void draw();
+	void draw() const;
 	void toggleDraw();
 
 	void destroy();
 
-	//list to store fiducials
-	std::map<fiducialIndex, vector<ofPoint> > fiducialCornersMap;
-	std::map<fiducialIndex, fiducialIndex> fiducialEdges;
-	
-	std::list<ofxFiducial> &fiducialsList;
+//	fiducial_edges_t fiducialEdges;
 
-	//list to store fingers
-	std::list <ofxFinger> &fingersList;
-	VideoFilter* createFiducialFilter(ofxFiducial* fiducial);
+	fiducials_corners_t	fiducialsCornersMap;
+	fiducial_edges_t	fiducialEdges;
+
+	fiducials_t			&fiducialsList;
+	fingers_t			&fingersList;
+	
+	my_fiducials_t		fiducialsMap;
+	my_fingers_t		fingersMap;
+
+	VideoFilter* createFiducialFilter(ofxFiducial* const fiducial);
 
 	ofEvent<fiducialEvtArgs> fiducialFoundEvt;
 	ofEvent<fiducialEvtArgs> fiducialLostEvt;
@@ -71,10 +88,10 @@ public:
 	void fiducialRayIntersectionFound		(fiducialRayIntersectionEvtArgs &args);
 	void fiducialRayIntersectionLost		(fiducialRayIntersectionEvtArgs &args);
 	void fiducialRayIntersectionUpdated		(fiducialRayIntersectionEvtArgs &args);
-	
-	ofPoint getVideoSize() { return fidtracker.videoSize; }
-	
-	bool verbose;	
+
+	ofPoint getVideoSize() const { return fidtracker.videoSize; }
+
+	bool verbose;
 
 	float x_scale, y_scale;
 	ofPoint videoSize;
@@ -82,18 +99,19 @@ public:
 protected:
 	bool doDraw;
 
-	ofxPoint2f intersects_window_edge(ofxPoint2f origin, ofxPoint2f endpoint);
-	
+	ofxPoint2f intersects_window_edge(const ofxPoint2f& origin, const ofxPoint2f& endpoint) const;
+
 	VideoPipeline pipe;
 	FiducialTrackingFilter fidtracker;
 //	MarkerFindingFilter markerfinder;
 };
 
-ofxPoint2f intersects(ofxPoint2f origin, ofxPoint2f endpoint,
-					  ofxPoint2f box_origin, double box_angle, int box_w, int box_h);
+ofxPoint2f intersects(const ofxPoint2f& origin, const ofxPoint2f& endpoint,
+					  const ofxPoint2f& box_origin, double box_angle,
+					  int box_w, int box_h);
 
-ofxPoint2f intersects(ofxPoint2f origin, ofxPoint2f endpoint,
-					  vector<ofPoint>& corners);
+ofxPoint2f intersects(const ofxPoint2f& origin, const ofxPoint2f& endpoint,
+					  const vector<ofPoint>& corners);
 
 
 //ofxPoint2f intersects_window_edge(ofxPoint2f origin, double angle);

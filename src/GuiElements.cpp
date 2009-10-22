@@ -50,6 +50,18 @@ namespace GuiElements {
 			glPopMatrix();
 		}
 
+		void drawArrow(types::lineSegment segment,
+					   types::arrow_type_t arrowtype)
+		{
+			drawLine(segment);
+			
+			if (arrowtype == types::ARROW_TYPE_BOTH || arrowtype == types::ARROW_TYPE_START)
+				ofCircle(segment.from.x, segment.from.y, style::arrowheadRadius);
+			
+			if (arrowtype == types::ARROW_TYPE_BOTH || arrowtype == types::ARROW_TYPE_END)
+				ofCircle(segment.to.x, segment.to.y, style::arrowheadRadius);
+		}
+		
 		void drawArrow(ofxPoint2f& startpoint, ofxPoint2f& endpoint,
 					   types::actor_type_t starttype, types::actor_type_t endtype,
 					   types::arrow_type_t arrowtype)

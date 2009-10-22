@@ -28,15 +28,15 @@ public:
 	public:
 		string sentences;
 		float width, height;
-		float getWidth() { return width; }
-		float getHeight() { return height; }
+		float getWidth() const { return width; }
+		float getHeight() const { return height; }
 		
-		void draw(float x, float y, float w, float h)
-	{
+		void draw(float x, float y, float w, float h) const
+		{
 			ofDrawBitmapString(sentences, x, y);
 		}
-		void draw(float x, float y)
-	{
+		void draw(float x, float y) const
+		{
 			draw(x, y, width, height);
 		}
 	} detected;

@@ -11,12 +11,12 @@ VideoFilterGraph::VideoFilterGraph()
 {
 //	ref_type = FIDUCIAL_FILTER_GRAPH_TYPE;
 	disableAllEvents();
-	
+
 	verbose = SYSTEM_VERBOSE;
-	
-	filters.clear();
-	flows.clear();
-	
+
+	vertices.clear();
+	edges.clear();
+
 	if (verbose) printf("VideoFilterGraph::VideoFilterGraph()\n");
 }
 
@@ -26,122 +26,57 @@ VideoFilterGraph::~VideoFilterGraph()
 	destroy();
 }
 
-void VideoFilterGraph::setConfig(ofxSimpleGuiConfig *config)
+void VideoFilterGraph::update()
 {
-	this->config = config;
+	//process edges
 }
 
-void VideoFilterGraph::setVideoSize(ofPoint videoSize) 
-{
-	if (this->videoSize != videoSize)
-	{
-		this->videoSize = videoSize;
-		setup();
-	}
-}
-
-void VideoFilterGraph::setup() 
-{
-	if (input.width != videoSize.x || input.height != videoSize.y)
-	{
-		input.clear();
-		input.allocate(videoSize.x, videoSize.y);
-	}
-	if (output.width != videoSize.x || output.height != videoSize.y)
-	{
-		output.clear();
-		output.allocate(videoSize.x, videoSize.y);
-	}
-	setDraw(true);
-	//	enableAppEvents();
-}
-
-void VideoFilterGraph::update() 
-{
-}
-
-void VideoFilterGraph::setDraw(bool b) 
+void VideoFilterGraph::setDraw(bool b)
 {
 	doDraw = b;
 }
 
-void VideoFilterGraph::toggleDraw() 
+void VideoFilterGraph::toggleDraw()
 {
 	setDraw(!doDraw);
 }
-/*
-VideoFilter *VideoFilterGraph::addFilter(VideoFilter* filter) 
-{
-	ofPoint sze = videoSize;
-	if (!filters.empty())
-		sze.set(filters.back()->output_ref().width,
-				filters.back()->output_ref().height);
-	
-	if (sze.x != 0 && sze.y != 0)
-	{
-		if (filter->videoSize.x != sze.x || filter->videoSize.y != sze.y)
-	{
-			if (filter->isAllocated())
-				filter->destroy();
-			
-			filter->videoSize = sze;
-		}
-		
-		if (!filter->isAllocated())
-			filter->setup();
-	}
-	
-	if (filter->fiducial == NULL)
-	{
-		filter->setPos(this->x + this->width + config->padding.x, this->y);
-		this->width += filter->width + config->padding.x;		
-	}
-	
-	filters.push_back(filter);
-	return filter;
-}
-*/
 
-void VideoFilterGraph::draw() 
+void VideoFilterGraph::draw()
 {
-	if(!doDraw || filters.empty()) return;
+	if(!doDraw) return;
 	glDisableClientState(GL_COLOR_ARRAY);
 
+	list<edge_t>::iterator edges_it;
+/*
 	ofxPoint2f startpoint, endpoint, ref;
-
-	map<VideoFilterPtr, ofxPoint2f>::iterator hit_p;
-	map<fiducialIndex,VideoFilter*>::iterator lhs = filters.begin();
-	map<fiducialIndex,VideoFilter*>::iterator rhs = filters.begin();
-
-	VideoFilter *from=lhs->second, *to;
-
 	startpoint.set	(254, 215);
-	
-	endpoint.set	(from->x,
-					 from->y + (from->height/2));
+
+	endpoint.set	(ray_it->from.x,
+					 ray_it->from.y + (from->height/2));
 
 	endpoint.rotateRad(angle, from->angle);
-	
-	if (!from->isAllocated()) return;
-	
+*/
 #ifndef TARGET_OPENGLES
 	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
 #endif
-	
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
+
 	//	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glEnable(GL_LINE_SMOOTH);
-	
-	drawArrow(startpoint, endpoint, GuiElements::types::ACTOR_TYPE_RGB);
+
+//	drawArrow(startpoint, endpoint, GuiElements::types::ACTOR_TYPE_RGB);
+
+	for (edges_it = edges.begin(); edges_it != edges.end(); edges_it++)
+		drawArrow(edges_it->ray);
 
 #ifndef TARGET_OPENGLES
 	glPopAttrib();
 #endif
 }
 
-void VideoFilterGraph::destroy() 
+void VideoFilterGraph::destroy()
 {
 	if (verbose) printf("VideoFilterGraph::destroy()\n");
 }
