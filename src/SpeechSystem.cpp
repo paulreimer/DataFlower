@@ -2,6 +2,8 @@
 
 #include "SpeechSystem.h"
 
+#ifdef USE_SPEECH_TO_TEXT
+
 SpeechSystem::SpeechSystem()
 {
 	verbose = SYSTEM_VERBOSE;
@@ -22,11 +24,11 @@ SpeechSystem::~SpeechSystem()
 	destroy();
 }
 
-void SpeechSystem::setup() 
+void SpeechSystem::setup()
 {
 	// ewwww
 	jconf = j_config_load_file_new(const_cast<char*>(jconf_filename.c_str()));
-	
+
 	/* 2. create recognition instance according to the jconf */
 	/* it loads models, setup final parameters, build lexicon
      and set up work area for recognition */
@@ -36,7 +38,7 @@ void SpeechSystem::setup()
 		fprintf(stderr, "Error in startup\n");
 		return;
 	}
-	
+
 	/*********************/
 	/* Register callback */
 	/*********************/
@@ -44,7 +46,7 @@ void SpeechSystem::setup()
 	callback_add(recog, CALLBACK_EVENT_SPEECH_READY, recready, this);
 	callback_add(recog, CALLBACK_EVENT_SPEECH_START, recstart, this);
 	callback_add(recog, CALLBACK_RESULT, recdone, this);
-	
+
 	/**************************/
 	/* Initialize audio input */
 	/**************************/
@@ -63,7 +65,7 @@ void SpeechSystem::setup()
 	/* Open input stream and recognize */
 	/***********************************/
 	/* raw speech input (microphone etc.) */
-	
+
 	switch(j_open_stream(recog, NULL)) {
 		case 0:			/* succeeded */
 			break;
@@ -74,11 +76,11 @@ void SpeechSystem::setup()
 			fprintf(stderr, "failed to begin input stream\n");
 			return;
 	}
-    
+
 	startThread(true, false); // blocking, verbose
 }
 
-void SpeechSystem::threadedFunction() 
+void SpeechSystem::threadedFunction()
 {
 	/**********************/
 	/* Recognization Loop */
@@ -86,25 +88,25 @@ void SpeechSystem::threadedFunction()
 	/* enter main loop to recognize the input stream */
 	/* finish after whole input has been processed and input reaches end */
 	j_recognize_stream(recog);
-	
+
 	if (verbose) printf("SpeechSystem::threadedFunction()\n");
 }
 
-void SpeechSystem::destroy() 
+void SpeechSystem::destroy()
 {
 	if (verbose) printf("SpeechSystem::destroy()\n");
 	/* calling j_close_stream(recog) at any time will terminate
      recognition and exit j_recognize_stream() */
 	j_close_stream(recog);
-	
-	stopThread();	
+
+	stopThread();
 }
 
-/** 
- * Callback to be called when start waiting speech input. 
- * 
+/**
+ * Callback to be called when start waiting speech input.
+ *
  */
-static void recready(Recog *recog, void *speech_sys) 
+static void recready(Recog *recog, void *speech_sys)
 {
 	if (recog->jconf->input.speech_input == SP_MIC || recog->jconf->input.speech_input == SP_NETAUDIO)
 	{
@@ -112,27 +114,27 @@ static void recready(Recog *recog, void *speech_sys)
 	}
 }
 
-/** 
+/**
  * Callback to be called when speech input is triggered.
- * 
+ *
  */
-static void recstart(Recog *recog, void *speech_sys) {	
+static void recstart(Recog *recog, void *speech_sys) {
 	if (recog->jconf->input.speech_input == SP_MIC || recog->jconf->input.speech_input == SP_NETAUDIO)
 	{
 		fprintf(stderr, "\n<<< listening >>>\n\n");
 	}
 }
 
-/** 
+/**
  * Sub function to output phoneme sequence.
- * 
+ *
  */
-void put_hypo_phoneme(WORD_ID *seq, int n, WORD_INFO *winfo) 
+void put_hypo_phoneme(WORD_ID *seq, int n, WORD_INFO *winfo)
 {
 	int i,j;
 	WORD_ID w;
 	static char buf[MAX_HMMNAME_LEN];
-	
+
 	if (seq != NULL)
 	{
 		for (i=0;i<n;i++) {
@@ -146,12 +148,12 @@ void put_hypo_phoneme(WORD_ID *seq, int n, WORD_INFO *winfo)
 	}
 	printf("\n");
 }
-/** 
+/**
  * Callback to output final recognition result.
  * This function will be called just after recognition of an input ends
- * 
+ *
  */
-static void recdone(Recog *recog, void *speech_sys) 
+static void recdone(Recog *recog, void *speech_sys)
 {
 	int i, j;
 	int len;
@@ -163,18 +165,18 @@ static void recdone(Recog *recog, void *speech_sys)
 	RecogProcess *r;
 	HMM_Logical *p;
 	SentenceAlign *align;
-	
+
 	/*	all recognition results are stored at each recognition process
 	 instance
 	 */
 	for(r=recog->process_list;r;r=r->next)
 	{
-		
+
 		/* skip the process if the process is not alive */
 		if (! r->live) continue;
-		
+
 		/* result are in r->result.	See recog.h for details */
-		
+
 		/* check result status */
 		if (r->result.status < 0)
 		{
@@ -183,16 +185,16 @@ static void recdone(Recog *recog, void *speech_sys)
 			/* continue to next process instance */
 			continue;
 		}
-		
+
 		/* output results for all the obtained sentences */
 		winfo = r->lm->winfo;
-		
+
 		int it_end = min(r->result.sentnum, 1);
 		for(n = 0; n < it_end; n++) { // for all sentences
 			s = &(r->result.sent[n]);
 			seq = s->word;
 			seqnum = s->word_num;
-			
+
 			// output word sequence like Julius
 			printf("sentence%d:", n+1);
 			for(i=0;i<seqnum;i++) printf(" %s", winfo->woutput[seq[i]]);
@@ -207,12 +209,12 @@ static void recdone(Recog *recog, void *speech_sys)
 				((SpeechSystem*)speech_sys)->detected.sentences += winfo->woutput[seq[i]];
 		}
 	}
-	
+
 	/* flush output buffer */
 	fflush(stdout);
 }
 
-void debug_julius_result(RecogProcess *r) 
+void debug_julius_result(RecogProcess *r)
 {
 	/* outout message according to the status code */
 	switch(r->result.status)
@@ -237,3 +239,5 @@ void debug_julius_result(RecogProcess *r)
 			break;
 	}
 }
+
+#endif

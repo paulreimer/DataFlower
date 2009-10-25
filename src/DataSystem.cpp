@@ -1,19 +1,22 @@
 #pragma once
-static const char * sw[] = {                                                
-	"a", "about", "an", "and", "are", "as", "at",                           
-	"be", "by",                                                             
-	"en",                                                                   
-	"for", "from",                                                          
-	"how",                                                                  
-	"i", "in", "is", "it",                                                  
-	"of", "on", "or",                                                       
-	"that", "the", "this", "to",                                            
-	"was", "what", "when", "where", "which", "who", "why", "will", "with"   
-};
 
 #include "DataSystem.h"
 
-DataSystem::DataSystem(const std::string lang) : 
+#ifdef USE_DATA
+
+static const char * sw[] = {
+    "a", "about", "an", "and", "are", "as", "at",
+	"be", "by",
+	"en",
+	"for", "from",
+	"how",
+	"i", "in", "is", "it",
+	"of", "on", "or",
+	"that", "the", "this", "to",
+	"was", "what", "when", "where", "which", "who", "why", "will", "with"
+};
+
+DataSystem::DataSystem(const std::string lang) :
 stemmer(lang),
 stopper(sw, sw + sizeof(sw) / sizeof(sw[0]))
 {
@@ -27,7 +30,7 @@ DataSystem::~DataSystem()
 	destroy();
 }
 
-void DataSystem::setup() 
+void DataSystem::setup()
 {
 	try {
 		// Parse the query string to produce a Xapian::Query object.
@@ -37,26 +40,26 @@ void DataSystem::setup()
 		qp.set_stopper(&stopper);
 
 		qp.set_stemming_strategy(Xapian::QueryParser::STEM_SOME);
-		
+
 	} catch (const Xapian::Error &e)
 	{
 		printf("%s", e.get_description());
-	}	
+	}
 }
 
-void DataSystem::query(const std::string q) 
+void DataSystem::query(const std::string q)
 {
 	try {
 		// Start an enquire session.
 		Xapian::Enquire enquire(db);
-		
+
 		Xapian::Query query = qp.parse_query(q);
 		printf("Parsed query is: %s", query.get_description().c_str());
 
 		// Find the top 10 results for the query.
 		enquire.set_query(query);
 		Xapian::MSet matches = enquire.get_mset(0, 10);
-		
+
 		// Display the results.
 		printf("%d results found.\n", matches.get_matches_estimated());
 		printf("Matches 1-$d:\n", matches.size());
@@ -74,7 +77,9 @@ void DataSystem::query(const std::string q)
 	}
 }
 
-void DataSystem::destroy() 
+void DataSystem::destroy()
 {
 	if (verbose) printf("DataSystem::destroy()\n");
 }
+
+#endif

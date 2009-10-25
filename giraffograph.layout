@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="release" />
+	<File name="..\..\..\addons\ofxCvMarkers\src\ofxCvDtouchMarkers.h" open="1" top="0" tabpos="7">
+		<Cursor position="39" topLine="0" />
+	</File>
+	<File name="..\..\..\addons\ofxOpenCv\src\ofxCvConstants.h" open="0" top="0" tabpos="0">
+		<Cursor position="60" topLine="0" />
+	</File>
+	<File name="..\..\..\addons\ofxOsc\src\ofxOscReceiver.h" open="0" top="0" tabpos="0">
+		<Cursor position="1055" topLine="25" />
+	</File>
+	<File name="..\..\..\addons\ofxRemoteControl\src\ofxRemoteControl.h" open="0" top="0" tabpos="0">
+		<Cursor position="39" topLine="0" />
+	</File>
+	<File name="..\..\..\addons\ofxSimpleGuiToo\src\ofxSimpleGuiControl.h" open="0" top="0" tabpos="0">
+		<Cursor position="1997" topLine="28" />
+	</File>
+	<File name="src\DataSystem.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="58" topLine="0" />
+	</File>
+	<File name="src\DataSystem.h" open="1" top="0" tabpos="5">
+		<Cursor position="511" topLine="6" />
+	</File>
+	<File name="src\RenderSystem.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="4708" topLine="182" />
+	</File>
+	<File name="src\SpeechSystem.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="43" topLine="0" />
+	</File>
+	<File name="src\SpeechSystem.h" open="0" top="0" tabpos="0">
+		<Cursor position="545" topLine="20" />
+	</File>
+	<File name="src\TuiSystem.h" open="0" top="0" tabpos="0">
+		<Cursor position="154" topLine="0" />
+	</File>
+	<File name="src\VideoFilter.h" open="0" top="0" tabpos="0">
+		<Cursor position="64" topLine="0" />
+	</File>
+	<File name="src\VideoSystem.h" open="0" top="0" tabpos="0">
+		<Cursor position="77" topLine="0" />
+	</File>
+	<File name="src\filters\CalibrationFilter.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="90" topLine="0" />
+	</File>
+	<File name="src\filters\DenseOpticalFlowFilter.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="213" topLine="0" />
+	</File>
+	<File name="src\filters\DenseOpticalFlowFilter.h" open="1" top="0" tabpos="1">
+		<Cursor position="71" topLine="0" />
+	</File>
+	<File name="src\filters\MarkerFindingFilter.h" open="1" top="0" tabpos="6">
+		<Cursor position="42" topLine="0" />
+	</File>
+	<File name="src\filters\PassthroughFilter.h" open="0" top="0" tabpos="0">
+		<Cursor position="16" topLine="0" />
+	</File>
+	<File name="src\filters\SobelFilterOcl.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1390" topLine="41" />
+	</File>
+	<File name="src\filters\SobelFilterOcl.h" open="0" top="0" tabpos="0">
+		<Cursor position="480" topLine="16" />
+	</File>
+	<File name="src\filters\VoxelBufferFilter.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="2249" topLine="69" />
+	</File>
+	<File name="src\filters\VoxelBufferFilter.h" open="0" top="0" tabpos="0">
+		<Cursor position="982" topLine="22" />
+	</File>
+	<File name="src\settings.h" open="1" top="1" tabpos="8">
+		<Cursor position="354" topLine="1" />
+	</File>
+</CodeBlocks_layout_file>

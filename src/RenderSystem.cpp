@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef USE_OPENCL
+
 #include "RenderSystem.h"
 #include "testApp.h"
 
@@ -17,13 +19,13 @@ RenderSystem::~RenderSystem()
 	destroy();
 }
 
-void RenderSystem::setup() 
+void RenderSystem::setup()
 {
 	settings.do_draw = true;
 
 	rayTracer.loadFromFile("volumeRender.cl");
 	clScheduler->initKernel(rayTracer);
-	
+
 //	pipe.addFilter(new SobelFilterOcl(*clScheduler));
 //	pipe.addFilter(new VoxelBufferFilter(*clScheduler, rayTracer));
 
@@ -32,12 +34,12 @@ void RenderSystem::setup()
 //	myApp->videoSystem.addPipeline(&pipe);
 }
 
-void RenderSystem::toggleDraw() 
+void RenderSystem::toggleDraw()
 {
 	settings.do_draw = !settings.do_draw;
 }
 
-void RenderSystem::update() 
+void RenderSystem::update()
 {
 	clScheduler->enqueueKernel(rayTracer);
 }
@@ -45,31 +47,31 @@ void RenderSystem::update()
 void RenderSystem::draw()
 {
 	if (!settings.do_draw) return;
-	
+
 	float pbo_offset[2];
 	pbo_offset[0] = ofClamp(settings.offset->x, 0, 1);
 	pbo_offset[1] = ofClamp(1-settings.offset->y, 0, 1);
-	
+
 	rayTracer.viewTranslation[0] = settings.offset->x - pbo_offset[0];
 	rayTracer.viewTranslation[1] = (1-settings.offset->y) - pbo_offset[1];
-	
+
 	// Begin ray tracing draw
 	glViewport(0, 0, rayTracer.width, rayTracer.height);
-	
+
     glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
     glLoadIdentity();
-	
+
     glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
     glLoadIdentity();
     glOrtho(0.0, 1.0, 0.0, 1.0, 0.0, 1.0);
-	
+
     // use OpenGL to build view matrix
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-	
+
 	//	glRotatef(180, 1.0, 0.0, 0.0);
 	//	glTranslatef(-viewTranslation[0], -viewTranslation[1], -viewTranslation[2]);
 	//	glTranslatef(rayTracer.volumeSize[0]/2, rayTracer.volumeSize[1]/2, rayTracer.volumeSize[2]/2);
@@ -79,11 +81,11 @@ void RenderSystem::draw()
 	glRotatef(180-settings.rot->y,   0,   0, 1.0);
 
 	glTranslatef(rayTracer.viewTranslation[0], rayTracer.viewTranslation[1], settings.offset->z);
-	
+
 	GLfloat modelView[16];
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelView);
     glPopMatrix();
-	
+
     rayTracer.invViewMatrix[0] = modelView[0];
 	rayTracer.invViewMatrix[1] = modelView[4];
 	rayTracer.invViewMatrix[2] = modelView[8];
@@ -96,38 +98,38 @@ void RenderSystem::draw()
 	rayTracer.invViewMatrix[9] = modelView[6];
 	rayTracer.invViewMatrix[10] = modelView[10];
 	rayTracer.invViewMatrix[11] = modelView[14];
-	
+
     // display results
     glClear(GL_COLOR_BUFFER_BIT);
-	
+
     // draw image from PBO
     glDisable(GL_DEPTH_TEST);
-	
+
 	GLfloat rpos[4];
 	GLboolean valid;
-	
+
 	// Invert y-axis
     glRasterPos2f(pbo_offset[0], pbo_offset[1]);
 	//	printf("Render offset: (%f, %f)\n", settings.offset.x, settings.offset.y);
-	
+
     glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, rayTracer.pbo);
     glDrawPixels(rayTracer.width, rayTracer.height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
 
     glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-	
+
     glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 }
 
-	
-void RenderSystem::destroy() 
+
+void RenderSystem::destroy()
 {
 	if (verbose) printf("RenderSystem::destroy()\n");
 }
 
-void RenderSystem::keyPressed(int key) 
+void RenderSystem::keyPressed(int key)
 {
 	switch (key)
 	{
@@ -143,21 +145,21 @@ void RenderSystem::keyPressed(int key)
 		case '_':
 			rayTracer.density -= 0.1;
 			break;
-			
+
 		case ']':
 			rayTracer.brightness += 0.1;
 			break;
 		case '[':
 			rayTracer.brightness -= 0.1;
 			break;
-			
+
 		case ';':
 			rayTracer.transferOffset += 0.01;
 			break;
 		case '\'':
 			rayTracer.transferOffset -= 0.01;
 			break;
-			
+
 		case '.':
 			rayTracer.transferScale += 0.01;
 			break;
@@ -167,25 +169,25 @@ void RenderSystem::keyPressed(int key)
 	}
 }
 
-void RenderSystem::mouseMoved(int x, int y) 
+void RenderSystem::mouseMoved(int x, int y)
 {
 	float dx, dy;
     dx = x - ox;
     dy = y - oy;
-	
+
 	//	viewRotation[0] += dy / 5.0;
 	//	viewRotation[1] += dx / 5.0;
-	
+
 	ox = x;
     oy = y;
 }
 
-void RenderSystem::onMouseDragOver(int x, int y, int button) 
+void RenderSystem::onMouseDragOver(int x, int y, int button)
 {
 	float dx, dy;
     dx = x - ox;
     dy = y - oy;
-	
+
 	switch (button)
 	{
 		case 0:
@@ -201,3 +203,5 @@ void RenderSystem::onMouseDragOver(int x, int y, int button)
     ox = x;
     oy = y;
 }
+
+#endif

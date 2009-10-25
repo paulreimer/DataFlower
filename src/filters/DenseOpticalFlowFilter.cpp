@@ -2,6 +2,8 @@
 
 #include "DenseOpticalFlowFilter.h"
 
+#ifdef USE_OPENCV_TRUNK
+
 DenseOpticalFlowFilter::DenseOpticalFlowFilter()
 {
 	if (verbose) printf("DenseOpticalFlowFilter::DenseOpticalFlowFilter()\n");
@@ -13,7 +15,7 @@ DenseOpticalFlowFilter::~DenseOpticalFlowFilter()
 	destroy();
 }
 
-void DenseOpticalFlowFilter::setup() 
+void DenseOpticalFlowFilter::setup()
 {
 	GrayscaleFilter::setup();
 
@@ -24,13 +26,13 @@ void DenseOpticalFlowFilter::setup()
 
 	//inputMatPrev = cvGetMat(grayInputPrev.getCvImage(), NULL, 0, 0);
 	//inputMat = cvGetMat(grayInput.getCvImage(), NULL, 0, 0);
-	
+
 	CvSize img_sz = cvGetSize( input.getCvImage() );
 	flowIpl = cvCreateImage( img_sz, IPL_DEPTH_32F, 2 );
 	grayFlowIpl = cvCreateImage( img_sz, IPL_DEPTH_8U, 2 );
-	
+
 //	flowMat = cvGetMat(flowIpl, NULL, 0, 0);
-	
+
 	//	cv::Mat inputMatPrev = cv::cvarrToMat(grayInputPrev.getCvImage());
 	//	cv::Mat inputMat = cv::cvarrToMat(grayInput.getCvImage());
 	//	cv::Mat flowMat = cv::cvarrToMat(flowIpl);
@@ -45,13 +47,13 @@ void DenseOpticalFlowFilter::setup()
 	addSlider("Poly. sigma", settings.poly_sigma, 0.1, 5.0);
 }
 
-void DenseOpticalFlowFilter::update() 
+void DenseOpticalFlowFilter::update()
 {
 #ifdef USE_OPENCV_TRUNK
 	inputMatPrev = cv::cvarrToMat(grayInputPrev.getCvImage());
 	inputMat = cv::cvarrToMat(input.getCvImage());
 	flowMat = cv::cvarrToMat(flowIpl);
-	
+
 	cv::calcOpticalFlowFarneback(inputMatPrev, inputMat, flowMat,
 								 settings.pyr_scale, settings.pyr_levels, settings.win_size,
 								 settings.max_iter, settings.poly_n, settings.poly_sigma,
@@ -67,12 +69,12 @@ void DenseOpticalFlowFilter::update()
 
 	cvMerge(flowX.getCvImage(), flowY.getCvImage(), NULL, NULL, output.getCvImage());
 	output.flagImageChanged();
-	
+
 	grayInputPrev = input;
 #endif
 }
 
-void DenseOpticalFlowFilter::destroy() 
+void DenseOpticalFlowFilter::destroy()
 {
 	grayInputPrev.clear();
 
@@ -81,6 +83,8 @@ void DenseOpticalFlowFilter::destroy()
 
 	cvReleaseImage(&flowIpl);
 	cvReleaseImage(&grayFlowIpl);
-	
+
 	if (verbose) printf("DenseOpticalFlowFilter::destroy()\n");
 }
+
+#endif

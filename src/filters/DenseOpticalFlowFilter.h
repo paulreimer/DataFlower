@@ -2,13 +2,15 @@
 
 #include "VideoFilter.h"
 
+#ifdef USE_OPENCV_TRUNK
+
 //#include <opencv/cv.h>
 //#include <opencv/cv.hpp>
 #include "cv.hpp"
 
 using namespace cv;
 
-class DenseOpticalFlowFilter : public GrayscaleFilter  
+class DenseOpticalFlowFilter : public GrayscaleFilter
 {
 public:
 	DenseOpticalFlowFilter();
@@ -52,3 +54,5 @@ private:
 
 	cv::Mat inputMatPrev, inputMat, flowMat;
 };
+
+#endif
