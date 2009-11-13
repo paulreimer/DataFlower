@@ -34,33 +34,35 @@ VideoSystem::~VideoSystem()
 
 void VideoSystem::setup() 
 {
-	
-	grabImgs.resize(grabSizes.size());
+	grabImgs.resize(grabSizes.size();
 	vidImgs.resize(vidSizes.size());
+	grabImgsNew.resize(grabImgs.size());
 
 	vidGrabbers.resize(grabSizes.size());
 	vidPlayers.resize(vidSizes.size());
-	
-	for (int g=0; g < grabSizes.size(); g++) {
-		vidGrabbers[g].setVerbose(true);
-		vidGrabbers[g].initGrabber(grabSizes[g].x, grabSizes[g].y);
+	vidImgsNew.resize(vidImgs.size());
+
+	for (int i=0; i < grabSizes.size(); i++)
+	{
+		vidGrabbers[i].setVerbose(true);
+		vidGrabbers[i].initGrabber(grabSizes[i].x, grabSizes[i].y);
 		
-		grabImgs[g].allocate(grabSizes[g].x, grabSizes[g].y);
+		grabImgs[i].allocate(grabSizes[i].x, grabSizes[i].y);
 #ifdef USE_GUI
-		gui->addContent("Capture "+ofToString(g), grabImgs[g]);
+		gui->addContent("Capture "+ofToString(i), grabImgs[i]);
 #endif
 	}
 
-	vidPlayers.resize(vidSizes.size());
-	for (int v=0; v < vidSizes.size(); v++) {
-		vidPlayers[v].loadMovie("fingers.mov");
-		vidPlayers[v].play();
+	for (int i=0; i < vidSizes.size(); i++)
+	{
+		vidPlayers[i].loadMovie("fingers.mov");
+		vidPlayers[i].play();
 
-		vidSizes[v].set(vidPlayers[v].width, vidPlayers[v].height);
+		vidSizes[i].set(vidPlayers[i].width, vidPlayers[i].height);
 
-		vidImgs[v].allocate(vidSizes[v].x, vidSizes[v].y);
+		vidImgs[i].allocate(grabSizes[i].x, grabSizes[i].y);
 #ifdef USE_GUI
-		gui->addContent("Video "+ofToString(v), (vidImgs[v]));
+		gui->addContent("Video "+ofToString(i), (vidImgs[]));
 #endif
 	}
 /*	
@@ -90,7 +92,6 @@ VideoPipeline *VideoSystem::addPipeline(VideoPipeline* const pipeline, ofxCvColo
 		else if (!vidImgs.empty())
 			src = &vidImgs[0];//.back());
 
-
 	if (src != NULL && src->bAllocated)
 	{
 		pipeline->videoSize.set(src->width, src->height);
@@ -108,7 +109,6 @@ void VideoSystem::dropPipeline(VideoPipeline* const pipeline)
 	for (pipeline_it = pipelines.begin(); pipeline_it != pipelines.end(); pipeline_it++)
 		if (pipeline_it->first == pipeline)
 			pipelines.erase(pipeline_it);
-
 }
 
 VideoFilterGraph *VideoSystem::addGraph(VideoFilterGraph* const graph) 
@@ -121,51 +121,67 @@ VideoFilterGraph *VideoSystem::addGraph(VideoFilterGraph* const graph)
 
 void VideoSystem::dropGraph(VideoFilterGraph* const graph) 
 {
-	graphs.remove(graph);
+//	graphs.remove(graph);
+	filter_graph_iter graph_it;
+	
+	for (graph_it = graphs.begin(); graph_it != graphs.end(); graph_it++)
+		if (graph_it->first == graph)
+			graphs.erase(graph_it);
 }
 
 void VideoSystem::update() 
 {
-	for (int g=0; g < vidGrabbers.size(); g++) {
-		ofVideoGrabber& vidGrabber = vidGrabbers[g];
-		ofxCvColorImage& grabImg = grabImgs[g];
+	// Reset new frame flags
+	for (int i=0; i < imgs_newFrame.size(); i++)
+		vidImgsNew[i] = false;
+
+	for (int i=0; i < vidGrabbers.size(); i++)
+	{
+		ofVideoGrabber& vidGrabber = vidGrabbers[i];
+		ofxCvColorImage& grabImg = grabImgs[i];
 		
 		vidGrabber.grabFrame();
 
 		if (vidGrabber.isFrameNew()) {
-			bGotFrame = true;
-			grabImg.setFromPixels(vidGrabber.getPixels(), grabSizes[g].x, grabSizes[g].y);
+			vidImgsNew[i] = true;
+			grabImg.setFromPixels(vidGrabber.getPixels(), grabSizes[i].x, grabSizes[i].y);
 		}
 	}
 
-	for (int v=0; v < vidPlayers.size(); v++) {
-		ofVideoPlayer& vidPlayer = vidPlayers[v];
-		ofxCvColorImage& vidImg = vidImgs[v];
+	for (int i=0; i < vidPlayers.size(); i++)
+	{
+		ofVideoPlayer& vidPlayer = vidPlayers[i];
+		ofxCvColorImage& vidImg = vidImgs[];
 
 		vidPlayer.idleMovie();
 
 		if (vidPlayer.isFrameNew()) {
-			bGotFrame = true;
-			vidImg.setFromPixels(vidPlayer.getPixels(), vidSizes[v].x, vidSizes[v].y);
+			grabImgsNew[i] = true;
+			vidImg.setFromPixels(vidPlayer.getPixels(), vidSizes[i].x, vidSizes[i].y);
 		}
 	}
 
-	ofxCvColorImage* src;
+	int src_idx;
 
 	pipeline_iter pipeline_it;
 	VideoPipelinePtr pipeline;
-	for(pipeline_it = pipelines.begin(); pipeline_it != pipelines.end(); pipeline_it++) {
+	for(pipeline_it = pipelines.begin(); pipeline_it != pipelines.end(); pipeline_it++)
+	{
 		pipeline = pipeline_it->first;
-		src = pipeline_it->second;
+		src_idx = pipeline_it->second;
+		pipeline->bNewFrame = false;
 
-		if (src != NULL && src->bAllocated)
+		if (src_idx < imgs.size()
+			&& imgs[src_idx].bAllocated
+			&& imgs_newFrame[src_idx])
 		{
-			pipeline->input = (*src);
+			pipeline->bNewFrame = true;
+			pipeline->input = imgs[src_idx];
 
 			if (pipeline->enabled)
 				pipeline->update();
 		}
-			pipeline->input = (ofxCvColorImage&)(*src);
+//		pipeline->input = (ofxCvColorImage&)(*src);
 	}
 }
 
@@ -200,6 +216,8 @@ void VideoSystem::fiducialFound(fiducialEvtArgs &args)
 	ofxFiducial		&fiducial	= *args.fiducial;
 	fiducialIndex	fiducialId	= fiducial.getId();
 
+	cout << "Fiducial " << fiducialId << " found (" << fiducial.life << ")" << endl;
+
 	filter_iter filter_it;
 	filter_it = filters.find(fiducialId);
 	
@@ -233,6 +251,8 @@ void VideoSystem::fiducialLost(fiducialEvtArgs &args)
 	ofxFiducial&	fiducial	= *args.fiducial;
 	fiducialIndex	fiducialId	= fiducial.getId();
 
+	cout << "Fiducial " << fiducialId << " lost (" << fiducial.life << ")" << endl;
+
 	filter_iter filter_it = filters.find(fiducialId);
 	
 	VideoFilterPtr filter;
@@ -258,6 +278,8 @@ void VideoSystem::fiducialUpdated(fiducialEvtArgs &args)
 	ofxFiducial&	fiducial	= *args.fiducial;
 	fiducialIndex	fiducialId	= fiducial.getId();
 
+	cout << "Fiducial " << fiducialId << " updated (" << fiducial.life << ")" << endl;
+	
 	filter_iter filter_it = filters.find(fiducialId);
 	
 	VideoFilterPtr filter;
@@ -286,6 +308,8 @@ void VideoSystem::fiducialUpdated(fiducialEvtArgs &args)
 void VideoSystem::fiducialRayIntersectionFound(fiducialRayIntersectionEvtArgs &args)
 {	
 	VideoFilterGraph& graph = *graphs.front();
+
+	cout << "Fiducial " << args.from->getId() << " hits " << args.to->getId() << endl;
 
 	VideoFilterPtr filter;
 	edge_t edge;
@@ -360,6 +384,8 @@ public:
 
 void VideoSystem::fiducialRayIntersectionLost(fiducialRayIntersectionEvtArgs &args)
 {
+	cout << "Fiducial " << args.from->getId() << " misses " << args.to->getId() << endl;	
+
 	ofxFiducial& from = *args.from;
 	ofxFiducial& to = *args.to;
 	ofxPoint2f pt = args.pt;

@@ -72,8 +72,11 @@ public:
 	fiducials_t			&fiducialsList;
 	fingers_t			&fingersList;
 	
-	my_fiducials_t		fiducialsMap;
-	my_fingers_t		fingersMap;
+	fiducials_t			fiducialsList_copy;
+	fingers_t			fingersList_copy;
+
+//	my_fiducials_t		fiducialsMap;
+//	my_fingers_t		fingersMap;
 
 	VideoFilter* createFiducialFilter(ofxFiducial* const fiducial);
 

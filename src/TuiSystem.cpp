@@ -76,80 +76,68 @@ void TuiSystem::setup()
 //--------------------------------------------------------------
 void TuiSystem::update()
 {
-	my_fiducial_iter fiducial_status_it;
+//	my_fiducial_iter fiducial_status_it;
 	fiducial_iter	fiducial_it;
 	ofxFiducial		*fiducial;
 	fiducialIndex	fiducialId;
 	int				fiducialLife;
 
 	fiducialEvtArgs fid_args;
-
+/*
 	// Decrement all fiducial life counts
-	for (fiducial_status_it = fiducialsMap.begin();
-		 fiducial_status_it != fiducialsMap.end();
-		 fiducial_status_it++)
+	for (fiducial_it = fiducialsList.begin();
+		 fiducial_it != fiducialsList.end();
+		 fiducial_it++)
 	{
-		fiducial_status_it->second--;
+		cout << "Fiducial " << fiducial_it->getId() << " has life " << fiducial_it->life << endl;
 	}
+*/	
+	fiducialsList_copy.clear();
+//	fingersList_copy.clear();
+//	copy(fiducialsList.begin(), fiducialsList.end(), fiducialsList_copy.begin());
+//	copy(fingersList.begin(), fingersList.end(), fingersList_copy.begin());
+	fiducialsList_copy	= fiducialsList;
+//	fingersList_copy	= fingersList;
 	
-	// Scan for new fiducials, initialize life count to MAX_FIDUCIAL_LIFE
-	for (fiducial_it =	fiducialsList.begin();
-		 fiducial_it !=	fiducialsList.end();
+	// Scan for new fiducials
+	for (fiducial_it =	fiducialsList_copy.begin();
+		 fiducial_it !=	fiducialsList_copy.end();
 		 fiducial_it++)
 	{
 		fiducial = &(*fiducial_it);
 		fiducialId = fiducial->getId();
 		
+		// TODO: this should be optional
 		fiducialsCornersMap[fiducialId] = fiducial->cornerPoints;
-
-		fiducial_status_it = fiducialsMap.find(fiducialId);
-		if (fiducial_status_it == fiducialsMap.end())
-			fiducialsMap[fiducialId] = 1;
-		else // add life subtracted in previous pass, and then some
-			fiducial_status_it->second = MIN(fiducial_status_it->second+2,
-											 MAX_FIDUCIAL_LIFE);
-	}
 		
-	// Scan fiducial life counts to trigger lost, found, updated events
-	for (fiducial_status_it = fiducialsMap.begin();
-		 fiducial_status_it != fiducialsMap.end();
-		 fiducial_status_it++)
-	{
-		fiducialId = fiducial_status_it->first;
-		fiducialLife = fiducial_status_it->second;
-
-		fiducial_it = find_if(fiducialsList.begin(),
-							  fiducialsList.end(),
-							  fiducial_list_by_id(fiducialId));
-		
-		if (fiducial_it==fiducialsList.end())
-			fiducial = &(*fiducial_it);
-		else
-			continue;
-
 		fid_args.fiducial = fiducial;
 		fid_args.cornerPts = &fiducialsCornersMap[fiducialId];
-	
-		cout << "Fiducial " << fiducialId << " has life " << fiducialLife << endl;
-		if (fiducialLife == 1)
+/*		
+		cout << "Fiducial\t" << fiducialId << " has life\t" << fiducial->life
+			 << " in state\t";
+		if (fiducial->state==FIDUCIAL_FOUND)
+			cout << "FOUND" << endl;
+		else
+			cout << "LOST" << endl;
+*/
+		if (fiducial->life == MAX_FIDUCIAL_LIFE-1)
 		{
-			ofNotifyEvent(this->fiducialFoundEvt, fid_args);
+			if (fiducial->state == FIDUCIAL_FOUND)
+				ofNotifyEvent(this->fiducialFoundEvt, fid_args);
 		}
-		else if (fiducialLife <= 0)
+		else if (fiducial->life == MIN_FIDUCIAL_LIFE-1)
 		{
-			ofNotifyEvent(this->fiducialLostEvt, fid_args);
-
-			fiducialsMap.erase(fiducial_status_it);
-			continue;
+			if (fiducial->state == FIDUCIAL_LOST)
+				ofNotifyEvent(this->fiducialLostEvt, fid_args);
 		}
-		else {
-			ofNotifyEvent(this->fiducialUpdatedEvt, fid_args);
+		else if (fiducial->life == MAX_FIDUCIAL_LIFE)
+		{
+			if (fiducial->state == FIDUCIAL_FOUND)
+				ofNotifyEvent(this->fiducialUpdatedEvt, fid_args);
 		}
-
 	}
 	
 	// Check intersections of fiducials
-	my_fiducial_iter chk_fiducial_status_it;
 	fiducial_iter	chk_fiducial_it, prev_hit_fiducial_it;
 	ofxFiducial		*chk_fiducial, *hit_fiducial;
 	fiducialIndex	chk_fiducialId, hit_fiducialId;
@@ -169,22 +157,17 @@ void TuiSystem::update()
 	
 	fiducialRayIntersectionEvtArgs fid_ray_args;
 
-	for (fiducial_status_it = fiducialsMap.begin();
-		 fiducial_status_it != fiducialsMap.end();
-		 fiducial_status_it++)
-	{
-		fiducialId = fiducial_status_it->first;
-		fiducialLife = fiducial_status_it->second;
-		if (fiducialLife < MIN_FIDUCIAL_LIFE)
-			continue;
+	if (fiducialsList.size() == 1)
+		return;
 
-		fiducial_it = find_if(fiducialsList.begin(),
-							  fiducialsList.end(),
-							  fiducial_list_by_id(fiducialId));
-		
-		if (fiducial_it==fiducialsList.end())
-			fiducial = &(*fiducial_it);
-		else
+	for (fiducial_it = fiducialsList_copy.begin();
+		 fiducial_it != fiducialsList_copy.end();
+		 fiducial_it++)
+	{
+		fiducial = &(*fiducial_it);
+		fiducialId = fiducial->getId();
+
+		if (fiducial->life < MIN_FIDUCIAL_LIFE)
 			continue;
 		
 		angle = fiducial->getAngle();
@@ -192,13 +175,9 @@ void TuiSystem::update()
 		fiducialCorners_it = fiducialsCornersMap.find(fiducialId);
 		if (fiducialCorners_it == fiducialsCornersMap.end())
 			continue;
-		else
-			fiducialCorners = fiducialsCornersMap[fiducialId];
-	
-//		cout << fiducialsCornersMap.size() << " fiducials" << endl;
-		cout << "fiducialCorners[1] (" << fiducialCorners[1].x << "," << fiducialCorners[1].y << ")" << endl; 
-//		cout << "fiducialCorners[2] (" << fiducialCorners[2].x << "," << fiducialCorners[2].y << ")" << endl;
-	
+
+		fiducialCorners = fiducialCorners_it->second;
+
 		origin = ofxPoint2f(fiducialCorners[1])
 					.getMiddle(ofxPoint2f(fiducialCorners[2]));
 //		origin.set	(fiducialCorners[1],
@@ -216,23 +195,14 @@ void TuiSystem::update()
 	
 		// Check if this candidate fiducial intersects any others, and choose the one
 		// with minimum distance intersection
-		for (chk_fiducial_status_it = fiducialsMap.begin();
-			 chk_fiducial_status_it != fiducialsMap.end();
-			 chk_fiducial_status_it++)
+		for (chk_fiducial_it = fiducialsList_copy.begin();
+			 chk_fiducial_it != fiducialsList_copy.end();
+			 chk_fiducial_it++)
 		{
-			chk_fiducialId = chk_fiducial_status_it->first;
-			chk_fiducialLife = chk_fiducial_status_it->second;
-			if (chk_fiducialLife < MIN_FIDUCIAL_LIFE)
+			chk_fiducial = &(*chk_fiducial_it);
+			chk_fiducialId = chk_fiducial->getId();
+			if (chk_fiducial->life < MIN_FIDUCIAL_LIFE)
 				continue;			
-			
-			chk_fiducial_it = find_if(fiducialsList.begin(),
-								  fiducialsList.end(),
-								  fiducial_list_by_id(chk_fiducialId));
-			
-			if (chk_fiducial_it==fiducialsList.end())
-				chk_fiducial = &(*chk_fiducial_it);
-			else
-				continue;
 			
 			vector<ofPoint>& chk_fiducialCorners = fiducialsCornersMap[chk_fiducialId];
 		
@@ -275,8 +245,8 @@ void TuiSystem::update()
 		if (fiducialEdgePrev != fiducialEdges.end()
 			&& (!hit_fiducial || fiducialEdgePrev->second != hit_fiducialId))
 		{
-			prev_hit_fiducial_it = find_if(fiducialsList.begin(),
-										   fiducialsList.end(),
+			prev_hit_fiducial_it = find_if(fiducialsList_copy.begin(),
+										   fiducialsList_copy.end(),
 										   fiducial_list_by_id(hit_fiducialId));
 			
 			fid_ray_args.from	= fiducial;
