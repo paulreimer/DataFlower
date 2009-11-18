@@ -1,5 +1,3 @@
-#pragma once
-
 #include "SpeechSystem.h"
 
 #ifdef USE_SPEECH_TO_TEXT

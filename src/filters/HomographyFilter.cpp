@@ -1,5 +1,3 @@
-#pragma once
-
 #include "HomographyFilter.h"
 
 HomographyFilter::HomographyFilter()
@@ -40,4 +38,5 @@ void HomographyFilter::update()
 void HomographyFilter::destroy() 
 {
 	if (verbose) printf("HomographyFilter::destroy()\n");
+	ColorFilter::destroy();
 }

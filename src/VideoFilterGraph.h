@@ -4,24 +4,27 @@
 #include "filters.h"
 
 #include "TuiSystem.h"
-#include "FiducialBackedObject.h"
+
+#include "GuiGraph.h"
+#include "Renderer.h"
+
 #include "ofxSimpleGuiConfig.h"
 #include "ofxOpenCv.h"
-#include "GuiElements.h"
 
 typedef VideoFilter* vertex_t;
 
 struct edge_t {
 	vertex_t* from;
 	vertex_t* to;
-	GuiElements::types::lineSegment ray;
+	ofxFiducialBacked::types::actors::lineSegment ray;
 
 #ifdef USE_FIDUCIALS
-	fiducialIndex fiducial;
+	int fiducial;
 #endif
 };
 
-class VideoFilterGraph : public FiducialBackedObject {
+class VideoFilterGraph : public ofxFiducialBacked::gui::GuiGraph
+{
 public:
 	VideoFilterGraph();
 	virtual ~VideoFilterGraph();
@@ -33,9 +36,6 @@ public:
 
 	void destroy();
 
-	void setDraw(bool b);
-	void toggleDraw();
-	bool					doDraw;
 /*
 	ofxCvColorImage&		input_ref() {
 		return flows.front().first;
@@ -48,7 +48,11 @@ public:
 	list	<edge_t>	edges;
 
 	map<ofxCvImage*, ofxCvImage*> image_edges;
-
+	
+	void fiducialRayTermination			(ofxFiducialBacked::types::events::fiducialRayIntersectionEvtArgs &args);
+	void fiducialRayIntersectionFound	(ofxFiducialBacked::types::events::fiducialRayIntersectionEvtArgs &args);
+	void fiducialRayIntersectionLost	(ofxFiducialBacked::types::events::fiducialRayIntersectionEvtArgs &args);
+	void fiducialRayIntersectionUpdated	(ofxFiducialBacked::types::events::fiducialRayIntersectionEvtArgs &args);	
 protected:
 #ifdef USE_GUI
 	ofxSimpleGuiConfig fid_gui_conf;

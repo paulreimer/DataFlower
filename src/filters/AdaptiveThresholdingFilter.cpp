@@ -1,5 +1,3 @@
-#pragma once
-
 #include "AdaptiveThresholdingFilter.h"
 
 AdaptiveThresholdingFilter::AdaptiveThresholdingFilter()
@@ -34,4 +32,5 @@ void AdaptiveThresholdingFilter::update()
 void AdaptiveThresholdingFilter::destroy() 
 {
 	if (verbose) printf("AdaptiveThresholdingFilter::destroy()\n");
+	GrayscaleFilter::destroy();
 }

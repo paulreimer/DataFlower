@@ -1,5 +1,3 @@
-#pragma once
-
 #include "SimpleThresholdingFilter.h"
 
 SimpleThresholdingFilter::SimpleThresholdingFilter()
@@ -31,4 +29,5 @@ void SimpleThresholdingFilter::update()
 void SimpleThresholdingFilter::destroy() 
 {
 	if (verbose) printf("SimpleThresholdingFilter::destroy()\n");
+	GrayscaleFilter::destroy();	
 }

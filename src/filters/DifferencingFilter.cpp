@@ -1,5 +1,3 @@
-#pragma once
-
 #include "DifferencingFilter.h"
 
 
@@ -38,8 +36,9 @@ void DifferencingFilter::update()
 }
 
 void DifferencingFilter::destroy() 
-{
-	capture.clear();
-
+{	
 	if (verbose) printf("DifferencingFilter::destroy()\n");
+	GrayscaleFilter::destroy();
+
+	capture.clear();
 }

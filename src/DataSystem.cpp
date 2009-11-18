@@ -1,5 +1,3 @@
-#pragma once
-
 #include "DataSystem.h"
 
 #ifdef USE_DATA

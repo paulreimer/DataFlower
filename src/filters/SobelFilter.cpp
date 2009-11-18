@@ -1,5 +1,3 @@
-#pragma once
-
 #include "SobelFilter.h"
 
 SobelFilter::SobelFilter()
@@ -67,6 +65,7 @@ void SobelFilter::update()
 void SobelFilter::destroy() 
 {
 	if (verbose) printf("SobelFilter::destroy()\n");
+	ColorFilter::destroy();
 	
 	cvReleaseImage(&tmpOutputX);
 	cvReleaseImage(&tmpOutputY);

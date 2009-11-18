@@ -1,5 +1,3 @@
-#pragma once
-
 #include "TemplateMatchingSystem.h"
 #include "VideoSystem.h"
 #include "testApp.h"
@@ -19,11 +17,11 @@ TemplateMatchingSystem::~TemplateMatchingSystem()
 }
 
 void TemplateMatchingSystem::setup()
-{
+{	
+	myApp->videoSystem.addPipeline(&pipe);
+
 	pipe.addFilter(new BackgroundSubtractionFilter());
 //	pipe->addFilter(&templCaptureFilter);
-	
-	myApp->videoSystem.addPipeline(&pipe);
 }
 
 //--------------------------------------------------------------

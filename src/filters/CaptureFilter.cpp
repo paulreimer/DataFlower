@@ -1,5 +1,3 @@
-#pragma once
-
 #include "CaptureFilter.h"
 
 
@@ -40,6 +38,8 @@ void CaptureFilter::update()
 void CaptureFilter::destroy() 
 {
 	if (verbose) printf("CaptureFilter::destroy()\n");
+	ColorFilter::destroy();
+
 	for (int i=0; i < captures.size(); i++)
 		delete captures[i];
 }

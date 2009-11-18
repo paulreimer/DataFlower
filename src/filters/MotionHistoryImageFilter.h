@@ -2,7 +2,7 @@
 
 #include "VideoFilter.h"
 
-class MotionHistoryImageFilter : public GrayscaleFilter  
+class MotionHistoryImageFilter : public ColorFilter  
 {
 public:
 	MotionHistoryImageFilter();
@@ -22,4 +22,7 @@ public:
 			duration	= 5.0;
 		}
 	} settings;
+
+protected:
+	ofxCvGrayscaleImage		fgMask;
 };

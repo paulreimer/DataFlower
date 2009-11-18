@@ -1,5 +1,3 @@
-#pragma once
-
 #include "MarkerFindingFilter.h"
 
 MarkerFindingFilter::MarkerFindingFilter()
@@ -91,8 +89,8 @@ void MarkerFindingFilter::draw()
 //		float y = 1.0f - (float) (2 * yi) / markerFinder.height;
 
 		printf("Found fiducial: %s (%d,%d), %dx%d\n", fiducial->getSequenceString(),
-			   fiducial->getCentre().x, fiducial->getCentre().y,
-			   fiducial->getWidth(), fiducial->getHeight());
+			   (int)fiducial->getCentre().x,(int)fiducial->getCentre().y,
+			   (int)fiducial->getWidth(),	(int)fiducial->getHeight());
 
 		glPushMatrix();
 		ofSetColor(0xCACACA);
@@ -108,6 +106,7 @@ void MarkerFindingFilter::draw()
 
 void MarkerFindingFilter::destroy() 
 {
-	diagnostics.clear();
 	if (verbose) printf("MarkerFindingFilter::destroy()\n");
+	GrayscaleFilter::destroy();	
+	diagnostics.clear();
 }

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "PassthroughFilter.h"
 
 PassthroughFilter::PassthroughFilter()
@@ -27,4 +25,5 @@ void PassthroughFilter::update()
 void PassthroughFilter::destroy() 
 {
 	if (verbose) printf("PassthroughFilter::destroy()\n");
+	ColorFilter::destroy();
 }

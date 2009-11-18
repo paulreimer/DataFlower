@@ -1,5 +1,3 @@
-#pragma once
-
 #include "BackgroundSubtractionFilter.h"
 
 
@@ -61,10 +59,11 @@ void BackgroundSubtractionFilter::update()
 }
 
 void BackgroundSubtractionFilter::destroy() 
-{
+{	
+	if (verbose) printf("BackgroundSubtractionFilter::destroy()\n");
+	ColorFilter::destroy();
+
 	inputCapture.clear();
 	grayCapture.clear();
 	fgMask.clear();
-	
-	if (verbose) printf("BackgroundSubtractionFilter::destroy()\n");
 }

@@ -3,12 +3,9 @@
 #include "ofMain.h"
 #include "settings.h"
 
-
-#include "ofxSimpleGuiIncludes.h"
-#include "FiducialBackedObject.h"
+#include "GuiGraph.h"
 #include "ofxOpenCv.h"
 #include "ofxFidMain.h"
-#include "ofxPoint2f.h"
 
 typedef unsigned char filter_type_t;
 enum filter_types {
@@ -30,7 +27,7 @@ typedef ofxCvColorImage*						ColorImagePtr;
 #endif
 
 //template <class ofxCvImageType>
-class VideoFilter : public FiducialBackedObject 
+class VideoFilter : public ofxFiducialBacked::gui::GuiPage 
 {
 public:
 	VideoFilter();
@@ -53,50 +50,21 @@ public:
 		return outputs.empty()?	NULL : outputs[0];
 	}
 */	
-	virtual void setup()	{};
-	virtual void update()	{};
-	void draw();// const;
-
-	void destroy();
-
-	ofPoint					videoSize;
-
-	ofxSimpleGuiControl		&addControl(ofxSimpleGuiControl& control);
-	ofxSimpleGuiButton		&addButton	(std::string name, bool &value);
-	ofxSimpleGuiContent		&addContent	(std::string name, ofBaseDraws &content, float fixwidth = -1);
-	ofxSimpleGuiSliderInt	&addSlider	(std::string name, int &value, int min, int max, float smoothing=0);
-	ofxSimpleGuiSliderByte	&addSlider	(std::string name, byte &value, byte min=0, byte max=255, float smoothing=0);
-	ofxSimpleGuiSliderFloat	&addSlider	(std::string name, float &value, float min, float max, float smoothing = 0);
-	ofxSimpleGuiSliderDouble &addSlider	(std::string name, double &value, double min, double max, double smoothing = 0);
-	ofxSimpleGuiSlider2d	&addSlider2d(std::string name, ofPoint& value, float xmin, float xmax, float ymin, float ymax);
-	ofxSimpleGuiTitle		&addTitle	(std::string name);
-	ofxSimpleGuiToggle		&addToggle	(std::string name, bool &value);
-	ofxSimpleGuiFPSCounter	&addFPSCounter();
-
-	void onPress(int mx, int my, int button);
-	void onDragOver(int mx, int my, int button);
-
-	void _mouseMoved	(ofMouseEventArgs &e);
-	void _mousePressed	(ofMouseEventArgs &e);
-	void _mouseDragged	(ofMouseEventArgs &e);
-	void _mouseReleased	(ofMouseEventArgs &e);
-
-	void _keyPressed	(ofKeyEventArgs &e);
-	void _keyReleased	(ofKeyEventArgs &e);
-
-	void setConfig		(ofxSimpleGuiConfig* config);
+	virtual void setup()	{ GuiPage::setup();	}
+	virtual void update()	{ GuiPage::update();}
+	virtual void draw()		{ GuiPage::draw();	}
 	
+	virtual void destroy();
+
 	virtual bool isAllocated() =0;
-
-	ofxSimpleGuiConfig	*config;
 	
-	void setPos(float _x, float _y, float _angle=0.0);
+	ofPoint					videoSize;
 	
 protected:
-	vector <ofxSimpleGuiControl*>	controls;
-
-	int saveX, saveY;
+	void onPress(int mx, int my, int button);
+	void onDragOver(int mx, int my, int button);
 	
+	int saveX, saveY;
 };
 
 
@@ -114,6 +82,12 @@ public:
 	void setup() {
 		input.allocate(videoSize.x, videoSize.y);
 		output.allocate(videoSize.x, videoSize.y);
+	}
+
+	void destroy() {
+		input.clear();
+		output.clear();
+		controls.clear();
 	}
 	
 	bool isAllocated() {
@@ -135,6 +109,12 @@ public:
 	void setup() {
 		input.allocate(videoSize.x, videoSize.y);
 		output.allocate(videoSize.x, videoSize.y);
+	}
+
+	void destroy() {
+		input.clear();
+		output.clear();
+		controls.clear();
 	}
 
 	bool isAllocated() {

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "DenseOpticalFlowFilter.h"
 
 #ifdef USE_OPENCV_TRUNK
@@ -76,15 +74,15 @@ void DenseOpticalFlowFilter::update()
 
 void DenseOpticalFlowFilter::destroy()
 {
+	if (verbose) printf("DenseOpticalFlowFilter::destroy()\n");
+	GrayscaleFilter::destroy();
 	grayInputPrev.clear();
-
+	
 	flowX.clear();
 	flowY.clear();
-
+	
 	cvReleaseImage(&flowIpl);
-	cvReleaseImage(&grayFlowIpl);
-
-	if (verbose) printf("DenseOpticalFlowFilter::destroy()\n");
+	cvReleaseImage(&grayFlowIpl);	
 }
 
 #endif

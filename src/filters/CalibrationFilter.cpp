@@ -1,5 +1,3 @@
-#pragma once
-
 #include "CalibrationFilter.h"
 
 CalibrationFilter::CalibrationFilter()
@@ -178,11 +176,12 @@ bool CalibrationFilter::calibrateCamera()
 }
 
 void CalibrationFilter::destroy() 
-{
+{	
+	if (verbose) printf("CalibrationFilter::destroy()\n");
+	ColorFilter::destroy();
+
 	grayInput.clear();
 	tempImage.clear();
 	
 	shownCapture.clear();
-	
-	if (verbose) printf("CalibrationFilter::destroy()\n");
 }

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "CannyEdgeFilter.h"
 
 CannyEdgeFilter::CannyEdgeFilter()
@@ -33,4 +31,5 @@ void CannyEdgeFilter::update()
 void CannyEdgeFilter::destroy() 
 {
 	if (verbose) printf("CannyEdgeFilter::destroy()\n");
+	GrayscaleFilter::destroy();
 }

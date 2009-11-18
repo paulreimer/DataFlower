@@ -1,5 +1,3 @@
-#pragma once
-
 #include "FiducialTrackingFilter.h"
 
 FiducialTrackingFilter::FiducialTrackingFilter()
@@ -26,6 +24,8 @@ void FiducialTrackingFilter::setup()
 	addSlider("Min Finger Size", fidFinder.minFingerSize, 0, 50);
 	addSlider("Max Finger Size", fidFinder.maxFingerSize, 0, 50);
 	addSlider("Finger Sensitivity", fidFinder.fingerSensitivity, 0.0, 2.0);
+	
+	output.set(0);
 }
 
 void FiducialTrackingFilter::update() 
@@ -35,20 +35,19 @@ void FiducialTrackingFilter::update()
 
 void FiducialTrackingFilter::draw() 
 {
-	VideoFilter::draw();
-	list<ofxFiducial>& fiducials = fidFinder.fiducialsList;	
-	list<ofxFinger>& fingers = fidFinder.fingersList;	
+	VideoFilter::draw(); // try after drawing fiducials?
+
+	list<ofxFiducial>& fiducials = fidFinder.fiducialsList;
+	list<ofxFinger>& fingers = fidFinder.fingersList;
 	
 	if (!fiducials.size() && !fingers.size()) return;
 	
-	// Draw on top of gui
-	float _x=0, _y=0;
 	glPushMatrix();
-	glTranslatef(x+width/2, y+height/2, 0);
-	glRotatef(angle*180.0/PI, 0, 0, 1.0); // must flip degrees to compensate for image flip
-	glTranslatef(-width/2, -height/2, 0);
-//	glScalef(controls[0]->width/(float)videoSize.x, controls[0]->height/(float)videoSize.y, 0.0);
-	glScalef(width/(float)videoSize.x, width/(float)videoSize.x, 0.0);
+
+	glTranslatef(x,	y, 0.0);
+	glRotatef	(ofRadToDeg(angle), 0.0, 0.0, 1.0);
+	glTranslatef(offset.x, offset.y, 0.0);
+	glScalef	(scale*width/(float)videoSize.x, scale*width/(float)videoSize.x, 1.0);
 
 	for (list<ofxFiducial>::iterator fiducial = fiducials.begin();
 		 fiducial != fiducials.end();
@@ -71,4 +70,5 @@ void FiducialTrackingFilter::draw()
 void FiducialTrackingFilter::destroy() 
 {
 	if (verbose) printf("FiducialTrackingFilter::destroy()\n");
+	GrayscaleFilter::destroy();
 }

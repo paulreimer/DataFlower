@@ -1,5 +1,3 @@
-#pragma once
-
 #include "ColorspaceConversionFilter.h"
 
 ColorspaceConversionFilter::ColorspaceConversionFilter()
@@ -30,4 +28,5 @@ void ColorspaceConversionFilter::update()
 void ColorspaceConversionFilter::destroy() 
 {
 	if (verbose) printf("ColorspaceConversionFilter::destroy()\n");
+	ColorFilter::destroy();	
 }

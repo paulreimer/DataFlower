@@ -1,40 +1,27 @@
-#pragma once
-
 #include "VideoPipeline.h"
 #include "testApp.h"
+#include "gui_types.h"
 
-#include "GuiElements.h"
-
-using namespace GuiElements::renderer;
-
-extern testApp* myApp;
+using namespace ofxFiducialBacked::renderer::primitives;
 
 VideoPipeline::VideoPipeline()
 {
-//	ref_type = FIDUCIAL_PIPELINE_TYPE;
 	disableAllEvents();
 
 	verbose = SYSTEM_VERBOSE;
-	
-	filters.clear();
-	
+	config = &defaultSimpleGuiConfig;
+
 	if (verbose) printf("VideoPipeline::VideoPipeline()\n");
 }
 
 VideoPipeline::~VideoPipeline()
 {
 	if (verbose) printf("VideoPipeline::~VideoPipeline()\n");
-	destroy();
 }
 
 void VideoPipeline::setConfig(ofxSimpleGuiConfig* const config) 
 {
 	this->config = config;
-}
-
-void VideoPipeline::setEdgeHitPoint(const ofxPoint2f& edgeHitPoint) 
-{
-	this->edgeHitPoint = edgeHitPoint;
 }
 
 void VideoPipeline::setVideoSize(const ofPoint& videoSize) 
@@ -48,6 +35,7 @@ void VideoPipeline::setVideoSize(const ofPoint& videoSize)
 
 void VideoPipeline::setup() 
 {
+	ofxFiducialBacked::gui::GuiSet::setup();
 	if (input.width != videoSize.x || input.height != videoSize.y)
 	{
 		input.clear();
@@ -58,29 +46,37 @@ void VideoPipeline::setup()
 		output.clear();
 		output.allocate(videoSize.x, videoSize.y);
 	}
-	setDraw(true);
-//	enableAppEvents();
 }
 
 void VideoPipeline::update() 
 {
-	if (filters.empty()) return;
-	if (!filters.front()->isAllocated()) return;
+	if (empty() || !input.bAllocated) return;
 	
-//	printf("update %d filters\n", filters.size());
-	list<VideoFilterPtr>::iterator lhs = filters.begin();
-	list<VideoFilterPtr>::iterator rhs = filters.begin();
+//	printf("update %d filters\n", size());
+	iterator lhs = begin();
+	iterator rhs = begin();
 
-	VideoFilter *from=*lhs, *to;
+	VideoFilter *from, *to;
+#ifdef USE_SMART_POINTERS
+	from = lhs->second.cast<VideoFilterPtr>();
+#else
+	from = dynamic_cast<VideoFilterPtr>(lhs->second);
+#endif
 
 	if (!from->enabled) return;
 	//	(*lhs)->input = input;
 	from->input_ref() = input;
 	from->update();
 
-	for (++rhs; rhs != filters.end() && (*rhs)->enabled; lhs++, rhs++) {
-		from = *lhs;
-		to = *rhs;
+	for (++rhs; rhs != end() && rhs->second->enabled; lhs++, rhs++) {
+#ifdef USE_SMART_POINTERS
+		from = lhs->second.cast<VideoFilterPtr>();
+		to = lhs->second.cast<VideoFilterPtr>();
+#else
+		from = dynamic_cast<VideoFilterPtr>(lhs->second);
+		to = dynamic_cast<VideoFilterPtr>(rhs->second);
+#endif
+
 		//		(*rhs)->input = (*lhs)->output;
 		if (from->output_ref().getCvImage()->nChannels == 3)
 #ifdef USE_SMART_POINTERS
@@ -98,31 +94,33 @@ void VideoPipeline::update()
 		to->update();
 	}
 
-	// lhs remains at filters.begin if size() == 1
+	// lhs remains at begin if size() == 1
 //	output = (*lhs)->output;
 }
 
-void VideoPipeline::setDraw(bool b) 
+VideoFilter *VideoPipeline::addFilter(VideoFilter* /*const*/ filter) 
 {
-	doDraw = b;
-}
+	if (filter==NULL)
+		return NULL;
 
-void VideoPipeline::toggleDraw() 
-{
-	setDraw(!doDraw);
-}
-
-VideoFilter *VideoPipeline::addFilter(VideoFilter* const filter) 
-{
-	ofPoint sze = videoSize;
-	if (!filters.empty())
-		sze.set(filters.back()->output_ref().width,
-				filters.back()->output_ref().height);
+	VideoFilterPtr prev;
+#ifdef USE_SMART_POINTERS
+	prev = back()->second.cast<VideoFilterPtr>();
+#else
+	prev = dynamic_cast<VideoFilterPtr>(back().second);
+#endif
 	
+	ofPoint sze;
+	if (empty())
+		sze = videoSize;
+	else
+		sze.set(prev->output_ref().width,
+				prev->output_ref().height);
+		
 	if (sze.x != 0 && sze.y != 0)
 	{
 		if (filter->videoSize.x != sze.x || filter->videoSize.y != sze.y)
-	{
+		{
 			if (filter->isAllocated())
 				filter->destroy();
 			
@@ -133,35 +131,40 @@ VideoFilter *VideoPipeline::addFilter(VideoFilter* const filter)
 			filter->setup();
 	}
 
-	filter->setPos(this->x + this->width + config->padding.x, this->y);
-	this->width += filter->width + config->padding.x;		
+	if (empty())
+		filter->setPos(x,y);
+	else
+		filter->setPos(prev->x + prev->width + config->padding.x, prev->y);
 
-	filters.push_back(filter);
+	push_back(make_pair(INVALID_FIDUCIAL_ID,filter));
 	return filter;
 }
 
-bool VideoPipeline::dropFilter(const VideoFilter* const filter) 
+void VideoPipeline::dropFilter(VideoFilter* filter) 
 {
-	list<VideoFilterPtr>::iterator chk = find(filters.begin(), filters.end(), filter);
+	using ofxFiducialBacked::types::gui::fiducial_pair_by_value;
 
-	if (chk != filters.end()) {
-		filters.erase(chk);
-		return true;
-	}
-	
-	return false;
+	remove_if(fiducial_pair_by_value(filter));
 }
 
 void VideoPipeline::draw() /* const */
-{	
-	if(!doDraw || filters.empty()) return;
+{
+	using ofxFiducialBacked::types::actors::ACTOR_TYPE_RGB;
+	using ofxFiducialBacked::types::actors::ACTOR_TYPE_GRAY;
+
+	if(empty()) return;
 	glDisableClientState(GL_COLOR_ARRAY);
 
 	map<VideoFilterPtr, ofxPoint2f>::iterator hit_p;
-	list<VideoFilterPtr>::const_iterator lhs = filters.begin();
-	list<VideoFilterPtr>::const_iterator rhs = filters.begin();
+	const_iterator lhs = begin();
+	const_iterator rhs = begin();
 
-	VideoFilter *from=*lhs, *to;
+	VideoFilter *from, *to;
+#ifdef USE_SMART_POINTERS
+	from = lhs->second.cast<VideoFilterPtr>();
+#else
+	from = dynamic_cast<VideoFilterPtr>(lhs->second);
+#endif
 
 	ofxPoint2f startpoint, endpoint, ref;
 	
@@ -173,54 +176,42 @@ void VideoPipeline::draw() /* const */
 	ofSetColor(0xFFFFFF);
 	ofSetLineWidth(1.0);
 
-	if (!from->isAllocated()) return;
-
 #ifndef TARGET_OPENGLES
 	glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
 #endif
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-//	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	glEnable(GL_LINE_SMOOTH);
-		
-	GuiElements::types::actor_type_t actor_type = GuiElements::types::ACTOR_TYPE_RGB;
-	drawArrow(startpoint, endpoint, actor_type);
-//	ofLine(startpoint.x,startpoint.y, endpoint.x,endpoint.y);
 	
-	for (++rhs; rhs != filters.end(); lhs++, rhs++) {
-		from = *lhs;
-		to = *rhs;
+	//	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glEnable(GL_LINE_SMOOTH);
 
-		startpoint.set	(from->x + from->width,
-						 from->y + (from->height/2));
+	render::arrow(startpoint, endpoint, ACTOR_TYPE_RGB);
+
+	for (++rhs; rhs != end(); lhs++) {
+		if (!rhs->second->enabled)
+			continue;
+#ifdef USE_SMART_POINTERS
+		from = lhs->second.cast<VideoFilterPtr>();
+		to = lhs->second.cast<VideoFilterPtr>();
+#else
+		from = dynamic_cast<VideoFilterPtr>(lhs->second);
+		to = dynamic_cast<VideoFilterPtr>(rhs->second);
+#endif
 		
-		endpoint.set	(to->x,
-						 to->y + (to->height/2));
-		
-		if (from->isAllocated() &&
-			from->output_ref().getCvImage()->nChannels == 3)
-			actor_type = GuiElements::types::ACTOR_TYPE_RGB;
+		startpoint.set	(from->x + from->width, from->y + (from->height/2));
+		endpoint.set	(to->x,					to->y + (to->height/2));
+
+		if (from->output_ref().getCvImage()->nChannels == 3)
+			render::arrow(startpoint, endpoint, ACTOR_TYPE_RGB);
 		else
-			actor_type = GuiElements::types::ACTOR_TYPE_GRAY;
-		
-		drawArrow(startpoint, endpoint, actor_type);
-	}
-/*	
-	if (lhs != filters.end() && from->fiducial != NULL)
-	{
-		startpoint.set(from->x + from->width, from->y + (from->height/2));
+			render::arrow(startpoint, endpoint, ACTOR_TYPE_GRAY);
 
-		if (from->isAllocated() &&
-			from->output_ref().getCvImage()->nChannels == 3)
-			actor_type = GuiElements::types::ACTOR_TYPE_RGB;
-		else
-			actor_type = GuiElements::types::ACTOR_TYPE_GRAY;
-
-		drawArrow(startpoint, edgeHitPoint, actor_type);
+		rhs++;
 	}
-*/	
+	
+
+
 #ifndef TARGET_OPENGLES
 	glPopAttrib();
 #endif
@@ -228,15 +219,10 @@ void VideoPipeline::draw() /* const */
 
 void VideoPipeline::truncate(int newlen) 
 {
-	if (filters.empty() || filters.size() <= newlen) return;
+	if (empty() || size() <= newlen) return;
 
 	if (newlen == 0)
-		filters.clear();
+		clear();
 	else
-		filters.resize(newlen);
-}
-
-void VideoPipeline::destroy() 
-{
-	if (verbose) printf("VideoPipeline::destroy()\n");
+		resize(newlen);
 }

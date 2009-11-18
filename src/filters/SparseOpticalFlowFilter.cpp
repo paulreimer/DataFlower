@@ -1,5 +1,3 @@
-#pragma once
-
 #include "SparseOpticalFlowFilter.h"
 
 SparseOpticalFlowFilter::SparseOpticalFlowFilter()
@@ -80,6 +78,7 @@ void SparseOpticalFlowFilter::update()
 void SparseOpticalFlowFilter::destroy() 
 {
 	if (verbose) printf("SparseOpticalFlowFilter::destroy()\n");
+	GrayscaleFilter::destroy();
 	
 	delete cornersImg;
 	delete cornersPrev;

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "DistanceTransformFilter.h"
 
 DistanceTransformFilter::DistanceTransformFilter()
@@ -36,4 +34,5 @@ void DistanceTransformFilter::update()
 void DistanceTransformFilter::destroy() 
 {
 	if (verbose) printf("DistanceTransformFilter::destroy()\n");
+	GrayscaleFilter::destroy();	
 }

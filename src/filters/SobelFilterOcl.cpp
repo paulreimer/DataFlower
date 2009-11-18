@@ -1,5 +1,3 @@
-#pragma once
-
 #include "SobelFilterOcl.h"
 
 #ifdef USE_OPENCL
@@ -55,11 +53,12 @@ void SobelFilterOcl::update()
 }
 
 void SobelFilterOcl::destroy()
-{
+{	
+	if (verbose) printf("SobelFilterOcl::destroy()\n");
+	ColorFilter::destroy();
+
 	rgbaInput.clear();
 	grayOutput.clear();
-
-	if (verbose) printf("SobelFilterOcl::destroy()\n");
 }
 
 #endif

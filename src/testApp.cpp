@@ -56,21 +56,28 @@ void testApp::setup()
 	page->setName("Video Inputs");
 	videoSystem.gui = page;
 	
-	videoSystem.grabSizes.resize(2, ofPoint(VIDEO_SIZE));
+	videoSystem.grabSizes.resize(DEFAULT_CAPTURE_SOURCES, ofPoint(VIDEO_SIZE));
+	videoSystem.vidSizes.resize(DEFAULT_VIDEO_SOURCES);
 	
 	videoSystem.addGraph(new VideoFilterGraph());
 #endif
 	
-#ifdef USE_TUI
-	ofAddListener(tuiSystem.fiducialFoundEvt,	&videoSystem,	&VideoSystem::fiducialFound);
-	ofAddListener(tuiSystem.fiducialLostEvt,	&videoSystem,	&VideoSystem::fiducialLost);
-	ofAddListener(tuiSystem.fiducialUpdatedEvt,	&videoSystem,	&VideoSystem::fiducialUpdated);
+#ifdef USE_TUI	
+	ofAddListener(tuiSystem.fiducial_physics.fiducialFoundEvt,
+				  &videoSystem, &VideoSystem::fiducialFound);
+	ofAddListener(tuiSystem.fiducial_physics.fiducialLostEvt,
+				  &videoSystem, &VideoSystem::fiducialLost);
+	ofAddListener(tuiSystem.fiducial_physics.fiducialUpdatedEvt,
+				  &videoSystem, &VideoSystem::fiducialUpdated);
 
-	ofAddListener(tuiSystem.fiducialRayIntersectionFoundEvt,	&videoSystem,	&VideoSystem::fiducialRayIntersectionFound);
-	ofAddListener(tuiSystem.fiducialRayIntersectionLostEvt,		&videoSystem,	&VideoSystem::fiducialRayIntersectionLost);
-	ofAddListener(tuiSystem.fiducialRayIntersectionUpdatedEvt,	&videoSystem,	&VideoSystem::fiducialRayIntersectionUpdated);
-#endif	
-	
+	ofAddListener(tuiSystem.fiducial_physics.fiducialRayIntersectionFoundEvt,
+				  &videoSystem, &VideoSystem::fiducialRayIntersectionFound);
+	ofAddListener(tuiSystem.fiducial_physics.fiducialRayIntersectionLostEvt,	
+				  &videoSystem,	&VideoSystem::fiducialRayIntersectionLost);
+	ofAddListener(tuiSystem.fiducial_physics.fiducialRayIntersectionUpdatedEvt,
+				  &videoSystem, &VideoSystem::fiducialRayIntersectionUpdated);
+#endif
+
 #ifdef USE_REMOTE_CONTROL
 	remoteSystem.enableAppEvents();
 #endif
@@ -188,11 +195,9 @@ void testApp::windowResized(int w, int h)
 	window.invHeight	= 1.0f/window.height;
 	window.aspectRatio	= window.width * window.invHeight;
 	window.aspectRatio2 = window.aspectRatio * window.aspectRatio;
-	
-	tuiSystem.x_scale=window.width/tuiSystem.videoSize.x;
-	tuiSystem.y_scale=window.height/tuiSystem.videoSize.y;
-}
 
+	tuiSystem.fiducial_physics.updateConversionFactors(tuiSystem.videoSize, ofPoint(w,h));
+}
 
 #pragma mark Input callbacks
 
@@ -204,22 +209,22 @@ void testApp::keyPressed(int key)
 	{
 		case 'g':
 #ifdef USE_GUI
-			guiSystem.toggleDraw();
+			guiSystem.enabled = !guiSystem.enabled;
 #endif			
 			glClear(GL_COLOR_BUFFER_BIT);
 
 		case 't':
 #ifdef USE_TUI
-			tuiSystem.toggleDraw();
+			tuiSystem.enabled = !tuiSystem.enabled;
 #endif
 		case 'v':
 #ifdef USE_VIDEO
-			videoSystem.toggleDraw();
+			videoSystem.enabled = !videoSystem.enabled;
 #endif			
 			break;
 		case 'r':
 #ifdef USE_GPU_VIS
-			renderSystem.toggleDraw();
+			renderSystem.enabled = !renderSystem.enabled;
 #endif
 			break;
 		case 'f':
@@ -230,7 +235,7 @@ void testApp::keyPressed(int key)
 			break;
 		case 's':
 			static char fileNameStr[255];
-			sprintf(fileNameStr, "output_%0.4i.png", ofGetFrameNum());
+			sprintf(fileNameStr, "output_%i.png", ofGetFrameNum());
 			static ofImage imgScreen;
 			imgScreen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
 			printf("Saving file: %s\n", fileNameStr);

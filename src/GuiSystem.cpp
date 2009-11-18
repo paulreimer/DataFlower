@@ -1,5 +1,3 @@
-#pragma once
-
 #include "GuiSystem.h"
 #include "testApp.h"
 
@@ -85,12 +83,7 @@ void GuiSystem::setup()
 	gui.setPage(startPage);
 }
 
-void GuiSystem::toggleDraw() 
-{
-	gui.toggleDraw();
-}
-
-void GuiSystem::draw()
+void GuiSystem::draw() 
 {
 	gui.draw();
 }

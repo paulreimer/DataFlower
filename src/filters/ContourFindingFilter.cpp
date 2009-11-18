@@ -1,5 +1,3 @@
-#pragma once
-
 #include "ContourFindingFilter.h"
 
 ContourFindingFilter::ContourFindingFilter()
@@ -37,4 +35,5 @@ void ContourFindingFilter::draw()
 void ContourFindingFilter::destroy() 
 {
 	if (verbose) printf("ContourFindingFilter::destroy()\n");
+	GrayscaleFilter::destroy();
 }

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "VoxelBufferFilter.h"
 
 #ifdef USE_OPENCL
@@ -81,10 +79,11 @@ void VoxelBufferFilter::update()
 }
 
 void VoxelBufferFilter::destroy()
-{
-	free(h_volume);
-
+{	
 	printf("VoxelBufferFilter::destroy()\n");
+	GrayscaleFilter::destroy();
+
+	free(h_volume);
 }
 
 #endif

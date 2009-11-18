@@ -19,7 +19,6 @@ public:
 	void update();
 
 	void draw();
-	void toggleDraw();
 	
 	void destroy();
 	
@@ -30,7 +29,6 @@ public:
 	RayTracingKernel rayTracer;
 	
 	struct RenderSettings {
-		bool do_draw;
 		ofPoint* rot;
 		ofPoint* offset;
 	} settings;

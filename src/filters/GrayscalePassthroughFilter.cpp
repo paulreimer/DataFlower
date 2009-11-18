@@ -1,5 +1,3 @@
-#pragma once
-
 #include "GrayscalePassthroughFilter.h"
 
 GrayscalePassthroughFilter::GrayscalePassthroughFilter()
@@ -27,4 +25,5 @@ void GrayscalePassthroughFilter::update()
 void GrayscalePassthroughFilter::destroy() 
 {
 	if (verbose) printf("GrayscaleFilter::destroy()\n");
+	GrayscaleFilter::destroy();	
 }

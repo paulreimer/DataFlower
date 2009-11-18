@@ -1,5 +1,3 @@
-#pragma once
-
 #include "CamShiftTrackingFilter.h"
 
 CamShiftTrackingFilter::CamShiftTrackingFilter()
@@ -30,4 +28,5 @@ void CamShiftTrackingFilter::update()
 void CamShiftTrackingFilter::destroy() 
 {
 	if (verbose) printf("CamShiftTrackingFilter::destroy()\n");
+	GrayscaleFilter::destroy();	
 }

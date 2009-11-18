@@ -13,7 +13,6 @@ public:
 
 	void setup();
 	void draw();
-	void toggleDraw();
 	
 	void destroy();
 	ofxSimpleGuiToo gui;

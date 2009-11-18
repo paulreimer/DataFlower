@@ -1,5 +1,3 @@
-#pragma once
-
 #include "LiBgFilter.h"
 
 LiBgFilter::LiBgFilter() {	
@@ -68,9 +66,9 @@ void LiBgFilter::update()
 
 void LiBgFilter::destroy() 
 {
-	if (verbose) printf("LiBgFilter::destroy()\n");
-	
-	cvReleaseBGStatModel(&pFGD);
+	if (verbose) printf("LiBgFilter::destroy()\n");	
+	ColorFilter::destroy();
 
+	cvReleaseBGStatModel(&pFGD);
 	fgMask.clear();
 }

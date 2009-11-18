@@ -1,5 +1,3 @@
-#pragma once
-
 #ifdef USE_OPENCL
 
 #include "RenderSystem.h"
@@ -26,17 +24,11 @@ void RenderSystem::setup()
 	rayTracer.loadFromFile("volumeRender.cl");
 	clScheduler->initKernel(rayTracer);
 
-//	pipe.addFilter(new SobelFilterOcl(*clScheduler));
-//	pipe.addFilter(new VoxelBufferFilter(*clScheduler, rayTracer));
-
+//	myApp->videoSystem.addPipeline(&pipe);
 //	pipe.setPos(164, 300);
 
-//	myApp->videoSystem.addPipeline(&pipe);
-}
-
-void RenderSystem::toggleDraw()
-{
-	settings.do_draw = !settings.do_draw;
+//	pipe.addFilter(new SobelFilterOcl(*clScheduler));
+//	pipe.addFilter(new VoxelBufferFilter(*clScheduler, rayTracer));
 }
 
 void RenderSystem::update()

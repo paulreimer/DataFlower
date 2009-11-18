@@ -1,4 +1,3 @@
-#pragma once
 /*
 MORPHING_METHOD_NONE = 0,
 MORPHING_METHOD_ERODE = 1,
@@ -43,11 +42,12 @@ void AdaptiveSkinFilter::update()
 }
 
 void AdaptiveSkinFilter::destroy() 
-{
+{	
+	if (verbose) printf("AdaptiveSkinFilter::destroy()\n");
+	ColorFilter::destroy();
+
 	bgrInput.clear();
 	grayOutput.clear();
-
-	if (verbose) printf("AdaptiveSkinFilter::destroy()\n");
 }
 
 #endif

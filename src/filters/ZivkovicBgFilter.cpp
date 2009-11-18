@@ -1,5 +1,3 @@
-#pragma once
-
 #include "ZivkovicBgFilter.h"
 
 ZivkovicBgFilter::ZivkovicBgFilter()
@@ -78,6 +76,7 @@ void ZivkovicBgFilter::update()
 void ZivkovicBgFilter::destroy() 
 {
 	if (verbose) printf("ZivkovicBgFilter::destroy()\n");
+	ColorFilter::destroy();
 	
 	cvReleasePixelBackgroundGMM(&pGMM);
 	fgMask.clear();
