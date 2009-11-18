@@ -1337,7 +1337,7 @@
 			sepNavWindowFrame = "{{15, 58}, {1106, 820}}";
 		};
 	};
-	878B385F0F92EF6A001F2EB0 /* giraffograph */ = {
+	878B385F0F92EF6A001F2EB0 /* DataFlower */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
 		);
@@ -1380,7 +1380,7 @@
 		executableSystemSymbolLevel = 0;
 		executableUserSymbolLevel = 0;
 		libgmallocEnabled = 0;
-		name = giraffograph;
+		name = DataFlower;
 		savedGlobals = {
 		};
 		showTypeColumn = 0;
@@ -8608,7 +8608,7 @@
 	};
 	87FB2F2110B3093A001A7DAC /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		comments = "Compile /Users/paulreimer/Development/ofx/006/apps/my/giraffograph/src/VideoSystem.cpp";
+		comments = "Compile /Users/paulreimer/Development/ofx/006/apps/my/DataFlower/src/VideoSystem.cpp";
 		fRef = 87B86C280FBA3BD8007ADBAE /* VideoSystem.cpp */;
 		rLen = 0;
 		rLoc = 235;
@@ -10971,16 +10971,16 @@
 	};
 	E4B69B4C0A3A1720003C02F2 /* Project object */ = {
 		activeBuildConfigurationName = Debug;
-		activeExecutable = 878B385F0F92EF6A001F2EB0 /* giraffograph */;
-		activeTarget = E4B69B5A0A3A1756003C02F2 /* giraffograph */;
+		activeExecutable = 878B385F0F92EF6A001F2EB0 /* DataFlower */;
+		activeTarget = E4B69B5A0A3A1756003C02F2 /* DataFlower */;
 		addToTargets = (
-			E4B69B5A0A3A1756003C02F2 /* giraffograph */,
+			E4B69B5A0A3A1756003C02F2 /* DataFlower */,
 		);
 		breakpoints = (
 		);
 		codeSenseManager = 878B38810F92EF75001F2EB0 /* Code sense */;
 		executables = (
-			878B385F0F92EF6A001F2EB0 /* giraffograph */,
+			878B385F0F92EF6A001F2EB0 /* DataFlower */,
 		);
 		expressions = (
 			y_scale,
@@ -12079,10 +12079,10 @@
 		userBuildSettings = {
 		};
 	};
-	E4B69B5A0A3A1756003C02F2 /* giraffograph */ = {
+	E4B69B5A0A3A1756003C02F2 /* DataFlower */ = {
 		activeExec = 0;
 		executables = (
-			878B385F0F92EF6A001F2EB0 /* giraffograph */,
+			878B385F0F92EF6A001F2EB0 /* DataFlower */,
 		);
 	};
 	E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {
