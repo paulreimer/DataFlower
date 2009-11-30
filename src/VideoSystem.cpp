@@ -215,7 +215,6 @@ void VideoSystem::fiducialFound(fiducialEvtArgs &args)
 	filter_it = filters.find(fiducialId);
 	
 	VideoFilterPtr filter;
-	vector<ofPoint> filter_corners;
 	float h, w;
 
 	if (filter_it == filters.end())
@@ -223,17 +222,16 @@ void VideoSystem::fiducialFound(fiducialEvtArgs &args)
 		filter = myApp->tuiSystem.createFiducialFilter(&fiducial);
 //		myApp->tuiSystem.fiducialsCornersMap[fiducial.getId()] = fiducial.cornerPoints;
 	
-		filter_corners = myApp->tuiSystem.fiducialsCornersMap[fiducial.getId()];
-		myApp->tuiSystem.fiducialsCornersMap[fiducial.getId()] = (ofRectangle)filter;
+		vector<ofPoint>& corners = myApp->tuiSystem.fiducialsCornersMap[fiducial.getId()];
 		
 		w = filter->width;
 		h = filter->height;
 
-		filter_corners.resize(4);
-		filter_corners[0].set(0, 0);
-		filter_corners[1].set(w, 0);
-		filter_corners[2].set(w, h);
-		filter_corners[3].set(0, h);
+		corners.resize(4);
+		corners[0].set(0, 0);
+		corners[1].set(w, 0);
+		corners[2].set(w, h);
+		corners[3].set(0, h);
 		
 		filter->setScale(0.5);
 		

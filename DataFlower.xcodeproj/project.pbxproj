@@ -25,12 +25,15 @@
 		87174BB90FD6464000EBE6E7 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87174BB70FD6464000EBE6E7 /* AudioToolbox.framework */; };
 		87174C060FD6496700EBE6E7 /* twister.dict in Resources */ = {isa = PBXBuildFile; fileRef = 87174C050FD6496700EBE6E7 /* twister.dict */; };
 		87174C380FD6FD0100EBE6E7 /* ofxThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87174C320FD6FD0100EBE6E7 /* ofxThread.cpp */; };
-		8719CE1E10AD138B0027D5B2 /* ProtobufDb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8719CDFF10AD138A0027D5B2 /* ProtobufDb.cpp */; };
+		871813A710BCC35500454B4D /* descriptor.proto in Resources */ = {isa = PBXBuildFile; fileRef = 8718137410BCC35500454B4D /* descriptor.proto */; };
+		871813AA10BCC35500454B4D /* libprotobuf-lite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8718139D10BCC35500454B4D /* libprotobuf-lite.a */; };
+		871813AB10BCC35500454B4D /* libprotobuf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8718139E10BCC35500454B4D /* libprotobuf.a */; };
+		871813AC10BCC35500454B4D /* libprotoc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8718139F10BCC35500454B4D /* libprotoc.a */; };
+		871813AD10BCC35500454B4D /* ProtobufOscExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 871813A210BCC35500454B4D /* ProtobufOscExporter.cpp */; };
+		871813AE10BCC35500454B4D /* ProtobufOscImporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 871813A410BCC35500454B4D /* ProtobufOscImporter.cpp */; };
 		8719CE1F10AD138B0027D5B2 /* GuiGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8719CE0510AD138B0027D5B2 /* GuiGraph.cpp */; };
 		8719CE2010AD138B0027D5B2 /* GuiPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8719CE0710AD138B0027D5B2 /* GuiPage.cpp */; };
 		8719CE2110AD138B0027D5B2 /* GuiSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8719CE0910AD138B0027D5B2 /* GuiSet.cpp */; };
-		8719CE2210AD138B0027D5B2 /* ofxFiducialBacked.proto in Resources */ = {isa = PBXBuildFile; fileRef = 8719CE0C10AD138B0027D5B2 /* ofxFiducialBacked.proto */; };
-		8719CE2310AD138B0027D5B2 /* ProtobufGuiManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8719CE0D10AD138B0027D5B2 /* ProtobufGuiManager.cpp */; };
 		8719CE2410AD138B0027D5B2 /* PhysicsEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8719CE1210AD138B0027D5B2 /* PhysicsEngine.cpp */; };
 		8719CE2510AD138B0027D5B2 /* PhysicsRoutines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8719CE1410AD138B0027D5B2 /* PhysicsRoutines.cpp */; };
 		8719CE2610AD138B0027D5B2 /* ActorPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8719CE1710AD138B0027D5B2 /* ActorPrimitives.cpp */; };
@@ -267,9 +270,55 @@
 		87174C330FD6FD0100EBE6E7 /* ofxThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxThread.h; path = ../../../addons/ofxThread/src/ofxThread.h; sourceTree = SOURCE_ROOT; };
 		87174C3A0FD6FE1F00EBE6E7 /* SpeechSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpeechSystem.cpp; path = src/SpeechSystem.cpp; sourceTree = SOURCE_ROOT; };
 		87174C3B0FD6FE1F00EBE6E7 /* SpeechSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeechSystem.h; path = src/SpeechSystem.h; sourceTree = SOURCE_ROOT; };
+		8718133A10BCC09500454B4D /* rayTracingKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rayTracingKernel.h; path = src/kernels/rayTracingKernel.h; sourceTree = SOURCE_ROOT; };
+		8718133B10BCC09500454B4D /* sobelKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sobelKernel.h; path = src/kernels/sobelKernel.h; sourceTree = SOURCE_ROOT; };
+		8718137110BCC35500454B4D /* descriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = descriptor.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/descriptor.h; sourceTree = SOURCE_ROOT; };
+		8718137310BCC35500454B4D /* descriptor.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = descriptor.pb.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/descriptor.pb.h; sourceTree = SOURCE_ROOT; };
+		8718137410BCC35500454B4D /* descriptor.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = descriptor.proto; path = ../../../addons/ofxProtobuf/include/google/protobuf/descriptor.proto; sourceTree = SOURCE_ROOT; };
+		8718137510BCC35500454B4D /* descriptor_database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = descriptor_database.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/descriptor_database.h; sourceTree = SOURCE_ROOT; };
+		8718137610BCC35500454B4D /* dynamic_message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_message.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/dynamic_message.h; sourceTree = SOURCE_ROOT; };
+		8718137710BCC35500454B4D /* extension_set.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = extension_set.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/extension_set.h; sourceTree = SOURCE_ROOT; };
+		8718137810BCC35500454B4D /* generated_message_reflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = generated_message_reflection.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/generated_message_reflection.h; sourceTree = SOURCE_ROOT; };
+		8718137910BCC35500454B4D /* generated_message_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = generated_message_util.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/generated_message_util.h; sourceTree = SOURCE_ROOT; };
+		8718137B10BCC35500454B4D /* coded_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = coded_stream.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/io/coded_stream.h; sourceTree = SOURCE_ROOT; };
+		8718137C10BCC35500454B4D /* gzip_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gzip_stream.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/io/gzip_stream.h; sourceTree = SOURCE_ROOT; };
+		8718137D10BCC35500454B4D /* package_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = package_info.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/io/package_info.h; sourceTree = SOURCE_ROOT; };
+		8718137E10BCC35500454B4D /* printer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = printer.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/io/printer.h; sourceTree = SOURCE_ROOT; };
+		8718137F10BCC35500454B4D /* tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tokenizer.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/io/tokenizer.h; sourceTree = SOURCE_ROOT; };
+		8718138010BCC35500454B4D /* zero_copy_stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zero_copy_stream.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/io/zero_copy_stream.h; sourceTree = SOURCE_ROOT; };
+		8718138110BCC35500454B4D /* zero_copy_stream_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zero_copy_stream_impl.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/io/zero_copy_stream_impl.h; sourceTree = SOURCE_ROOT; };
+		8718138210BCC35500454B4D /* zero_copy_stream_impl_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zero_copy_stream_impl_lite.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/io/zero_copy_stream_impl_lite.h; sourceTree = SOURCE_ROOT; };
+		8718138310BCC35500454B4D /* message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = message.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/message.h; sourceTree = SOURCE_ROOT; };
+		8718138410BCC35500454B4D /* message_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = message_lite.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/message_lite.h; sourceTree = SOURCE_ROOT; };
+		8718138510BCC35500454B4D /* package_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = package_info.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/package_info.h; sourceTree = SOURCE_ROOT; };
+		8718138610BCC35500454B4D /* reflection_ops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reflection_ops.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/reflection_ops.h; sourceTree = SOURCE_ROOT; };
+		8718138710BCC35500454B4D /* repeated_field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = repeated_field.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/repeated_field.h; sourceTree = SOURCE_ROOT; };
+		8718138810BCC35500454B4D /* service.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = service.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/service.h; sourceTree = SOURCE_ROOT; };
+		8718138A10BCC35500454B4D /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/stubs/common.h; sourceTree = SOURCE_ROOT; };
+		8718138B10BCC35500454B4D /* hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hash.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/stubs/hash.h; sourceTree = SOURCE_ROOT; };
+		8718138C10BCC35500454B4D /* map-util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "map-util.h"; path = "../../../addons/ofxProtobuf/include/google/protobuf/stubs/map-util.h"; sourceTree = SOURCE_ROOT; };
+		8718138D10BCC35500454B4D /* once.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = once.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/stubs/once.h; sourceTree = SOURCE_ROOT; };
+		8718138E10BCC35500454B4D /* stl_util-inl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "stl_util-inl.h"; path = "../../../addons/ofxProtobuf/include/google/protobuf/stubs/stl_util-inl.h"; sourceTree = SOURCE_ROOT; };
+		8718138F10BCC35500454B4D /* strutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = strutil.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/stubs/strutil.h; sourceTree = SOURCE_ROOT; };
+		8718139010BCC35500454B4D /* substitute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = substitute.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/stubs/substitute.h; sourceTree = SOURCE_ROOT; };
+		8718139110BCC35500454B4D /* test_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_util.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/test_util.h; sourceTree = SOURCE_ROOT; };
+		8718139210BCC35500454B4D /* test_util_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_util_lite.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/test_util_lite.h; sourceTree = SOURCE_ROOT; };
+		8718139310BCC35500454B4D /* text_format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = text_format.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/text_format.h; sourceTree = SOURCE_ROOT; };
+		8718139410BCC35500454B4D /* unknown_field_set.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unknown_field_set.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/unknown_field_set.h; sourceTree = SOURCE_ROOT; };
+		8718139510BCC35500454B4D /* wire_format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wire_format.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/wire_format.h; sourceTree = SOURCE_ROOT; };
+		8718139610BCC35500454B4D /* wire_format_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wire_format_lite.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/wire_format_lite.h; sourceTree = SOURCE_ROOT; };
+		8718139710BCC35500454B4D /* wire_format_lite_inl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wire_format_lite_inl.h; path = ../../../addons/ofxProtobuf/include/google/protobuf/wire_format_lite_inl.h; sourceTree = SOURCE_ROOT; };
+		8718139A10BCC35500454B4D /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "../../../addons/ofxProtobuf/lib/arm/libprotobuf-lite.a"; sourceTree = SOURCE_ROOT; };
+		8718139B10BCC35500454B4D /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = ../../../addons/ofxProtobuf/lib/arm/libprotobuf.a; sourceTree = SOURCE_ROOT; };
+		8718139D10BCC35500454B4D /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "../../../addons/ofxProtobuf/lib/osx/libprotobuf-lite.a"; sourceTree = SOURCE_ROOT; };
+		8718139E10BCC35500454B4D /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = ../../../addons/ofxProtobuf/lib/osx/libprotobuf.a; sourceTree = SOURCE_ROOT; };
+		8718139F10BCC35500454B4D /* libprotoc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotoc.a; path = ../../../addons/ofxProtobuf/lib/osx/libprotoc.a; sourceTree = SOURCE_ROOT; };
+		871813A110BCC35500454B4D /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../../addons/ofxProtobuf/src/config.h; sourceTree = SOURCE_ROOT; };
+		871813A210BCC35500454B4D /* ProtobufOscExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProtobufOscExporter.cpp; path = ../../../addons/ofxProtobuf/src/ProtobufOscExporter.cpp; sourceTree = SOURCE_ROOT; };
+		871813A310BCC35500454B4D /* ProtobufOscExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtobufOscExporter.h; path = ../../../addons/ofxProtobuf/src/ProtobufOscExporter.h; sourceTree = SOURCE_ROOT; };
+		871813A410BCC35500454B4D /* ProtobufOscImporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProtobufOscImporter.cpp; path = ../../../addons/ofxProtobuf/src/ProtobufOscImporter.cpp; sourceTree = SOURCE_ROOT; };
+		871813A510BCC35500454B4D /* ProtobufOscImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtobufOscImporter.h; path = ../../../addons/ofxProtobuf/src/ProtobufOscImporter.h; sourceTree = SOURCE_ROOT; };
 		8719CDFD10AD138A0027D5B2 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../../addons/ofxFiducialBacked/src/config.h; sourceTree = SOURCE_ROOT; };
-		8719CDFF10AD138A0027D5B2 /* ProtobufDb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProtobufDb.cpp; path = ../../../addons/ofxFiducialBacked/src/db/ProtobufDb.cpp; sourceTree = SOURCE_ROOT; };
-		8719CE0010AD138A0027D5B2 /* ProtobufDb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtobufDb.h; path = ../../../addons/ofxFiducialBacked/src/db/ProtobufDb.h; sourceTree = SOURCE_ROOT; };
 		8719CE0110AD138B0027D5B2 /* event_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = event_types.h; path = ../../../addons/ofxFiducialBacked/src/event_types.h; sourceTree = SOURCE_ROOT; };
 		8719CE0210AD138B0027D5B2 /* fiducial_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fiducial_types.h; path = ../../../addons/ofxFiducialBacked/src/fiducial_types.h; sourceTree = SOURCE_ROOT; };
 		8719CE0410AD138B0027D5B2 /* gui_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gui_types.h; path = ../../../addons/ofxFiducialBacked/src/gui/gui_types.h; sourceTree = SOURCE_ROOT; };
@@ -279,9 +328,6 @@
 		8719CE0810AD138B0027D5B2 /* GuiPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiPage.h; path = ../../../addons/ofxFiducialBacked/src/gui/GuiPage.h; sourceTree = SOURCE_ROOT; };
 		8719CE0910AD138B0027D5B2 /* GuiSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiSet.cpp; path = ../../../addons/ofxFiducialBacked/src/gui/GuiSet.cpp; sourceTree = SOURCE_ROOT; };
 		8719CE0A10AD138B0027D5B2 /* GuiSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiSet.h; path = ../../../addons/ofxFiducialBacked/src/gui/GuiSet.h; sourceTree = SOURCE_ROOT; };
-		8719CE0C10AD138B0027D5B2 /* ofxFiducialBacked.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ofxFiducialBacked.proto; path = ../../../addons/ofxFiducialBacked/src/io/ofxFiducialBacked.proto; sourceTree = SOURCE_ROOT; };
-		8719CE0D10AD138B0027D5B2 /* ProtobufGuiManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProtobufGuiManager.cpp; path = ../../../addons/ofxFiducialBacked/src/io/ProtobufGuiManager.cpp; sourceTree = SOURCE_ROOT; };
-		8719CE0E10AD138B0027D5B2 /* ProtobufGuiManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProtobufGuiManager.h; path = ../../../addons/ofxFiducialBacked/src/io/ProtobufGuiManager.h; sourceTree = SOURCE_ROOT; };
 		8719CE0F10AD138B0027D5B2 /* ofxFiducialBacked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxFiducialBacked.h; path = ../../../addons/ofxFiducialBacked/src/ofxFiducialBacked.h; sourceTree = SOURCE_ROOT; };
 		8719CE1110AD138B0027D5B2 /* physics_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = physics_types.h; path = ../../../addons/ofxFiducialBacked/src/physics/physics_types.h; sourceTree = SOURCE_ROOT; };
 		8719CE1210AD138B0027D5B2 /* PhysicsEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsEngine.cpp; path = ../../../addons/ofxFiducialBacked/src/physics/PhysicsEngine.cpp; sourceTree = SOURCE_ROOT; };
@@ -754,6 +800,9 @@
 				87142B6D108CD5540015415F /* libcxts.2.0.0.dylib in Frameworks */,
 				87142B6E108CD5540015415F /* libhighgui.2.0.0.dylib in Frameworks */,
 				87142B6F108CD5540015415F /* libml.2.0.0.dylib in Frameworks */,
+				871813AA10BCC35500454B4D /* libprotobuf-lite.a in Frameworks */,
+				871813AB10BCC35500454B4D /* libprotobuf.a in Frameworks */,
+				871813AC10BCC35500454B4D /* libprotoc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -974,6 +1023,141 @@
 			path = ../../../addons/ofxThread/src;
 			sourceTree = SOURCE_ROOT;
 		};
+		8718136D10BCC35500454B4D /* ofxProtobuf */ = {
+			isa = PBXGroup;
+			children = (
+				8718136E10BCC35500454B4D /* include */,
+				8718139810BCC35500454B4D /* lib */,
+				871813A010BCC35500454B4D /* src */,
+			);
+			name = ofxProtobuf;
+			path = ../../../addons/ofxProtobuf;
+			sourceTree = SOURCE_ROOT;
+		};
+		8718136E10BCC35500454B4D /* include */ = {
+			isa = PBXGroup;
+			children = (
+				8718136F10BCC35500454B4D /* google */,
+			);
+			name = include;
+			path = ../../../addons/ofxProtobuf/include;
+			sourceTree = SOURCE_ROOT;
+		};
+		8718136F10BCC35500454B4D /* google */ = {
+			isa = PBXGroup;
+			children = (
+				8718137010BCC35500454B4D /* protobuf */,
+			);
+			name = google;
+			path = ../../../addons/ofxProtobuf/include/google;
+			sourceTree = SOURCE_ROOT;
+		};
+		8718137010BCC35500454B4D /* protobuf */ = {
+			isa = PBXGroup;
+			children = (
+				8718137110BCC35500454B4D /* descriptor.h */,
+				8718137310BCC35500454B4D /* descriptor.pb.h */,
+				8718137410BCC35500454B4D /* descriptor.proto */,
+				8718137510BCC35500454B4D /* descriptor_database.h */,
+				8718137610BCC35500454B4D /* dynamic_message.h */,
+				8718137710BCC35500454B4D /* extension_set.h */,
+				8718137810BCC35500454B4D /* generated_message_reflection.h */,
+				8718137910BCC35500454B4D /* generated_message_util.h */,
+				8718137A10BCC35500454B4D /* io */,
+				8718138310BCC35500454B4D /* message.h */,
+				8718138410BCC35500454B4D /* message_lite.h */,
+				8718138510BCC35500454B4D /* package_info.h */,
+				8718138610BCC35500454B4D /* reflection_ops.h */,
+				8718138710BCC35500454B4D /* repeated_field.h */,
+				8718138810BCC35500454B4D /* service.h */,
+				8718138910BCC35500454B4D /* stubs */,
+				8718139110BCC35500454B4D /* test_util.h */,
+				8718139210BCC35500454B4D /* test_util_lite.h */,
+				8718139310BCC35500454B4D /* text_format.h */,
+				8718139410BCC35500454B4D /* unknown_field_set.h */,
+				8718139510BCC35500454B4D /* wire_format.h */,
+				8718139610BCC35500454B4D /* wire_format_lite.h */,
+				8718139710BCC35500454B4D /* wire_format_lite_inl.h */,
+			);
+			name = protobuf;
+			path = ../../../addons/ofxProtobuf/include/google/protobuf;
+			sourceTree = SOURCE_ROOT;
+		};
+		8718137A10BCC35500454B4D /* io */ = {
+			isa = PBXGroup;
+			children = (
+				8718137B10BCC35500454B4D /* coded_stream.h */,
+				8718137C10BCC35500454B4D /* gzip_stream.h */,
+				8718137D10BCC35500454B4D /* package_info.h */,
+				8718137E10BCC35500454B4D /* printer.h */,
+				8718137F10BCC35500454B4D /* tokenizer.h */,
+				8718138010BCC35500454B4D /* zero_copy_stream.h */,
+				8718138110BCC35500454B4D /* zero_copy_stream_impl.h */,
+				8718138210BCC35500454B4D /* zero_copy_stream_impl_lite.h */,
+			);
+			name = io;
+			path = ../../../addons/ofxProtobuf/include/google/protobuf/io;
+			sourceTree = SOURCE_ROOT;
+		};
+		8718138910BCC35500454B4D /* stubs */ = {
+			isa = PBXGroup;
+			children = (
+				8718138A10BCC35500454B4D /* common.h */,
+				8718138B10BCC35500454B4D /* hash.h */,
+				8718138C10BCC35500454B4D /* map-util.h */,
+				8718138D10BCC35500454B4D /* once.h */,
+				8718138E10BCC35500454B4D /* stl_util-inl.h */,
+				8718138F10BCC35500454B4D /* strutil.h */,
+				8718139010BCC35500454B4D /* substitute.h */,
+			);
+			name = stubs;
+			path = ../../../addons/ofxProtobuf/include/google/protobuf/stubs;
+			sourceTree = SOURCE_ROOT;
+		};
+		8718139810BCC35500454B4D /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				8718139910BCC35500454B4D /* arm */,
+				8718139C10BCC35500454B4D /* osx */,
+			);
+			name = lib;
+			path = ../../../addons/ofxProtobuf/lib;
+			sourceTree = SOURCE_ROOT;
+		};
+		8718139910BCC35500454B4D /* arm */ = {
+			isa = PBXGroup;
+			children = (
+				8718139A10BCC35500454B4D /* libprotobuf-lite.a */,
+				8718139B10BCC35500454B4D /* libprotobuf.a */,
+			);
+			name = arm;
+			path = ../../../addons/ofxProtobuf/lib/arm;
+			sourceTree = SOURCE_ROOT;
+		};
+		8718139C10BCC35500454B4D /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				8718139D10BCC35500454B4D /* libprotobuf-lite.a */,
+				8718139E10BCC35500454B4D /* libprotobuf.a */,
+				8718139F10BCC35500454B4D /* libprotoc.a */,
+			);
+			name = osx;
+			path = ../../../addons/ofxProtobuf/lib/osx;
+			sourceTree = SOURCE_ROOT;
+		};
+		871813A010BCC35500454B4D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				871813A110BCC35500454B4D /* config.h */,
+				871813A210BCC35500454B4D /* ProtobufOscExporter.cpp */,
+				871813A310BCC35500454B4D /* ProtobufOscExporter.h */,
+				871813A410BCC35500454B4D /* ProtobufOscImporter.cpp */,
+				871813A510BCC35500454B4D /* ProtobufOscImporter.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxProtobuf/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		8719CDFB10AD138A0027D5B2 /* ofxFiducialBacked */ = {
 			isa = PBXGroup;
 			children = (
@@ -987,27 +1171,15 @@
 			isa = PBXGroup;
 			children = (
 				8719CDFD10AD138A0027D5B2 /* config.h */,
-				8719CDFE10AD138A0027D5B2 /* db */,
 				8719CE0110AD138B0027D5B2 /* event_types.h */,
 				8719CE0210AD138B0027D5B2 /* fiducial_types.h */,
 				8719CE0310AD138B0027D5B2 /* gui */,
-				8719CE0B10AD138B0027D5B2 /* io */,
 				8719CE0F10AD138B0027D5B2 /* ofxFiducialBacked.h */,
 				8719CE1010AD138B0027D5B2 /* physics */,
 				8719CE1610AD138B0027D5B2 /* renderer */,
 			);
 			name = src;
 			path = ../../../addons/ofxFiducialBacked/src;
-			sourceTree = SOURCE_ROOT;
-		};
-		8719CDFE10AD138A0027D5B2 /* db */ = {
-			isa = PBXGroup;
-			children = (
-				8719CDFF10AD138A0027D5B2 /* ProtobufDb.cpp */,
-				8719CE0010AD138A0027D5B2 /* ProtobufDb.h */,
-			);
-			name = db;
-			path = ../../../addons/ofxFiducialBacked/src/db;
 			sourceTree = SOURCE_ROOT;
 		};
 		8719CE0310AD138B0027D5B2 /* gui */ = {
@@ -1023,17 +1195,6 @@
 			);
 			name = gui;
 			path = ../../../addons/ofxFiducialBacked/src/gui;
-			sourceTree = SOURCE_ROOT;
-		};
-		8719CE0B10AD138B0027D5B2 /* io */ = {
-			isa = PBXGroup;
-			children = (
-				8719CE0C10AD138B0027D5B2 /* ofxFiducialBacked.proto */,
-				8719CE0D10AD138B0027D5B2 /* ProtobufGuiManager.cpp */,
-				8719CE0E10AD138B0027D5B2 /* ProtobufGuiManager.h */,
-			);
-			name = io;
-			path = ../../../addons/ofxFiducialBacked/src/io;
 			sourceTree = SOURCE_ROOT;
 		};
 		8719CE1010AD138B0027D5B2 /* physics */ = {
@@ -1464,7 +1625,9 @@
 			isa = PBXGroup;
 			children = (
 				878C9C101003019400E4638A /* rayTracingKernel.cpp */,
+				8718133A10BCC09500454B4D /* rayTracingKernel.h */,
 				878C9C111003019400E4638A /* sobelKernel.cpp */,
+				8718133B10BCC09500454B4D /* sobelKernel.h */,
 				878C9BF51002E3DA00E4638A /* sobelFilter.cl */,
 				878C9BF61002E3DA00E4638A /* volumeRender.cl */,
 			);
@@ -1790,6 +1953,7 @@
 		E44665C70F5B3E03005D0BF0 /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				8718136D10BCC35500454B4D /* ofxProtobuf */,
 				8719CE5610AD18540027D5B2 /* ofxOsc */,
 				8719CDFB10AD138A0027D5B2 /* ofxFiducialBacked */,
 				87DD44E0107E6593008B53DA /* ofxRemoteControl */,
@@ -2285,9 +2449,9 @@
 				879302160FE7672B00C965C7 /* dict in Resources */,
 				878C9C001002E54000E4638A /* readme.txt in Resources */,
 				87EA940210406ABA00EE4962 /* dtouchmarkers.txt in Resources */,
-				8719CE2210AD138B0027D5B2 /* ofxFiducialBacked.proto in Resources */,
 				8719CE9110AD18540027D5B2 /* license in Resources */,
 				8719CE9610AD18540027D5B2 /* readme in Resources */,
+				871813A710BCC35500454B4D /* descriptor.proto in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2315,6 +2479,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
+				878C9BDA1002E2B900E4638A /* RenderSystem.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
 				E446644B0F5B1CFD005D0BF0 /* ofAppGlutWindow.cpp in Sources */,
 				E446644C0F5B1CFD005D0BF0 /* ofAppRunner.cpp in Sources */,
@@ -2383,7 +2548,6 @@
 				879019890FE2B3220069C4C7 /* CaptureFilter.cpp in Sources */,
 				8790198C0FE2B32F0069C4C7 /* TemplateMatchingSystem.cpp in Sources */,
 				8748E6340FEACC66002E8CB1 /* SobelFilter.cpp in Sources */,
-				878C9BDA1002E2B900E4638A /* RenderSystem.cpp in Sources */,
 				878C9BDF1002E2F100E4638A /* LiBgFilter.cpp in Sources */,
 				878C9BE01002E2F100E4638A /* ZivkovicBgFilter.cpp in Sources */,
 				876A5C0E103B308600EFC090 /* SparseOpticalFlowFilter.cpp in Sources */,
@@ -2421,11 +2585,9 @@
 				87CB80D610698D0D0030FFA2 /* ColorspaceConversionFilter.cpp in Sources */,
 				87DD427D107D1034008B53DA /* VideoFilterGraph.cpp in Sources */,
 				87DD44E5107E6593008B53DA /* ofxRemoteControl.cpp in Sources */,
-				8719CE1E10AD138B0027D5B2 /* ProtobufDb.cpp in Sources */,
 				8719CE1F10AD138B0027D5B2 /* GuiGraph.cpp in Sources */,
 				8719CE2010AD138B0027D5B2 /* GuiPage.cpp in Sources */,
 				8719CE2110AD138B0027D5B2 /* GuiSet.cpp in Sources */,
-				8719CE2310AD138B0027D5B2 /* ProtobufGuiManager.cpp in Sources */,
 				8719CE2410AD138B0027D5B2 /* PhysicsEngine.cpp in Sources */,
 				8719CE2510AD138B0027D5B2 /* PhysicsRoutines.cpp in Sources */,
 				8719CE2610AD138B0027D5B2 /* ActorPrimitives.cpp in Sources */,
@@ -2442,6 +2604,8 @@
 				8719CE9810AD18540027D5B2 /* ofxOscMessage.cpp in Sources */,
 				8719CE9910AD18540027D5B2 /* ofxOscReceiver.cpp in Sources */,
 				8719CE9A10AD18540027D5B2 /* ofxOscSender.cpp in Sources */,
+				871813AD10BCC35500454B4D /* ProtobufOscExporter.cpp in Sources */,
+				871813AE10BCC35500454B4D /* ProtobufOscImporter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2586,6 +2750,8 @@
 					"\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/stock/lib/osx\"",
 					"\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/stock/lib/win32\"",
 					"\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/trunk/lib/osx\"",
+					"\"$(SRCROOT)/../../../addons/ofxProtobuf/lib/arm\"",
+					"\"$(SRCROOT)/../../../addons/ofxProtobuf/lib/osx\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_10 = "\"$(SRCROOT)/../../../addons/ofxOsc/libs/oscpack/lib/osx\"";
@@ -2640,6 +2806,8 @@
 					"\"$(SRCROOT)/../../../../../lib/julius4/libjulius\"",
 					"\"$(SRCROOT)/../../../../../lib/julius4/libsent\"",
 					"\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/trunk/lib/osx\"",
+					"\"$(SRCROOT)/../../../addons/ofxProtobuf/lib/arm\"",
+					"\"$(SRCROOT)/../../../addons/ofxProtobuf/lib/osx\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/freeimage/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_10 = "\"$(SRCROOT)/../../../addons/ofxOsc/libs/oscpack/lib/osx\"";

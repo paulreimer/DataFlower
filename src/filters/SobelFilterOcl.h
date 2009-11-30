@@ -4,7 +4,7 @@
 #include "ofxCvRgbaImage.h"
 
 #ifdef USE_OPENCL
-#include "../kernels/sobelKernel.cpp"
+#include "../kernels/sobelKernel.h"
 // Unfortunately, we schedule our own invocation
 #include "ofxClScheduler.h"
 #endif

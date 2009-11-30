@@ -3,7 +3,7 @@
 #include "VideoFilter.h"
 
 #ifdef USE_OPENCL
-#include "../kernels/rayTracingKernel.cpp"
+#include "../kernels/rayTracingKernel.h"
 // Unfortunately, we schedule our own invocation
 #include "ofxClScheduler.h"
 #endif

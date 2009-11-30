@@ -3,7 +3,7 @@
 #include "RenderSystem.h"
 #include "testApp.h"
 
-extern testApp* myApp;
+//extern testApp* myApp;
 
 RenderSystem::RenderSystem()
 {

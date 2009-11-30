@@ -4,7 +4,7 @@
 #include "ofxMSAInteractiveObject.h"
 #include "VideoSystem.h"
 
-#include "kernels/rayTracingKernel.cpp"
+#include "kernels/rayTracingKernel.h"
 // Unfortunately, we schedule our own invocation
 #include "ofxClScheduler.h"
 
